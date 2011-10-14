@@ -32,6 +32,9 @@
     <DocumentationFile>..\..\bin\Release\Remora\Remora.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -48,13 +51,18 @@
     <Compile Include="Category.cs" />
     <Compile Include="Configuration\IRemoraConfig.cs" />
     <Compile Include="Impl\CategoryResolver.cs" />
+    <Compile Include="Impl\RequestProcessor.cs" />
+    <Compile Include="IRequestProcessor.cs" />
     <Compile Include="PipelineComponentDefinition.cs" />
     <Compile Include="ICategoryResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoraAsyncResult.cs" />
     <Compile Include="RemoraException.cs" />
     <Compile Include="RemoraHandler.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
