@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!--The MIT License
+
+Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.-->
+
+<project name="Remora" xmlns="http://nant.sf.net/release/0.91-alpha2/nant.xsd">
+
+  <property name="nant.settings.currentframework" value="net-4.0" />
+  
+  <property name="project.name" value="${project::get-name()}" />
+  <property name="folder.base" value="${project::get-base-directory()}\.."/>
+
+  <loadtasks assembly="${folder.base}\lib\NAnt\NAnt.Contrib.Tasks.dll" />
+
+  <property name="author.name" value="Julien Blin" />
+  <property name="repository.path" value="git://github.com/julienblin/Remora.git" overwrite="false" />
+
+  <property name="msbuild.configuration" value="Release" />
+  <property name="version.major" value="0" />
+  <property name="version.minor" value="1" />
+  <property name="version.patch" value="0" />
+
+  <property name="folder.src" value="${folder.base}\src"/>
+  <property name="folder.bin" value="${folder.base}\bin"/>
+  <property name="folder.test" value="${folder.base}\test"/>
+  <property name="folder.release" value="${folder.base}\release"/>
+  <property name="folder.package" value="${folder.base}\packages_built"/>
+  <property name="project.solution" value="${folder.base}\${project.name}.sln" />
+
+  <property name="now" value="${datetime::now()}"/>
+
+  <property name="test.open" value="true" />
+
+  <!-- EXTERNAL TOOLS -->
+  <property name="app.msbuild" value="${framework::get-tool-path('msbuild.exe')}" />
+  <property name="app.git" value="C:\Program Files (x86)\Git\bin\git" />
+
+  <target name="clean">
+    <delete dir="${folder.bin}" includeemptydirs="true" />
+  </target>
+
+  <target name="determine-version">
+    <exec program="${app.git}" output="_git-log.output">
+      <arg line="log -1 --pretty=oneline" />
+    </exec>
+    <loadfile file="_git-log.output" property="version.informational" />
+    <delete file="_git-log.output" />
+    <property name="version.informational" value="${string::substring(string::trim(version.informational), 0, 40)}"/>
+
+    <property name="version.revision" value="${string::substring(int::to-string(datetime::get-year(now)), 2, 2)}${string::pad-left(int::to-string(datetime::get-day-of-year(now)), 3, '0')}"/>
+    <property name="version" value="${version.major}.${version.minor}.${version.patch}.${version.revision}"/>
+  </target>
+
+  <target name="build" depends="clean, determine-version">
+    <echo message="Building ${project.name}..."/>
+    <asminfo output="${folder.src}\GlobalAssemblyInfo.cs" language="CSharp">
+      <imports>
+        <import namespace="System" />
+        <import namespace="System.Reflection" />
+      </imports>
+      <attributes>
+        <attribute type="AssemblyVersionAttribute" value="${version}" />
+        <attribute type="AssemblyFileVersionAttribute" value="${version}" />
+        <attribute type="AssemblyInformationalVersionAttribute" value="${version.informational}" />
+        <attribute type="AssemblyCompanyAttribute" value="${project.name}" />
+        <attribute type="AssemblyProductAttribute" value="${project.name}" />
+        <attribute type="AssemblyCopyrightAttribute" value="Copyright © ${author.name} ${datetime::get-year(now)}" />
+        <attribute type="CLSCompliantAttribute" value="true" />
+      </attributes>
+    </asminfo>
+
+    <exec program="${app.msbuild}">
+      <arg line='"${project.solution}"' />
+      <arg line="/property:Configuration=${msbuild.configuration}" />
+      <arg value="/verbosity:normal" />
+      <arg value="/nologo" />
+    </exec>
+
+  </target>
+
+</project>
