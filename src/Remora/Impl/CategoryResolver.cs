@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
-using Remora.Configuration;
 
 namespace Remora.Impl
 {
@@ -32,7 +31,7 @@ namespace Remora.Impl
                 Logger.DebugFormat("Resolving category for url {0}...", url);
 
             var result = (from cat in _config.Categories
-                         where Regex.IsMatch(url, cat.UrlMatcher)
+                         where Regex.IsMatch(url, cat.Properties["url"])
                          select cat).FirstOrDefault();
 
             if (Logger.IsDebugEnabled)

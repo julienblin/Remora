@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Remora
 {
-    public class PipelineComponentDefinition
+    public abstract class AbstractPipelineComponent : IPipelineComponent
     {
-        public PipelineComponentDefinition()
+        protected AbstractPipelineComponent()
         {
             Properties = new Dictionary<string, string>();
         }
 
-        public Type Type { get; set; }
+        public abstract void Proceed(IPipelineComponentInvocation nextInvocation);
 
         public IDictionary<string, string> Properties { get; private set; }
     }

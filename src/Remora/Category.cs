@@ -9,12 +9,13 @@ namespace Remora
     {
         public Category()
         {
+            Properties = new Dictionary<string, string>();
             PipelineComponents = new List<PipelineComponentDefinition>();
         }
 
         public string Name { get; set; }
 
-        public string UrlMatcher { get; set; }
+        public IDictionary<string, string> Properties { get; private set; }
 
         public ICollection<PipelineComponentDefinition> PipelineComponents { get; private set; }
     }
