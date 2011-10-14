@@ -26,12 +26,24 @@ namespace Remora
         public bool CompletedSynchronously { get { return false; } }
         public HttpContext Context { get; private set; }
 
+        private IRequestProcessor _requestProcessor;
+        public IRequestProcessor RequestProcessor
+        {
+            get
+            {
+                if (_requestProcessor == null)
+                    _requestProcessor = new RequestProcessor();
+
+                return _requestProcessor;
+            }
+            set { _requestProcessor = value; }
+        }
+
         public void Process()
         {
             Task.Factory.StartNew(() =>
             {
-                IRequestProcessor requestProcessor = new RequestProcessor();
-                requestProcessor.Process(Context);
+                RequestProcessor.Process(Context);
                 IsCompleted = true;
                 _callback(this);
             });
