@@ -38,7 +38,8 @@ namespace Remora.Tests
             }).Verify(() =>
             {
                 asyncResult.Process();
-                Thread.Sleep(100);
+                while (!asyncResult.IsCompleted) { Thread.Sleep(10);}
+
                 Assert.That(callbackCalled);
                 Assert.That(asyncResult.IsCompleted);
                 Assert.That(asyncResult.CompletedSynchronously, Is.False);
