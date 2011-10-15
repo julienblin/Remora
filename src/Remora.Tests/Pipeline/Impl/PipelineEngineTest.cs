@@ -18,7 +18,7 @@ namespace Remora.Tests.Pipeline.Impl
         {
             var engine = new PipelineEngine { Logger = GetConsoleLogger() };
 
-            Assert.That(() => engine.Run(null, new Remora.Pipeline.Impl.Pipeline("default", ".*", "")),
+            Assert.That(() => engine.Run(null, new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0])),
                 Throws.Exception.TypeOf<ArgumentNullException>()
                 .With.Message.Contains("operation")
             );
@@ -35,7 +35,7 @@ namespace Remora.Tests.Pipeline.Impl
             var operation = new RemoraOperation();
             operation.IncomingRequest.Uri = @"http://www.example.org/request";
             var components = new[] { new TestPipelineComponent(), new TestPipelineComponent(), new TestPipelineComponent() };
-            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", ".*", "", components);
+            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", components);
 
             foreach (var component in components)
             {

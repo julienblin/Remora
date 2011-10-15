@@ -9,10 +9,6 @@ namespace Remora.Pipeline
     {
         string Id { get; }
 
-        string UriFilterRegex { get; }
-
-        string UriRewriteRegex { get; }
-
         IEnumerable<IPipelineComponent> Components { get; }
     }
 }

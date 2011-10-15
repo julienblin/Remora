@@ -71,6 +71,7 @@
     <Compile Include="Core\IRemoraRequest.cs" />
     <Compile Include="Core\IRemoraResponse.cs" />
     <Compile Include="Bootstraper.cs" />
+    <Compile Include="Exceptions\UrlRewriteException.cs" />
     <Compile Include="Exceptions\InvalidConfigurationException.cs" />
     <Compile Include="Exceptions\SoapParsingException.cs" />
     <Compile Include="Configuration\PipelinesConfigurationSectionHandler.cs" />

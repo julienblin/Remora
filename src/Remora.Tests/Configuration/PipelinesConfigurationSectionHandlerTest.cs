@@ -19,14 +19,14 @@ namespace Remora.Tests.Configuration
 
             var firstPipeline = result.First();
             Assert.That(firstPipeline.Id, Is.EqualTo("simpleone"));
-            Assert.That(firstPipeline.UriFilterRegex, Is.EqualTo("/foo/(?.*)"));
-            Assert.That(firstPipeline.UriRewriteRegex, Is.EqualTo("http://tempuri.org/{1}"));
+            Assert.That(firstPipeline.UriFilterRegex, Is.EqualTo("/foo/(.*)"));
+            Assert.That(firstPipeline.UriRewriteRegex, Is.EqualTo("http://tempuri.org/$1"));
             Assert.That(firstPipeline.Components.Count(), Is.EqualTo(0));
 
             var secondPipeline = result.Skip(1).First();
             Assert.That(secondPipeline.Id, Is.EqualTo("anotherone"));
-            Assert.That(secondPipeline.UriFilterRegex, Is.EqualTo("/bar/(?.*)"));
-            Assert.That(secondPipeline.UriRewriteRegex, Is.EqualTo("http://tempuri.org/{1}"));
+            Assert.That(secondPipeline.UriFilterRegex, Is.EqualTo("/bar/(.*)"));
+            Assert.That(secondPipeline.UriRewriteRegex, Is.EqualTo("http://tempuri.org/$1"));
             Assert.That(secondPipeline.Components.Count(), Is.EqualTo(2));
             Assert.That(secondPipeline.Components.First(), Is.EqualTo("testcomponentone"));
             Assert.That(secondPipeline.Components.Skip(1).First(), Is.EqualTo("testcomponenttwo"));
