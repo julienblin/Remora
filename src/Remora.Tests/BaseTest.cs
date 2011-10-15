@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Castle.Core.Logging;
 using Castle.Facilities.Logging;
@@ -20,6 +22,11 @@ namespace Remora.Tests
                 _container.AddFacility<LoggingFacility>(f => f.LogUsing(LoggerImplementation.Console));
             }
             return _container.Resolve<ILogger>();
+        }
+
+        public Stream LoadSample(string name)
+        {
+            return typeof (BaseTest).Assembly.GetManifestResourceStream("Remora.Tests.Samples." + name);
         }
     }
 }

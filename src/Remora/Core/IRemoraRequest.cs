@@ -13,8 +13,10 @@ namespace Remora.Core
 
         IDictionary<string, string> HttpHeaders { get; }
 
-        XDocument SoapHeaders { get; set; }
+        XDocument SoapPayload { get; set; }
 
-        XDocument SoapBody { get; set; }
+        XElement SoapHeaders { get; set; }
+
+        XElement SoapBody { get; set; }
     }
 }

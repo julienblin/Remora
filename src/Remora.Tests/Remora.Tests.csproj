@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="BaseTest.cs" />
     <Compile Include="BootstraperTest.cs" />
+    <Compile Include="Core\Impl\RemoraOperationFactoryTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineEngineTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -83,9 +84,14 @@
       <Name>Remora</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Samples\SimpleHelloWorldRequest.xml" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Samples\InvalidRequest.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

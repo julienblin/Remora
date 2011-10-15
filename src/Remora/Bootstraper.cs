@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using Castle.Facilities.Logging;
+using Castle.Facilities.Startable;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
@@ -32,8 +33,10 @@ namespace Remora
         {
             var container = ConfigurationManager.GetSection("castle") != null ? new WindsorContainer(new XmlInterpreter()) : new WindsorContainer();
             container.AddFacility<LoggingFacility>(f => f.LogUsing(LoggerImplementation.Log4net));
+            container.AddFacility<StartableFacility>();
             container.Register(
                 RegisterIfMissing<IRemoraOperation, RemoraOperation>(true),
+                RegisterIfMissing<IRemoraOperationFactory, RemoraOperationFactory>(),
                 RegisterIfMissing<IPipelineEngine, PipelineEngine>()
             );
 
