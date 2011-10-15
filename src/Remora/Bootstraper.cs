@@ -1,4 +1,5 @@
-﻿using Castle.Facilities.Logging;
+﻿using System.Configuration;
+using Castle.Facilities.Logging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
@@ -13,7 +14,7 @@ namespace Remora
     {
         private static readonly object SyncRoot = new object();
 
-        public static void Init(params IRegistration[] registrations)
+        public static void Init(IWindsorContainer container = null)
         {
             if (IsInitialized) return;
 
@@ -21,28 +22,22 @@ namespace Remora
             {
                 if (IsInitialized) return;
 
-                InitContainer(registrations);
+                Container = container ?? InitContainer();
 
                 IsInitialized = true;
             }
         }
 
-        private static void InitContainer(params IRegistration[] registrations)
+        private static IWindsorContainer InitContainer()
         {
-            if (registrations.Length == 0)
-            {
-                Container = new WindsorContainer(new XmlInterpreter());
-            }
-            else
-            {
-                Container = new WindsorContainer();
-                Container.Register(registrations);
-            }
-            Container.AddFacility<LoggingFacility>(f => f.LogUsing(LoggerImplementation.Log4net));
-            Container.Register(
+            var container = ConfigurationManager.GetSection("castle") != null ? new WindsorContainer(new XmlInterpreter()) : new WindsorContainer();
+            container.AddFacility<LoggingFacility>(f => f.LogUsing(LoggerImplementation.Log4net));
+            container.Register(
                 RegisterIfMissing<IRemoraOperation, RemoraOperation>(true),
                 RegisterIfMissing<IPipelineEngine, PipelineEngine>()
             );
+
+            return container;
         }
 
         private static ComponentRegistration<TService> RegisterIfMissing<TService, TImpl>(bool transient = false)

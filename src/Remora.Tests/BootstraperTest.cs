@@ -17,10 +17,12 @@ namespace Remora.Tests
         [Test]
         public void It_should_register_default_components()
         {
-            Bootstraper.Init(Component.For<BootstraperTest>()); // Avoids loading from app.config file.
+            Bootstraper.Init();
 
             Assert.That(Bootstraper.Container.Resolve<IRemoraOperation>(), Is.TypeOf<RemoraOperation>());
+            Assert.That(Bootstraper.Container.Resolve<IRemoraOperation>(), Is.Not.SameAs(Bootstraper.Container.Resolve<IRemoraOperation>()));
             Assert.That(Bootstraper.Container.Resolve<IPipelineEngine>(), Is.TypeOf<PipelineEngine>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineEngine>(), Is.SameAs(Bootstraper.Container.Resolve<IPipelineEngine>()));
         }
     }
 }
