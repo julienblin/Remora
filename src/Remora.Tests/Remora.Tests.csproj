@@ -74,9 +74,12 @@
     </Compile>
     <Compile Include="BaseTest.cs" />
     <Compile Include="BootstraperTest.cs" />
+    <Compile Include="Configuration\PipelinesConfigurationSectionHandlerTest.cs" />
+    <Compile Include="TestComponentTwo.cs" />
     <Compile Include="Core\Impl\RemoraOperationFactoryTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineEngineTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestComponentOne.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Remora\Remora.csproj">
@@ -88,6 +91,7 @@
     <EmbeddedResource Include="Samples\SimpleHelloWorldRequest.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

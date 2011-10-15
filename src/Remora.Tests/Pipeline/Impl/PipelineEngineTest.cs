@@ -63,6 +63,7 @@ namespace Remora.Tests.Pipeline.Impl
             public string Id
             {
                 get { return "TestPipelineComponent"; }
+                set {}
             }
 
             public void Proceed(IPipelineComponentInvocation invocation)
