@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using NUnit.Framework;
@@ -116,6 +117,35 @@ namespace Remora.Tests.Pipeline.Impl
             });
         }
 
+        [Test]
+        public void It_should_work_with_empty_pipeline()
+        {
+            var container = new WindsorContainer();
+            container.Register(Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId));
+            var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
+            var operation = new RemoraOperation
+                                {
+                                    IncomingUri = new Uri("http://localhost"),
+                                    Request =
+                                        {
+                                            Uri = new Uri("http://tempuri.org/"),
+                                            Method = @"GET"
+                                        }
+                                };
+
+            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0]);
+
+            var ended = false;
+            engine.RunAsync(operation, pipeline, (op) =>
+            {
+                Assert.That(op.OnError, Is.False);
+                Assert.That(op.Exception, Is.Null);
+                Assert.That(op.Response.Data.Length, Is.GreaterThan(0));
+                ended = true;
+            });
+
+            while (!ended) { Thread.Sleep(10); }
+        }
 
 
         public class PcOne : AbstractPipelineComponent
