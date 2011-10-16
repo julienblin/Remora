@@ -29,7 +29,6 @@ namespace Remora
 
         public void EndProcessRequest(IAsyncResult result)
         {
-            
         }
     }
 }

@@ -104,13 +104,12 @@ namespace Remora.Components
         {
             foreach (var header in remoraRequest.HttpHeaders)
             {
-                switch (header.Value.Trim().ToLowerInvariant())
+                switch (header.Key.Trim().ToLowerInvariant())
                 {
                     case "accept":
                         webRequest.Accept = header.Value;
                         break;
                     case "connection":
-                        // TODO
                         break;
                     case "content-length":
                         break;
@@ -118,7 +117,6 @@ namespace Remora.Components
                         webRequest.ContentType = header.Value;
                         break;
                     case "expect":
-                        webRequest.Expect = header.Value;
                         break;
                     case "date":
                         DateTime dateValue;
@@ -134,7 +132,6 @@ namespace Remora.Components
                             webRequest.IfModifiedSince = ifModifiedSinceValue;
                         break;
                     case "range":
-                        // TODO
                         break;
                     case "referer":
                         webRequest.Referer = header.Value;
@@ -146,7 +143,15 @@ namespace Remora.Components
                         webRequest.UserAgent = header.Value;
                         break;
                     default:
-                        webRequest.Headers.Add(header.Key, header.Value);
+                        try
+                        {
+                            webRequest.Headers.Add(header.Key, header.Value);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.ErrorFormat(ex, "Error while setting header {0}={1}", header.Key, header.Value);
+                            throw;
+                        }
                         break;
                 }
             }

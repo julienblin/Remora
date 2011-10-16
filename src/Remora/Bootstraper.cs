@@ -4,6 +4,7 @@ using Castle.Facilities.Startable;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
+using Remora.Components;
 using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Pipeline;
@@ -32,13 +33,14 @@ namespace Remora
         private static IWindsorContainer InitContainer()
         {
             var container = ConfigurationManager.GetSection("castle") != null ? new WindsorContainer(new XmlInterpreter()) : new WindsorContainer();
-            container.AddFacility<LoggingFacility>(f => f.LogUsing(LoggerImplementation.Log4net));
+            container.AddFacility<LoggingFacility>(f => f.LogUsing(LoggerImplementation.Log4net).WithAppConfig());
             container.AddFacility<StartableFacility>();
             container.Register(
                 RegisterIfMissing<IRemoraOperation, RemoraOperation>(true),
                 RegisterIfMissing<IRemoraOperationFactory, RemoraOperationFactory>(),
                 RegisterIfMissing<IPipelineFactory, PipelineFactory>(),
-                RegisterIfMissing<IPipelineEngine, PipelineEngine>()
+                RegisterIfMissing<IPipelineEngine, PipelineEngine>(),
+                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId).Unless((k,m) => k.HasComponent(Sender.SenderComponentId))
             );
 
             return container;
