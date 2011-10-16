@@ -85,6 +85,8 @@
     <Compile Include="Pipeline\IPipelineComponent.cs" />
     <Compile Include="Pipeline\IPipelineFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoraAsyncResult.cs" />
+    <Compile Include="RemoraHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
