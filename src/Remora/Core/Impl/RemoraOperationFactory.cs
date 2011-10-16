@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Castle.Core.Logging;
 using Castle.MicroKernel;
 using Remora.Exceptions;
+using Remora.Extensions;
 
 namespace Remora.Core.Impl
 {
@@ -65,23 +66,17 @@ namespace Remora.Core.Impl
             {
                 throw new InvalidConfigurationException("Error while resolving IRemoraOperation from Windsor. Please make sure that the IRemoraOperation component is correctly registered.", ex);
             }
+
             operation.IncomingRequest.Uri = uri;
 
             foreach (string header in headers)
             {
                 operation.IncomingRequest.HttpHeaders.Add(header, headers[header]);
+                operation.OutgoingRequest.HttpHeaders.Add(header, headers[header]);
             }
 
-            try
-            {
-                operation.IncomingRequest.SoapPayload = XDocument.Load(inputStream);
-                operation.IncomingRequest.SoapHeaders = operation.IncomingRequest.SoapPayload.Descendants("{" + SoapEnvelopeSchema + "}Header").FirstOrDefault();
-                operation.IncomingRequest.SoapBody = operation.IncomingRequest.SoapPayload.Descendants("{" + SoapEnvelopeSchema + "}Body").FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                throw new SoapParsingException(string.Format("Error while parsing SOAP payload from operation {0}", operation), ex);
-            }
+            operation.IncomingRequest.Data = inputStream.ReadFully();
+            operation.OutgoingRequest.Data = operation.IncomingRequest.Data;
 
             return operation;
         }

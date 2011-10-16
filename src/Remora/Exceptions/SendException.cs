@@ -7,23 +7,23 @@ using System.Text;
 namespace Remora.Exceptions
 {
     [Serializable]
-    public class SoapParsingException : RemoraException
+    public class SendException : RemoraException
     {
-        public SoapParsingException()
+        public SendException()
         {
         }
 
-        public SoapParsingException(string message)
+        public SendException(string message)
             : base(message)
         {
         }
 
-        public SoapParsingException(string message, Exception innerException)
+        public SendException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
-        public SoapParsingException(SerializationInfo info, StreamingContext context)
+        public SendException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             

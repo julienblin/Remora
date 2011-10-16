@@ -11,8 +11,6 @@ namespace Remora.Pipeline
     /// </summary>
     public interface IPipelineComponent
     {
-        string Id { get; set; }
-
         void Proceed(IPipelineComponentInvocation invocation);
     }
 }

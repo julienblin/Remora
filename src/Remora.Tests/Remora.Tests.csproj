@@ -74,7 +74,10 @@
     </Compile>
     <Compile Include="BaseTest.cs" />
     <Compile Include="BootstraperTest.cs" />
+    <Compile Include="Components\SenderTest.cs" />
+    <Compile Include="Components\TestPipelineComponentInvocation.cs" />
     <Compile Include="Configuration\PipelinesConfigurationSectionHandlerTest.cs" />
+    <Compile Include="Extensions\StreamExtensionsTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineFactoryTest.cs" />
     <Compile Include="TestComponentTwo.cs" />
     <Compile Include="Core\Impl\RemoraOperationFactoryTest.cs" />
@@ -94,9 +97,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Samples\InvalidRequest.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

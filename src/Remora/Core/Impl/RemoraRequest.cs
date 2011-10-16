@@ -17,10 +17,8 @@ namespace Remora.Core.Impl
 
         public IDictionary<string, string> HttpHeaders { get; private set; }
 
-        public XDocument SoapPayload { get; set; }
+        public string Method { get; set; }
 
-        public XElement SoapHeaders { get; set; }
-
-        public XElement SoapBody { get; set; }
+        public byte[] Data { get; set; }
     }
 }

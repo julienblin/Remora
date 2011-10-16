@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Xml.Linq;
 
 namespace Remora.Core
@@ -10,8 +11,8 @@ namespace Remora.Core
     {
         IDictionary<string, string> HttpHeaders { get; }
 
-        XDocument SoapHeaders { get; set; }
+        int StatusCode { get; set; }
 
-        XDocument SoapBody { get; set; }
+        byte[] Data { get; set; }
     }
 }

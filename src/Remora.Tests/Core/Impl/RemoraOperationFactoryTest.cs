@@ -12,6 +12,7 @@ using NUnit.Framework;
 using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Exceptions;
+using Remora.Extensions;
 
 namespace Remora.Tests.Core.Impl
 {
@@ -44,8 +45,7 @@ namespace Remora.Tests.Core.Impl
             container.Register(Component.For<IRemoraOperation>().ImplementedBy<RemoraOperation>());
 
             var uri = "/uri/?foo=bar";
-            var headers = new NameValueCollection();
-            headers.Add("Content-Type", "text/xml");
+            var headers = new NameValueCollection {{"Content-Type", "text/xml"}};
             var sampleStream = LoadSample("SimpleHelloWorldRequest.xml");
 
             var factory = new RemoraOperationFactory(container.Kernel);
@@ -57,12 +57,13 @@ namespace Remora.Tests.Core.Impl
             Assert.That(result.IncomingRequest.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
             Assert.That(result.IncomingRequest.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
 
-            var testDoc = XDocument.Load(LoadSample("SimpleHelloWorldRequest.xml"));
-            var testHeader = testDoc.Descendants("{" + RemoraOperationFactory.SoapEnvelopeSchema + "}Header").FirstOrDefault();
-            var testBody = testDoc.Descendants("{" + RemoraOperationFactory.SoapEnvelopeSchema + "}Body").FirstOrDefault();
-            Assert.That(result.IncomingRequest.SoapPayload.ToString(), Is.EqualTo(testDoc.ToString()));
-            Assert.That(result.IncomingRequest.SoapHeaders.ToString(), Is.EqualTo(testHeader.ToString()));
-            Assert.That(result.IncomingRequest.SoapBody.ToString(), Is.EqualTo(testBody.ToString()));
+            Assert.That(result.IncomingRequest.Data, Is.EqualTo(LoadSample("SimpleHelloWorldRequest.xml").ReadFully()));
+
+            Assert.That(result.OutgoingRequest.HttpHeaders.Count(), Is.EqualTo(1));
+            Assert.That(result.OutgoingRequest.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
+            Assert.That(result.OutgoingRequest.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
+
+            Assert.That(result.OutgoingRequest.Data, Is.EqualTo(LoadSample("SimpleHelloWorldRequest.xml").ReadFully()));
         }
 
         [Test]
@@ -74,19 +75,6 @@ namespace Remora.Tests.Core.Impl
             Assert.That(() => factory.InternalGet("", new NameValueCollection(), null),
                 Throws.Exception.TypeOf<InvalidConfigurationException>()
                 .With.Message.Contains("IRemoraOperation"));
-        }
-
-        [Test]
-        public void It_should_throw_an_SoapParsingException_when_Soap_is_not_correct()
-        {
-            var container = new WindsorContainer();
-            container.Register(Component.For<IRemoraOperation>().ImplementedBy<RemoraOperation>());
-            var factory = new RemoraOperationFactory(container.Kernel);
-
-            var sampleStream = LoadSample("InvalidRequest.xml");
-
-            Assert.That(() => factory.InternalGet("", new NameValueCollection(), sampleStream),
-                Throws.Exception.TypeOf<SoapParsingException>());
         }
     }
 }

@@ -31,12 +31,12 @@ namespace Remora.Pipeline.Impl
             if ((_component != null) && (_nextInvocation != null))
             {
                 if (_logger.IsDebugEnabled)
-                    _logger.DebugFormat("Proceeding with component {0} for operation {1} on pipeline {2}...", _component.Id, Operation, Pipeline.Id);
+                    _logger.DebugFormat("Proceeding with component {0} for operation {1} on pipeline {2}...", _component, Operation, Pipeline.Id);
 
                 _component.Proceed(_nextInvocation);
 
                 if (_logger.IsDebugEnabled)
-                    _logger.DebugFormat("Component {0} successfully executed operation {1} on pipeline {2}.", _component.Id, Operation, Pipeline.Id);
+                    _logger.DebugFormat("Component {0} successfully executed operation {1} on pipeline {2}.", _component, Operation, Pipeline.Id);
             }
         }
     }
