@@ -8,11 +8,5 @@ namespace Remora.Tests
 {
     public class TestComponentTwo : IPipelineComponent
     {
-        public string Id { get; set; }
-
-        public void Proceed(IPipelineComponentInvocation invocation)
-        {
-            invocation.ProceedWithNextComponent();
-        }
     }
 }
