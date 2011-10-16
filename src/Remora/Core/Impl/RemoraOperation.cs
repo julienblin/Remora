@@ -9,23 +9,22 @@ namespace Remora.Core.Impl
     {
         public RemoraOperation()
         {
-            IncomingRequest = new RemoraRequest();
-            OutgoingRequest = new RemoraRequest();
-            IncomingResponse = new RemoraResponse();
-            OutgoingResponse = new RemoraResponse();
+            OperationId = Guid.NewGuid();
+            Request = new RemoraRequest();
+            Response = new RemoraResponse();
         }
 
-        public IRemoraRequest IncomingRequest { get; private set; }
+        public Guid OperationId { get; private set; }
 
-        public IRemoraRequest OutgoingRequest { get; private set; }
+        public Uri IncomingUri { get; set; }
 
-        public IRemoraResponse IncomingResponse { get; private set; }
+        public IRemoraRequest Request { get; private set; }
 
-        public IRemoraResponse OutgoingResponse { get; private set; }
+        public IRemoraResponse Response { get; private set; }
 
         public override string ToString()
         {
-            return string.Format("From: {0} - To: {1}", IncomingRequest.Uri ?? "<unknown>", OutgoingRequest.Uri ?? "<unknown>");
+            return string.Format("{0}({1})", OperationId, IncomingUri);
         }
     }
 }

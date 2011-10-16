@@ -9,7 +9,7 @@ namespace Remora.Core
     /// </summary>
     public interface IRemoraRequest
     {
-        string Uri { get; set; }
+        Uri Uri { get; set; }
 
         IDictionary<string, string> HttpHeaders { get; }
 

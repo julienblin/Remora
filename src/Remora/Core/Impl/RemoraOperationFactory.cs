@@ -44,7 +44,7 @@ namespace Remora.Core.Impl
             if (request == null) throw new ArgumentNullException("request");
             Contract.EndContractBlock();
 
-            return InternalGet(request.RawUrl, request.Headers, request.InputStream);
+            return InternalGet(request.Url, request.Headers, request.InputStream);
         }
 
         public IRemoraOperation Get(HttpListenerRequest request)
@@ -52,10 +52,10 @@ namespace Remora.Core.Impl
             if (request == null) throw new ArgumentNullException("request");
             Contract.EndContractBlock();
 
-            return InternalGet(request.RawUrl, request.Headers, request.InputStream);
+            return InternalGet(request.Url, request.Headers, request.InputStream);
         }
 
-        public virtual IRemoraOperation InternalGet(string uri, NameValueCollection headers, Stream inputStream)
+        public virtual IRemoraOperation InternalGet(Uri uri, NameValueCollection headers, Stream inputStream)
         {
             IRemoraOperation operation;
             try
@@ -67,16 +67,14 @@ namespace Remora.Core.Impl
                 throw new InvalidConfigurationException("Error while resolving IRemoraOperation from Windsor. Please make sure that the IRemoraOperation component is correctly registered.", ex);
             }
 
-            operation.IncomingRequest.Uri = uri;
+            operation.IncomingUri = uri;
 
             foreach (string header in headers)
             {
-                operation.IncomingRequest.HttpHeaders.Add(header, headers[header]);
-                operation.OutgoingRequest.HttpHeaders.Add(header, headers[header]);
+                operation.Request.HttpHeaders.Add(header, headers[header]);
             }
 
-            operation.IncomingRequest.Data = inputStream.ReadFully();
-            operation.OutgoingRequest.Data = operation.IncomingRequest.Data;
+            operation.Request.Data = inputStream.ReadFully();
 
             return operation;
         }

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Remora.Core
 {
     /// <summary>
@@ -6,24 +8,12 @@ namespace Remora.Core
     /// </summary>
     public interface IRemoraOperation
     {
-        /// <summary>
-        /// Request that is coming from the original system to Remora
-        /// </summary>
-        IRemoraRequest IncomingRequest { get; }
+        Guid OperationId { get; }
 
-        /// <summary>
-        /// Request that is emitted from Remora to the final destination system
-        /// </summary>
-        IRemoraRequest OutgoingRequest { get; }
+        Uri IncomingUri { get; set; }
 
-        /// <summary>
-        /// Response that is coming back from the destination system to Remora
-        /// </summary>
-        IRemoraResponse IncomingResponse { get; }
+        IRemoraRequest Request { get; }
 
-        /// <summary>
-        /// Response returned to the original system by Remora
-        /// </summary>
-        IRemoraResponse OutgoingResponse { get; }
+        IRemoraResponse Response { get; }
     }
 }

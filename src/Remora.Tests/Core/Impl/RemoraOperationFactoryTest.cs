@@ -44,7 +44,7 @@ namespace Remora.Tests.Core.Impl
             var container = new WindsorContainer();
             container.Register(Component.For<IRemoraOperation>().ImplementedBy<RemoraOperation>());
 
-            var uri = "/uri/?foo=bar";
+            var uri = new Uri("http://tempuri.org/uri/?foo=bar");
             var headers = new NameValueCollection {{"Content-Type", "text/xml"}};
             var sampleStream = LoadSample("SimpleHelloWorldRequest.xml");
 
@@ -52,18 +52,11 @@ namespace Remora.Tests.Core.Impl
 
             var result = factory.InternalGet(uri, headers, sampleStream);
 
-            Assert.That(result.IncomingRequest.Uri, Is.EqualTo(uri));
-            Assert.That(result.IncomingRequest.HttpHeaders.Count(), Is.EqualTo(1));
-            Assert.That(result.IncomingRequest.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
-            Assert.That(result.IncomingRequest.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
+            Assert.That(result.Request.HttpHeaders.Count(), Is.EqualTo(1));
+            Assert.That(result.Request.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
+            Assert.That(result.Request.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
 
-            Assert.That(result.IncomingRequest.Data, Is.EqualTo(LoadSample("SimpleHelloWorldRequest.xml").ReadFully()));
-
-            Assert.That(result.OutgoingRequest.HttpHeaders.Count(), Is.EqualTo(1));
-            Assert.That(result.OutgoingRequest.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
-            Assert.That(result.OutgoingRequest.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
-
-            Assert.That(result.OutgoingRequest.Data, Is.EqualTo(LoadSample("SimpleHelloWorldRequest.xml").ReadFully()));
+            Assert.That(result.Request.Data, Is.EqualTo(LoadSample("SimpleHelloWorldRequest.xml").ReadFully()));
         }
 
         [Test]
@@ -72,7 +65,7 @@ namespace Remora.Tests.Core.Impl
             var container = new WindsorContainer();
             var factory = new RemoraOperationFactory(container.Kernel);
 
-            Assert.That(() => factory.InternalGet("", new NameValueCollection(), null),
+            Assert.That(() => factory.InternalGet(new Uri("http://tempuri.org"), new NameValueCollection(), null),
                 Throws.Exception.TypeOf<InvalidConfigurationException>()
                 .With.Message.Contains("IRemoraOperation"));
         }

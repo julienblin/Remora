@@ -7,6 +7,7 @@ using Castle.Windsor;
 using NUnit.Framework;
 using Remora.Configuration;
 using Remora.Core.Impl;
+using Remora.Exceptions;
 using Remora.Pipeline;
 using Remora.Pipeline.Impl;
 
@@ -50,7 +51,7 @@ namespace Remora.Tests.Pipeline.Impl
 
             var factory = new PipelineFactory(container.Kernel, new [] { pipelineConfig1, pipelineConfig2 }) { Logger = GetConsoleLogger() };
 
-            var operation1 = new RemoraOperation {IncomingRequest = {Uri = "/foo/something"}};
+            var operation1 = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org/foo/something")};
             var result1 = factory.Get(operation1);
 
             Assert.That(result1.Id, Is.EqualTo(pipelineConfig1.Id));
@@ -64,13 +65,13 @@ namespace Remora.Tests.Pipeline.Impl
             container.Register(Component.For<IPipelineComponent>().ImplementedBy<TestComponentOne>().Named("cmpOne"));
             container.Register(Component.For<IPipelineComponent>().ImplementedBy<TestComponentTwo>().Named("cmpTwo"));
 
-            var pipelineConfig1 = new PipelineConfiguration { Id = "pipe1", UriFilterRegex = "/bar/(.*)", UriRewriteRegex = "http://tempuri.org/$1", Components = new List<string>() };
-            var pipelineConfig2 = new PipelineConfiguration { Id = "pipe2", UriFilterRegex = "/(.*)", UriRewriteRegex = "http://tempuri.org/all/$1", Components = new List<string> { "cmpOne", "cmpTwo" } };
-            var pipelineConfig3 = new PipelineConfiguration { Id = "pipe3", UriFilterRegex = "/foo/(.*)", UriRewriteRegex = "http://tempuri.org/all/$1", Components = new List<string>() };
+            var pipelineConfig1 = new PipelineConfiguration { Id = "pipe1", UriFilterRegex = "/bar/(.*)", UriRewriteRegex = "", Components = new List<string>() };
+            var pipelineConfig2 = new PipelineConfiguration { Id = "pipe2", UriFilterRegex = "/(.*)", UriRewriteRegex = "", Components = new List<string> { "cmpOne", "cmpTwo" } };
+            var pipelineConfig3 = new PipelineConfiguration { Id = "pipe3", UriFilterRegex = "/foo/(.*)", UriRewriteRegex = "", Components = new List<string>() };
 
             var factory = new PipelineFactory(container.Kernel, new[] { pipelineConfig1, pipelineConfig2, pipelineConfig3 }) { Logger = GetConsoleLogger() };
 
-            var operation1 = new RemoraOperation { IncomingRequest = { Uri = "/foo/something" } };
+            var operation1 = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/foo/something") };
             var result1 = factory.Get(operation1);
 
             Assert.That(result1.Id, Is.EqualTo(pipelineConfig2.Id));
@@ -83,20 +84,20 @@ namespace Remora.Tests.Pipeline.Impl
         public void It_should_rewrite_url_if_present()
         {
             var container = new WindsorContainer();
-            var pipelineConfig1 = new PipelineConfiguration { Id = "pipe1", UriFilterRegex = "/bar/(.*)", UriRewriteRegex = "http://tempuri.org/$1", Components = new List<string>() };
+            var pipelineConfig1 = new PipelineConfiguration { Id = "pipe1", UriFilterRegex = "http(s)?://.*/bar/(.*)", UriRewriteRegex = "http://tempuri2.org/$2", Components = new List<string>() };
             var pipelineConfig2 = new PipelineConfiguration { Id = "pipe2", UriFilterRegex = "/(.*)", UriRewriteRegex = "", Components = new List<string>() };
 
             var factory = new PipelineFactory(container.Kernel, new[] { pipelineConfig1, pipelineConfig2 }) { Logger = GetConsoleLogger() };
 
-            var operation1 = new RemoraOperation { IncomingRequest = { Uri = "/bar/foobar?welcome" } };
+            var operation1 = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/bar/foobar?welcome") };
             var result1 = factory.Get(operation1);
 
-            Assert.That(operation1.OutgoingRequest.Uri, Is.EqualTo("http://tempuri.org/foobar?welcome"));
+            Assert.That(operation1.Request.Uri, Is.EqualTo(new Uri("http://tempuri2.org/foobar?welcome")));
 
-            var operation2 = new RemoraOperation { IncomingRequest = { Uri = "/foo" } };
+            var operation2 = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/foo") };
             var result2 = factory.Get(operation2);
 
-            Assert.That(operation2.OutgoingRequest.Uri, Is.Null);
+            Assert.That(operation2.Request.Uri, Is.Null);
         }
 
         [Test]
@@ -104,9 +105,52 @@ namespace Remora.Tests.Pipeline.Impl
         {
             var container = new WindsorContainer();
             var factory = new PipelineFactory(container.Kernel, new PipelineConfiguration[0]) { Logger = GetConsoleLogger() };
-            
-            var operation = new RemoraOperation { IncomingRequest = { Uri = "/bar/foobar?welcome" } };
+
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/bar/foobar?welcome") };
             Assert.That(factory.Get(operation), Is.Null);
+        }
+
+        [Test]
+        public void It_should_throw_InvalidConfigurationException_when_filter_regex_is_invalid()
+        {
+            var container = new WindsorContainer();
+            var pipelineConfig = new PipelineConfiguration { Id = "pipe", UriFilterRegex = "(((", UriRewriteRegex = "", Components = new List<string>() };
+            var factory = new PipelineFactory(container.Kernel, new PipelineConfiguration[] { pipelineConfig }) { Logger = GetConsoleLogger() };
+
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/") };
+            Assert.That(() => factory.Get(operation),
+                Throws.Exception.TypeOf<InvalidConfigurationException>()
+                .With.Message.Contains("(((")
+            );
+        }
+
+        [Test]
+        public void It_should_throw_InvalidConfigurationException_when_component_not_registered()
+        {
+            var container = new WindsorContainer();
+            var pipelineConfig = new PipelineConfiguration { Id = "pipe", UriFilterRegex = ".*", UriRewriteRegex = "", Components = new List<string> { "comp1" } };
+            var factory = new PipelineFactory(container.Kernel, new PipelineConfiguration[] { pipelineConfig }) { Logger = GetConsoleLogger() };
+
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/") };
+            Assert.That(() => factory.Get(operation),
+                Throws.Exception.TypeOf<InvalidConfigurationException>()
+                .With.Message.Contains("comp1")
+            );
+        }
+
+        [Test]
+        public void It_should_throw_UrlRewriteException_when_urlrewriting_fails()
+        {
+            var container = new WindsorContainer();
+            var pipelineConfig = new PipelineConfiguration { Id = "pipe", UriFilterRegex = ".*", UriRewriteRegex = "foo", Components = new List<string>() };
+            var factory = new PipelineFactory(container.Kernel, new PipelineConfiguration[] { pipelineConfig }) { Logger = GetConsoleLogger() };
+
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/") };
+            Assert.That(() => factory.Get(operation),
+                Throws.Exception.TypeOf<UrlRewriteException>()
+                .With.Message.Contains(".*")
+                .And.Message.Contains("foo")
+            );
         }
     }
 }
