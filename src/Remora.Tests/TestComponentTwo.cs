@@ -6,7 +6,7 @@ using Remora.Pipeline;
 
 namespace Remora.Tests
 {
-    public class TestComponentTwo : IPipelineComponent
+    public class TestComponentTwo : AbstractPipelineComponent
     {
     }
 }

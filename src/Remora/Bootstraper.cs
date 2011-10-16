@@ -37,8 +37,8 @@ namespace Remora
             container.Register(
                 RegisterIfMissing<IRemoraOperation, RemoraOperation>(true),
                 RegisterIfMissing<IRemoraOperationFactory, RemoraOperationFactory>(),
-                RegisterIfMissing<IPipelineFactory, PipelineFactory>()
-                //RegisterIfMissing<IPipelineEngine, PipelineEngine>()
+                RegisterIfMissing<IPipelineFactory, PipelineFactory>(),
+                RegisterIfMissing<IPipelineEngine, PipelineEngine>()
             );
 
             return container;

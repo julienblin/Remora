@@ -61,6 +61,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Components\Sender.cs" />
     <Compile Include="Configuration\PipelineConfiguration.cs" />
     <Compile Include="Core\Impl\RemoraOperation.cs" />
     <Compile Include="Core\Impl\RemoraOperationFactory.cs" />
@@ -78,11 +79,17 @@
     <Compile Include="Exceptions\InvalidConfigurationException.cs" />
     <Compile Include="Configuration\PipelinesConfigurationSectionHandler.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Pipeline\AbstractPipelineComponent.cs" />
+    <Compile Include="Pipeline\Impl\FinalCallbackPipelineComponentInvocation.cs" />
+    <Compile Include="Pipeline\Impl\PipelineComponentInvocation.cs" />
+    <Compile Include="Pipeline\Impl\PipelineEngine.cs" />
     <Compile Include="Pipeline\Impl\PipelineFactory.cs" />
     <Compile Include="Exceptions\RemoraException.cs" />
     <Compile Include="Pipeline\Impl\Pipeline.cs" />
     <Compile Include="Pipeline\IPipeline.cs" />
     <Compile Include="Pipeline\IPipelineComponent.cs" />
+    <Compile Include="Pipeline\IPipelineComponentInvocation.cs" />
+    <Compile Include="Pipeline\IPipelineEngine.cs" />
     <Compile Include="Pipeline\IPipelineFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoraAsyncResult.cs" />
@@ -91,9 +98,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -5,9 +5,10 @@ using System.Text;
 using Remora.Core;
 using Remora.Pipeline;
 
-namespace Remora.Tests
+namespace Remora.Components
 {
-    public class TestComponentOne : AbstractPipelineComponent
+    public class Sender : AbstractPipelineComponent
     {
+        public const string SenderComponentId = @"sender";
     }
 }

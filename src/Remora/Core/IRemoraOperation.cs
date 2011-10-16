@@ -15,5 +15,9 @@ namespace Remora.Core
         IRemoraRequest Request { get; }
 
         IRemoraResponse Response { get; }
+
+        Exception Exception { get; set; }
+
+        bool OnError { get; }
     }
 }

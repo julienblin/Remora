@@ -20,7 +20,9 @@ namespace Remora
 
         public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
         {
-            var result = new RemoraAsyncResult(cb, context, extraData);
+            Bootstraper.Init();
+
+            var result = new RemoraAsyncResult(cb, context, extraData, Bootstraper.Container);
             result.Process();
             return result;
         }

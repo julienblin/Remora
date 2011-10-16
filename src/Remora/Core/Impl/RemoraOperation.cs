@@ -22,6 +22,10 @@ namespace Remora.Core.Impl
 
         public IRemoraResponse Response { get; private set; }
 
+        public Exception Exception { get; set; }
+
+        public bool OnError { get { return Exception != null; } }
+
         public override string ToString()
         {
             return string.Format("{0}({1})", OperationId, IncomingUri);
