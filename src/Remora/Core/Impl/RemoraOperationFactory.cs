@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
@@ -48,7 +49,7 @@ namespace Remora.Core.Impl
             if (request == null) throw new ArgumentNullException("request");
             Contract.EndContractBlock();
 
-            return InternalGet(request.Url, request.Headers, request.InputStream);
+            return InternalGet(request.Url, request.ContentType, request.Headers, request.InputStream);
         }
 
         public IRemoraOperation Get(HttpListenerRequest request)
@@ -56,10 +57,10 @@ namespace Remora.Core.Impl
             if (request == null) throw new ArgumentNullException("request");
             Contract.EndContractBlock();
 
-            return InternalGet(request.Url, request.Headers, request.InputStream);
+            return InternalGet(request.Url, request.ContentType, request.Headers, request.InputStream);
         }
 
-        public virtual IRemoraOperation InternalGet(Uri uri, NameValueCollection headers, Stream inputStream)
+        public virtual IRemoraOperation InternalGet(Uri uri, string contentType, NameValueCollection headers, Stream inputStream)
         {
             IRemoraOperation operation;
             try
@@ -71,14 +72,15 @@ namespace Remora.Core.Impl
                 throw new InvalidConfigurationException("Error while resolving IRemoraOperation from Windsor. Please make sure that the IRemoraOperation component is correctly registered.", ex);
             }
 
+            operation.Request.Data = inputStream.ReadFully(_config.MaxMessageSize);
+
             operation.IncomingUri = uri;
+            operation.IncomingContentType = contentType;
 
             foreach (string header in headers)
             {
                 operation.Request.HttpHeaders.Add(header, headers[header]);
             }
-
-            operation.Request.Data = inputStream.ReadFully(_config.MaxMessageSize);
 
             return operation;
         }

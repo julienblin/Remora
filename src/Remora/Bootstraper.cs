@@ -9,6 +9,8 @@ using Remora.Components;
 using Remora.Configuration;
 using Remora.Core;
 using Remora.Core.Impl;
+using Remora.Exceptions;
+using Remora.Exceptions.Impl;
 using Remora.Pipeline;
 using Remora.Pipeline.Impl;
 
@@ -40,9 +42,11 @@ namespace Remora
             container.AddFacility<FactorySupportFacility>();
             container.Register(
                 RegisterIfMissing<IRemoraOperation, RemoraOperation>(true),
+                RegisterIfMissing<IRemoraOperationKindIdentifier, RemoraOperationKindIdentifier>(),
                 RegisterIfMissing<IRemoraOperationFactory, RemoraOperationFactory>(),
                 RegisterIfMissing<IPipelineFactory, PipelineFactory>(),
                 RegisterIfMissing<IPipelineEngine, PipelineEngine>(),
+                RegisterIfMissing<IExceptionFormatter, ExceptionFormatter>(),
 
                 Component.For<IRemoraConfig>()
                     .UsingFactoryMethod(RemoraConfigurationSectionHandler.GetConfiguration),

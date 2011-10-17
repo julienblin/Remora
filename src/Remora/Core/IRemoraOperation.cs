@@ -12,9 +12,13 @@ namespace Remora.Core
 
         Uri IncomingUri { get; set; }
 
+        string IncomingContentType { get; set; }
+
         IRemoraRequest Request { get; }
 
         IRemoraResponse Response { get; }
+
+        RemoraOperationKind Kind { get; set; }
 
         Exception Exception { get; set; }
 

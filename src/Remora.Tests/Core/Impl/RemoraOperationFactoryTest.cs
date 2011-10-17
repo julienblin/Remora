@@ -56,8 +56,10 @@ namespace Remora.Tests.Core.Impl
 
             var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig());
 
-            var result = factory.InternalGet(uri, headers, sampleStream);
+            var result = factory.InternalGet(uri, "text/html", headers, sampleStream);
 
+            Assert.That(result.IncomingUri, Is.EqualTo(uri));
+            Assert.That(result.IncomingContentType, Is.EqualTo("text/html"));
             Assert.That(result.Request.HttpHeaders.Count(), Is.EqualTo(1));
             Assert.That(result.Request.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
             Assert.That(result.Request.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
@@ -71,7 +73,7 @@ namespace Remora.Tests.Core.Impl
             var container = new WindsorContainer();
             var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig());
 
-            Assert.That(() => factory.InternalGet(new Uri("http://tempuri.org"), new NameValueCollection(), null),
+            Assert.That(() => factory.InternalGet(new Uri("http://tempuri.org"), "text/html", new NameValueCollection(), null),
                 Throws.Exception.TypeOf<InvalidConfigurationException>()
                 .With.Message.Contains("IRemoraOperation"));
         }

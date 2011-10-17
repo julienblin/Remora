@@ -127,4 +127,15 @@
   &lt;/body&gt;
 &lt;/html&gt;</value>
   </data>
+  <data name="SoapError" xml:space="preserve">
+    <value>&lt;s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;s:Header /&gt;
+  &lt;s:Body&gt;
+    &lt;s:Fault&gt;
+      &lt;faultcode&gt;{0}&lt;/faultcode&gt;
+      &lt;faultstring&gt;{1}&lt;/faultstring&gt;
+    &lt;/s:Fault&gt;
+  &lt;/s:Body&gt;
+&lt;/s:Envelope&gt;</value>
+  </data>
 </root>

@@ -70,18 +70,23 @@
     <Compile Include="Configuration\IRemoraConfig.cs" />
     <Compile Include="Core\Impl\RemoraOperation.cs" />
     <Compile Include="Core\Impl\RemoraOperationFactory.cs" />
+    <Compile Include="Core\Impl\RemoraOperationKindIdentifier.cs" />
     <Compile Include="Core\Impl\RemoraRequest.cs" />
     <Compile Include="Core\Impl\RemoraResponse.cs" />
     <Compile Include="Core\IRemoraOperation.cs" />
     <Compile Include="Core\IRemoraOperationFactory.cs" />
+    <Compile Include="Core\IRemoraOperationKindIdentifier.cs" />
     <Compile Include="Core\IRemoraRequest.cs" />
     <Compile Include="Core\IRemoraResponse.cs" />
     <Compile Include="Bootstraper.cs" />
+    <Compile Include="Core\RemoraOperationKind.cs" />
     <Compile Include="ErrorResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ErrorResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Exceptions\IExceptionFormatter.cs" />
+    <Compile Include="Exceptions\Impl\ExceptionFormatter.cs" />
     <Compile Include="Exceptions\MaxMessageSizeException.cs" />
     <Compile Include="Exceptions\SendException.cs" />
     <Compile Include="Exceptions\InvalidDestinationUriException.cs" />

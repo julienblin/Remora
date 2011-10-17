@@ -76,6 +76,8 @@
     <Compile Include="BootstraperTest.cs" />
     <Compile Include="Components\SenderTest.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandlerTest.cs" />
+    <Compile Include="Core\Impl\RemoraOperationKindIdentifierTest.cs" />
+    <Compile Include="Exceptions\Impl\ExceptionFormatterTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineEngineTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineFactoryTest.cs" />

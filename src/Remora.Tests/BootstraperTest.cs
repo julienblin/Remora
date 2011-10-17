@@ -8,6 +8,8 @@ using Remora.Configuration;
 using Remora.Configuration.Impl;
 using Remora.Core;
 using Remora.Core.Impl;
+using Remora.Exceptions;
+using Remora.Exceptions.Impl;
 using Remora.Pipeline;
 using Remora.Pipeline.Impl;
 
@@ -27,6 +29,9 @@ namespace Remora.Tests
             Assert.That(Bootstraper.Container.Resolve<IPipelineEngine>(), Is.TypeOf<PipelineEngine>());
             Assert.That(Bootstraper.Container.Resolve<IPipelineEngine>(), Is.SameAs(Bootstraper.Container.Resolve<IPipelineEngine>()));
 
+            Assert.That(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>(), Is.TypeOf<RemoraOperationKindIdentifier>());
+            Assert.That(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>(), Is.SameAs(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>()));
+
             Assert.That(Bootstraper.Container.Resolve<IRemoraOperationFactory>(), Is.TypeOf<RemoraOperationFactory>());
             Assert.That(Bootstraper.Container.Resolve<IRemoraOperationFactory>(), Is.SameAs(Bootstraper.Container.Resolve<IRemoraOperationFactory>()));
 
@@ -34,6 +39,9 @@ namespace Remora.Tests
 
             Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(), Is.TypeOf<PipelineFactory>());
             Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(), Is.SameAs(Bootstraper.Container.Resolve<IPipelineFactory>()));
+
+            Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(), Is.TypeOf<ExceptionFormatter>());
+            Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(), Is.SameAs(Bootstraper.Container.Resolve<IExceptionFormatter>()));
         }
     }
 }

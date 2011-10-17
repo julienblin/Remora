@@ -75,5 +75,22 @@ namespace Remora {
                 return ResourceManager.GetString("GenericHtmlError", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;s:Envelope xmlns:s=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;
+        ///  &lt;s:Header /&gt;
+        ///  &lt;s:Body&gt;
+        ///    &lt;s:Fault&gt;
+        ///      &lt;faultcode&gt;{0}&lt;/faultcode&gt;
+        ///      &lt;faultstring&gt;{1}&lt;/faultstring&gt;
+        ///    &lt;/s:Fault&gt;
+        ///  &lt;/s:Body&gt;
+        ///&lt;/s:Envelope&gt;.
+        /// </summary>
+        internal static string SoapError {
+            get {
+                return ResourceManager.GetString("SoapError", resourceCulture);
+            }
+        }
     }
 }

@@ -47,10 +47,12 @@ namespace Remora
                     _logger.DebugFormat("Begin async process for request coming from {0}...", Context.Request.Url);
 
                 var operationFactory = _container.Resolve<IRemoraOperationFactory>();
+                var kindIdentifier = _container.Resolve<IRemoraOperationKindIdentifier>();
                 var pipelineFactory = _container.Resolve<IPipelineFactory>();
                 var pipelineEngine = _container.Resolve<IPipelineEngine>();
 
                 var operation = operationFactory.Get(Context.Request);
+                operation.Kind = kindIdentifier.Identify(operation);
                 var pipeline = pipelineFactory.Get(operation);
 
                 if(pipeline == null)
@@ -107,7 +109,8 @@ namespace Remora
 
         private void WriteOperationException(IRemoraOperation operation)
         {
-            WriteGenericException(operation.Exception);
+            var formatter = _container.Resolve<IExceptionFormatter>();
+            formatter.WriteException(operation, Context.Response);
         }
     }
 }
