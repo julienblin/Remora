@@ -28,7 +28,7 @@ namespace Remora.Tests.Components
         [Test]
         public void It_should_throw_a_UnknownDestinationException_if_no_destination_uri()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org")} };
 
             var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
@@ -40,7 +40,7 @@ namespace Remora.Tests.Components
         [Test]
         public void It_should_throw_a_InvalidDestinationUriException_if_scheme_is_not_http()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org")} };
             operation.Request.Uri = new Uri("ftp://localhost");
 
             var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
@@ -54,7 +54,7 @@ namespace Remora.Tests.Components
         [Test]
         public void It_should_position_an_operation_SendException_if_server_not_ready()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org")} };
             operation.Request.Uri = new Uri("http://zxsdfsafdd");
 
             var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
@@ -73,7 +73,7 @@ namespace Remora.Tests.Components
         [Test]
         public void It_should_send_and_get_response()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org")} };
             operation.Request.Uri = new Uri("http://localhost:8081/foo/");
             operation.Request.HttpHeaders.Add("foo", "bar");
             operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");

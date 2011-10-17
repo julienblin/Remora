@@ -43,7 +43,7 @@ namespace Remora.Pipeline.Impl
             Contract.EndContractBlock();
 
             if (Logger.IsDebugEnabled)
-                Logger.DebugFormat("Finding appropriate pipeline for {0}...", operation.IncomingUri.ToString());
+                Logger.DebugFormat("Finding appropriate pipeline for {0}...", operation.IncomingRequest.Uri.ToString());
 
             if (_config.PipelineDefinitions != null)
             {
@@ -59,10 +59,10 @@ namespace Remora.Pipeline.Impl
                         throw new InvalidConfigurationException(string.Format("There has been an error while initializing the regular expression for pipeline {0}: {1}", pipelineDef.Id, pipelineDef.UriFilterRegex), ex);
                     }
 
-                    if (regex.IsMatch(operation.IncomingUri.ToString()))
+                    if (regex.IsMatch(operation.IncomingRequest.Uri.ToString()))
                     {
                         if (Logger.IsDebugEnabled)
-                            Logger.DebugFormat("Found pipeline definition {0} (filter: {1}) for {2}. Creating IPipeline...", pipelineDef.Id, pipelineDef.UriFilterRegex, operation.IncomingUri.ToString());
+                            Logger.DebugFormat("Found pipeline definition {0} (filter: {1}) for {2}. Creating IPipeline...", pipelineDef.Id, pipelineDef.UriFilterRegex, operation.IncomingRequest.Uri.ToString());
 
                         var components = new List<IPipelineComponent>();
                         foreach (var componentDef in pipelineDef.ComponentDefinitions)
@@ -78,19 +78,19 @@ namespace Remora.Pipeline.Impl
                         }
 
                         if (Logger.IsDebugEnabled)
-                            Logger.DebugFormat("Pipeline {0} created for {1}.", pipelineDef.Id, operation.IncomingUri.ToString());
+                            Logger.DebugFormat("Pipeline {0} created for {1}.", pipelineDef.Id, operation.IncomingRequest.Uri.ToString());
 
                         if (!string.IsNullOrWhiteSpace(pipelineDef.UriRewriteRegex))
                         {
                             try
                             {
-                                operation.Request.Uri = new Uri(regex.Replace(operation.IncomingUri.ToString(), pipelineDef.UriRewriteRegex));
+                                operation.Request.Uri = new Uri(regex.Replace(operation.IncomingRequest.Uri.ToString(), pipelineDef.UriRewriteRegex));
                                 if (Logger.IsDebugEnabled)
-                                    Logger.DebugFormat("Wrote outgoing uri for {0}: {1}.", operation.IncomingUri.ToString(), operation.Request.Uri);
+                                    Logger.DebugFormat("Wrote outgoing uri for {0}: {1}.", operation.IncomingRequest.Uri.ToString(), operation.Request.Uri);
                             }
                             catch (Exception ex)
                             {
-                                throw new UrlRewriteException(string.Format("There has been an error while rewriting uri {0} with filter {1} and rewrite {2}.", operation.IncomingUri.ToString(), pipelineDef.UriFilterRegex, pipelineDef.UriRewriteRegex), ex);
+                                throw new UrlRewriteException(string.Format("There has been an error while rewriting uri {0} with filter {1} and rewrite {2}.", operation.IncomingRequest.Uri.ToString(), pipelineDef.UriFilterRegex, pipelineDef.UriRewriteRegex), ex);
                             }
                         }
 
@@ -99,7 +99,7 @@ namespace Remora.Pipeline.Impl
                     else
                     {
                         if (Logger.IsDebugEnabled)
-                            Logger.DebugFormat("Skipped pipeline definition {0} (filter: {1}) for {2}.", pipelineDef.Id, pipelineDef.UriFilterRegex, operation.IncomingUri.ToString());
+                            Logger.DebugFormat("Skipped pipeline definition {0} (filter: {1}) for {2}.", pipelineDef.Id, pipelineDef.UriFilterRegex, operation.IncomingRequest.Uri.ToString());
                     }
                 }
             }

@@ -10,15 +10,16 @@ namespace Remora.Core.Impl
         public RemoraOperation()
         {
             OperationId = Guid.NewGuid();
+            IncomingRequest = new RemoraRequest();
             Request = new RemoraRequest();
             Response = new RemoraResponse();
         }
 
         public Guid OperationId { get; private set; }
 
-        public Uri IncomingUri { get; set; }
-
         public string IncomingContentType { get; set; }
+
+        public IRemoraRequest IncomingRequest { get; private set; }
 
         public IRemoraRequest Request { get; private set; }
 
@@ -32,7 +33,7 @@ namespace Remora.Core.Impl
 
         public override string ToString()
         {
-            return string.Format("{0}({1})", OperationId, IncomingUri);
+            return string.Format("{0}({1})", OperationId, IncomingRequest.Uri);
         }
     }
 }

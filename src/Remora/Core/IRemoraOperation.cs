@@ -10,9 +10,7 @@ namespace Remora.Core
     {
         Guid OperationId { get; }
 
-        Uri IncomingUri { get; set; }
-
-        string IncomingContentType { get; set; }
+        IRemoraRequest IncomingRequest { get; }
 
         IRemoraRequest Request { get; }
 

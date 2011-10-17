@@ -139,7 +139,7 @@ namespace Remora.Tests.Pipeline.Impl
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation
                                 {
-                                    IncomingUri = new Uri("http://localhost"),
+                                    IncomingRequest = { Uri = new Uri("http://localhost") },
                                     Request =
                                         {
                                             Uri = new Uri("http://tempuri.org/"),
