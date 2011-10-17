@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Castle.MicroKernel.Registration;
 using NUnit.Framework;
+using Remora.Configuration;
+using Remora.Configuration.Impl;
 using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Pipeline;
@@ -28,8 +30,10 @@ namespace Remora.Tests
             Assert.That(Bootstraper.Container.Resolve<IRemoraOperationFactory>(), Is.TypeOf<RemoraOperationFactory>());
             Assert.That(Bootstraper.Container.Resolve<IRemoraOperationFactory>(), Is.SameAs(Bootstraper.Container.Resolve<IRemoraOperationFactory>()));
 
-            //Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(), Is.TypeOf<PipelineFactory>());
-            //Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(), Is.SameAs(Bootstraper.Container.Resolve<IPipelineFactory>()));
+            Assert.That(Bootstraper.Container.Resolve<IRemoraConfig>(), Is.TypeOf<RemoraConfig>());
+
+            Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(), Is.TypeOf<PipelineFactory>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(), Is.SameAs(Bootstraper.Container.Resolve<IPipelineFactory>()));
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Web;
 using Castle.Core.Logging;
 using Castle.Windsor;
 using Remora.Core;
+using Remora.Exceptions;
 using Remora.Pipeline;
 
 namespace Remora
@@ -51,6 +52,9 @@ namespace Remora
 
                 var operation = operationFactory.Get(Context.Request);
                 var pipeline = pipelineFactory.Get(operation);
+
+                if(pipeline == null)
+                    throw new InvalidConfigurationException(string.Format("Unable to select an appropriate pipeline for operation {0}.", operation));
 
                 pipelineEngine.RunAsync(operation, pipeline, EngineCallback);
             }
