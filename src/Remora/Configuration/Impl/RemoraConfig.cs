@@ -7,6 +7,11 @@ namespace Remora.Configuration.Impl
 {
     public class RemoraConfig : IRemoraConfig
     {
+        public RemoraConfig()
+        {
+            PipelineDefinitions = new IPipelineDefinition[0];
+        }
+
         public int MaxMessagesSize { get; set; }
 
         public IEnumerable<IPipelineDefinition> PipelineDefinitions { get; set; }

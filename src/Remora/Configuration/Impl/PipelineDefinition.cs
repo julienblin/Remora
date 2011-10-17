@@ -7,6 +7,12 @@ namespace Remora.Configuration.Impl
 {
     public class PipelineDefinition : IPipelineDefinition
     {
+        public PipelineDefinition()
+        {
+            ComponentDefinitions = new IComponentDefinition[0];
+            Properties = new Dictionary<string, string>();
+        }
+
         public string Id { get; set; }
 
         public string UriFilterRegex { get; set; }
@@ -14,5 +20,7 @@ namespace Remora.Configuration.Impl
         public string UriRewriteRegex { get; set; }
 
         public IEnumerable<IComponentDefinition> ComponentDefinitions { get; set; }
+
+        public IDictionary<string, string> Properties { get; set; }
     }
 }

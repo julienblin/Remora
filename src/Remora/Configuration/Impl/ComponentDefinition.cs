@@ -7,6 +7,13 @@ namespace Remora.Configuration.Impl
 {
     public class ComponentDefinition : IComponentDefinition
     {
+        public ComponentDefinition()
+        {
+            Properties = new Dictionary<string, string>();
+        }
+
         public string RefId { get; set; }
+
+        public IDictionary<string, string> Properties { get; set; }
     }
 }

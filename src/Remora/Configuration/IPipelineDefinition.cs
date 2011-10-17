@@ -14,5 +14,7 @@ namespace Remora.Configuration
         string UriRewriteRegex { get; }
 
         IEnumerable<IComponentDefinition> ComponentDefinitions { get; }
+
+        IDictionary<string, string> Properties { get; }
     }
 }

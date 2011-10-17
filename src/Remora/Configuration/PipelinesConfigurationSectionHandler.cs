@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using Remora.Configuration.Impl;
 using Remora.Exceptions;
 
 namespace Remora.Configuration
@@ -12,55 +13,72 @@ namespace Remora.Configuration
     {
         public const string ConfigurationSectionName = @"pipelines";
 
-        public static IEnumerable<PipelineConfiguration> GetConfiguration()
+        public static IRemoraConfig GetConfiguration()
         {
-            var section = ConfigurationManager.GetSection(ConfigurationSectionName);
-            if(section == null)
-                throw new InvalidConfigurationException("Unable to find configuration section " + ConfigurationSectionName + " in application configuration file.");
-            
-            return (IEnumerable<PipelineConfiguration>)section;
+            var config = (IRemoraConfig)ConfigurationManager.GetSection(ConfigurationSectionName);;
+            return config ?? new RemoraConfig();
         }
 
         public object Create(object parent, object configContext, XmlNode section)
         {
-            var result = new List<PipelineConfiguration>();
+            var result = new RemoraConfig();
 
             var pipelineNodes = section.SelectNodes("/" + ConfigurationSectionName + "/pipeline");
 
+            var pipelineDefs = new List<IPipelineDefinition>();
             foreach (XmlNode pipelineNode in pipelineNodes)
             {
-                var pipelineConfig = new PipelineConfiguration
-                                         {
-                                             Id = SafelyReadAttribute(pipelineNode, "id"),
-                                             UriFilterRegex = SafelyReadAttribute(pipelineNode, "filter"),
-                                             UriRewriteRegex = SafelyReadAttribute(pipelineNode, "rewrite")
-                                         };
+                var pipelineDef = new PipelineDefinition();
+                foreach (XmlAttribute attr in pipelineNode.Attributes)
+                {
+                    switch (attr.Name.ToLowerInvariant())
+                    {
+                        case "id":
+                            pipelineDef.Id = attr.Value;
+                            break;
+                        case "filter":
+                            pipelineDef.UriFilterRegex = attr.Value;
+                            break;
+                        case "rewrite":
+                            pipelineDef.UriRewriteRegex = attr.Value;
+                            break;
+                        default:
+                            pipelineDef.Properties.Add(attr.Name, attr.Value);
+                            break;
+                    }
+                }
 
-                if (string.IsNullOrWhiteSpace(pipelineConfig.Id))
-                    throw new InvalidConfigurationException("One of the pipeline is missing the mandatory 'id' attribute, or its value is empty. Every pipeline must be identified by an id.");
+                pipelineDef.ComponentDefinitions = ParseComponents(pipelineNode);
 
-                pipelineConfig.Components = ParseComponents(pipelineNode);
-
-                result.Add(pipelineConfig);
+                pipelineDefs.Add(pipelineDef);
             }
+
+            result.PipelineDefinitions = pipelineDefs;
 
             return result;
         }
 
-        private IList<string> ParseComponents(XmlNode node)
+        private IEnumerable<IComponentDefinition> ParseComponents(XmlNode node)
         {
             var componentNodes = node.SelectNodes("component");
 
-            return (from XmlNode componentNode in componentNodes
-                    select SafelyReadAttribute(componentNode, "id") into id
-                    where !string.IsNullOrWhiteSpace(id)
-                    select id).ToList();
-        }
-
-        private string SafelyReadAttribute(XmlNode node, string attributeName)
-        {
-            var attribute = node.Attributes[attributeName];
-            return attribute != null ? attribute.Value : null;
+            foreach (XmlNode componentNode in componentNodes)
+            {
+                var cmpDef = new ComponentDefinition();
+                foreach (XmlAttribute attr in componentNode.Attributes)
+                {
+                    switch (attr.Name.ToLowerInvariant())
+                    {
+                        case "id":
+                            cmpDef.RefId = attr.Value;
+                            break;
+                        default:
+                            cmpDef.Properties.Add(attr.Name, attr.Value);
+                            break;
+                    }
+                }
+                yield return cmpDef;
+            }
         }
     }
 }
