@@ -9,7 +9,7 @@ namespace Remora.Configuration.Impl
     {
         public ComponentDefinition()
         {
-            Properties = new Dictionary<string, string>();
+            Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         public string RefId { get; set; }

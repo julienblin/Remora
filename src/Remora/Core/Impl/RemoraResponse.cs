@@ -11,7 +11,7 @@ namespace Remora.Core.Impl
     {
         public RemoraResponse()
         {
-            HttpHeaders = new Dictionary<string, string>();
+            HttpHeaders = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         public IDictionary<string, string> HttpHeaders { get; private set; }

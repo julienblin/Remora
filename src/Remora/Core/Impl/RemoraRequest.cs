@@ -10,7 +10,7 @@ namespace Remora.Core.Impl
     {
         public RemoraRequest()
         {
-            HttpHeaders = new Dictionary<string, string>();
+            HttpHeaders = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         public Uri Uri { get; set; }

@@ -10,7 +10,7 @@ namespace Remora.Configuration.Impl
         public PipelineDefinition()
         {
             ComponentDefinitions = new IComponentDefinition[0];
-            Properties = new Dictionary<string, string>();
+            Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         public string Id { get; set; }
