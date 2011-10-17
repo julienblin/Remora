@@ -62,6 +62,10 @@ namespace Remora.Core.Impl
 
         public virtual IRemoraOperation InternalGet(Uri uri, NameValueCollection headers, Stream inputStream)
         {
+
+            if(Logger.IsDebugEnabled)
+                Logger.DebugFormat("Creating IRemoraOperation for {0}...", uri);
+
             IRemoraOperation operation;
             try
             {
@@ -82,6 +86,9 @@ namespace Remora.Core.Impl
                 operation.IncomingRequest.HttpHeaders.Add(header, headers[header]);
                 operation.Request.HttpHeaders.Add(header, headers[header]);
             }
+
+            if (Logger.IsDebugEnabled)
+                Logger.DebugFormat("IRemoraOperation {0} created.", operation);
 
             return operation;
         }

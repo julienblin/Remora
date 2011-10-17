@@ -64,8 +64,8 @@ namespace Remora {
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
         ///&lt;html&gt;
         ///  &lt;body&gt;
-        ///    &lt;h1&gt;Remora: Internal error!&lt;/h1&gt;
-        ///    &lt;h2&gt;{0}&lt;/h2&gt;
+        ///    &lt;h1&gt;Internal error: {0}&lt;/h1&gt;
+        ///    &lt;h2&gt;{1}&lt;/h2&gt;
         ///    &lt;p&gt;Check the log for more information.&lt;/p&gt;
         ///  &lt;/body&gt;
         ///&lt;/html&gt;.

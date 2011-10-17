@@ -110,7 +110,7 @@ namespace Remora.Tests.Pipeline.Impl
             var exception = new Exception();
 
             var pcOne = new PcOne { ControlOperation = operation };
-            var pcErrorLast = new PcWithErrorOnBegin() { ControlOperation = operation, Exception = exception };
+            var pcErrorLast = new PcWithErrorOnEnd() { ControlOperation = operation, Exception = exception };
             var pcLast = new LastPc { ControlOperation = operation };
 
             var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcOne, pcErrorLast, pcLast });
@@ -122,44 +122,44 @@ namespace Remora.Tests.Pipeline.Impl
                 Assert.That(pcOne.BeginAsyncProcessCalledCount, Is.EqualTo(1));
                 Assert.That(pcOne.EndAsyncProcessCalledCount, Is.EqualTo(1));
                 Assert.That(pcErrorLast.BeginAsyncProcessCalledCount, Is.EqualTo(1));
-                Assert.That(pcErrorLast.EndAsyncProcessCalledCount, Is.EqualTo(0));
-                Assert.That(pcLast.BeginAsyncProcessCalledCount, Is.EqualTo(0));
+                Assert.That(pcErrorLast.EndAsyncProcessCalledCount, Is.EqualTo(1));
+                Assert.That(pcLast.BeginAsyncProcessCalledCount, Is.EqualTo(1));
                 Assert.That(pcLast.EndAsyncProcessCalledCount, Is.EqualTo(0));
             });
         }
 
-        [Test]
-        public void It_should_work_with_empty_pipeline()
-        {
-            var container = new WindsorContainer();
-            container.Register(
-                Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
-                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId)
-            );
-            var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
-            var operation = new RemoraOperation
-                                {
-                                    IncomingRequest = { Uri = new Uri("http://localhost") },
-                                    Request =
-                                        {
-                                            Uri = new Uri("http://tempuri.org/"),
-                                            Method = @"GET"
-                                        }
-                                };
+        //[Test]
+        //public void It_should_work_with_empty_pipeline()
+        //{
+        //    var container = new WindsorContainer();
+        //    container.Register(
+        //        Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
+        //        Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId)
+        //    );
+        //    var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
+        //    var operation = new RemoraOperation
+        //                        {
+        //                            IncomingRequest = { Uri = new Uri("http://localhost") },
+        //                            Request =
+        //                                {
+        //                                    Uri = new Uri("http://tempuri.org/"),
+        //                                    Method = @"GET"
+        //                                }
+        //                        };
 
-            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0]);
+        //    var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0]);
 
-            var ended = false;
-            engine.RunAsync(operation, pipeline, (op) =>
-            {
-                Assert.That(op.OnError, Is.False);
-                Assert.That(op.Exception, Is.Null);
-                Assert.That(op.Response.Data.Length, Is.GreaterThan(0));
-                ended = true;
-            });
+        //    var ended = false;
+        //    engine.RunAsync(operation, pipeline, (op) =>
+        //    {
+        //        Assert.That(op.OnError, Is.False);
+        //        Assert.That(op.Exception, Is.Null);
+        //        Assert.That(op.Response.Data.Length, Is.GreaterThan(0));
+        //        ended = true;
+        //    });
 
-            while (!ended) { Thread.Sleep(10); }
-        }
+        //    while (!ended) { Thread.Sleep(10); }
+        //}
 
 
         public class PcOne : AbstractPipelineComponent

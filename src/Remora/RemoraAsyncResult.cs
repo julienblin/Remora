@@ -9,6 +9,7 @@ using Castle.Core.Logging;
 using Castle.Windsor;
 using Remora.Core;
 using Remora.Exceptions;
+using Remora.Exceptions.Impl;
 using Remora.Pipeline;
 
 namespace Remora
@@ -98,19 +99,24 @@ namespace Remora
             _callback(this);
         }
 
-        private void WriteGenericException(Exception exception)
-        {
-            Context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-            Context.Response.ContentType = "text/html";
-            Context.Response.ContentEncoding = Encoding.UTF8;
-            Context.Response.Write(string.Format(ErrorResources.GenericHtmlError, exception.Message));
-            Context.Response.End();
-        }
-
         private void WriteOperationException(IRemoraOperation operation)
         {
             var formatter = _container.Resolve<IExceptionFormatter>();
             formatter.WriteException(operation, Context.Response);
+        }
+
+        private void WriteGenericException(Exception exception)
+        {
+            IExceptionFormatter formatter;
+            try
+            {
+                formatter = _container.Resolve<IExceptionFormatter>();
+            }
+            catch
+            {
+                formatter = new ExceptionFormatter();
+            }
+            formatter.WriteHtmlException(exception, Context.Response);
         }
     }
 }

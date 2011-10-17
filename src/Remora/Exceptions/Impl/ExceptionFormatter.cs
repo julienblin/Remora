@@ -23,23 +23,27 @@ namespace Remora.Exceptions.Impl
                     WriteSoap(operation, response);
                     break;
                 default:
-                    WriteHtml(operation, response);
+                    WriteHtmlException(operation.Exception, response);
                     break;
             }
         }
 
-        private void WriteSoap(IRemoraOperation operation, HttpResponse response)
+        public virtual void WriteHtmlException(Exception exception, HttpResponse response)
+        {
+            response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            response.ContentType = "text/html";
+            response.ContentEncoding = Encoding.UTF8;
+            response.Write(string.Format(ErrorResources.GenericHtmlError, exception.GetType().Name.Replace("Exception", ""), exception.Message));
+            response.Flush();
+        }
+
+        protected virtual void WriteSoap(IRemoraOperation operation, HttpResponse response)
         {
             response.ContentType = "text/xml";
             response.StatusCode = (int)HttpStatusCode.OK;
             response.ContentEncoding = Encoding.UTF8;
             response.Write(string.Format(ErrorResources.SoapError, operation.Exception.GetType().Name.Replace("Exception", ""), operation.Exception.Message));
-            response.End();
-        }
-
-        protected virtual void WriteHtml(IRemoraOperation operation, HttpResponse response)
-        {
-            throw new NotImplementedException();
+            response.Flush();
         }
     }
 }

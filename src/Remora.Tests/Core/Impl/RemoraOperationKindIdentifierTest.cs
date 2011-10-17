@@ -30,5 +30,14 @@ namespace Remora.Tests.Core.Impl
 
             Assert.That(identifier.Identify(operation), Is.EqualTo(RemoraOperationKind.Soap));
         }
+
+        [Test]
+        public void It_should_return_unknown()
+        {
+            var identifier = new RemoraOperationKindIdentifier() { Logger = GetConsoleLogger() };
+            var operation = new RemoraOperation();
+
+            Assert.That(identifier.Identify(operation), Is.EqualTo(RemoraOperationKind.Unknown));
+        }
     }
 }

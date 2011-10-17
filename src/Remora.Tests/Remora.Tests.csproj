@@ -77,8 +77,10 @@
     <Compile Include="Components\SenderTest.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandlerTest.cs" />
     <Compile Include="Core\Impl\RemoraOperationKindIdentifierTest.cs" />
+    <Compile Include="Exceptions\ExceptionsTest.cs" />
     <Compile Include="Exceptions\Impl\ExceptionFormatterTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
+    <Compile Include="Pipeline\AbstractPipelineComponentTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineEngineTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineFactoryTest.cs" />
     <Compile Include="Core\Impl\RemoraOperationFactoryTest.cs" />

@@ -116,5 +116,53 @@ namespace Remora.Tests.Components
             }
         }
 
+        [Test]
+        public void It_should_be_able_to_work_with_reserved_headers()
+        {
+            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org") } };
+            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
+            operation.Request.HttpHeaders.Add("accept", "image/*");
+            operation.Request.HttpHeaders.Add("connection", "foo");
+            operation.Request.HttpHeaders.Add("content-length", "foo");
+            operation.Request.HttpHeaders.Add("content-type", "text/html");
+            operation.Request.HttpHeaders.Add("expect", "foo");
+            operation.Request.HttpHeaders.Add("date", "2011-01-01");
+            operation.Request.HttpHeaders.Add("host", "localhost");
+            operation.Request.HttpHeaders.Add("if-modified-since", "2011-01-01");
+            operation.Request.HttpHeaders.Add("range", "foo");
+            operation.Request.HttpHeaders.Add("referer", "localhost");
+            operation.Request.HttpHeaders.Add("transfer-encoding", "utf-8");
+            operation.Request.HttpHeaders.Add("user-agent", "Remora");
+
+            var responseBuffer = Encoding.UTF8.GetBytes("theresponse");
+
+            using (var listener = new HttpListener())
+            {
+                listener.Prefixes.Add("http://localhost:8081/foo/");
+                listener.Start();
+
+                listener.BeginGetContext((result) =>
+                {
+                    var l = (HttpListener)result.AsyncState;
+                    var context = l.EndGetContext(result);
+                    var request = context.Request;
+
+                    var response = context.Response;
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    response.OutputStream.Close();
+                }, listener);
+
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+                var ended = false;
+                sender.BeginAsyncProcess(operation, (c) =>
+                {
+                    ended = true;
+                });
+
+                while (!ended) { Thread.Sleep(10); }
+            }
+        }
+
     }
 }

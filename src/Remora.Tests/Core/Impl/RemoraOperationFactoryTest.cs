@@ -54,7 +54,7 @@ namespace Remora.Tests.Core.Impl
             var headers = new NameValueCollection {{"Content-Type", "text/xml"}};
             var sampleStream = LoadSample("SimpleHelloWorldRequest.xml");
 
-            var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig());
+            var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             var result = factory.InternalGet(uri, headers, sampleStream);
 
@@ -71,7 +71,7 @@ namespace Remora.Tests.Core.Impl
         public void It_should_throw_an_InvalidConfigurationException_when_IRemoraOperation_is_not_registered()
         {
             var container = new WindsorContainer();
-            var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig());
+            var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             Assert.That(() => factory.InternalGet(new Uri("http://tempuri.org"), new NameValueCollection(), null),
                 Throws.Exception.TypeOf<InvalidConfigurationException>()

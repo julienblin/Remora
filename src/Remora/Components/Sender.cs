@@ -147,7 +147,6 @@ namespace Remora.Components
                         webRequest.Referer = header.Value;
                         break;
                     case "transfer-encoding":
-                        webRequest.TransferEncoding = header.Value;
                         break;
                     case "user-agent":
                         webRequest.UserAgent = header.Value;

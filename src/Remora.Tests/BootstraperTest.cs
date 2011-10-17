@@ -43,5 +43,15 @@ namespace Remora.Tests
             Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(), Is.TypeOf<ExceptionFormatter>());
             Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(), Is.SameAs(Bootstraper.Container.Resolve<IExceptionFormatter>()));
         }
+
+        [Test]
+        public void It_should_init_only_once()
+        {
+            Bootstraper.Init();
+            var container = Bootstraper.Container;
+
+            Bootstraper.Init();
+            Assert.That(Bootstraper.Container, Is.SameAs(container));
+        }
     }
 }
