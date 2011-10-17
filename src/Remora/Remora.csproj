@@ -62,6 +62,12 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Components\Sender.cs" />
+    <Compile Include="Configuration\IComponentDefinition.cs" />
+    <Compile Include="Configuration\Impl\ComponentDefinition.cs" />
+    <Compile Include="Configuration\Impl\PipelineDefinition.cs" />
+    <Compile Include="Configuration\Impl\RemoraConfig.cs" />
+    <Compile Include="Configuration\IPipelineDefinition.cs" />
+    <Compile Include="Configuration\IRemoraConfig.cs" />
     <Compile Include="Configuration\PipelineConfiguration.cs" />
     <Compile Include="Core\Impl\RemoraOperation.cs" />
     <Compile Include="Core\Impl\RemoraOperationFactory.cs" />
