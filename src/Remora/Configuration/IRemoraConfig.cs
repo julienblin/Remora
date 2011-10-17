@@ -7,8 +7,10 @@ namespace Remora.Configuration
 {
     public interface IRemoraConfig
     {
-        int MaxMessagesSize { get; }
+        int MaxMessageSize { get; }
 
         IEnumerable<IPipelineDefinition> PipelineDefinitions { get; }
+
+        IDictionary<string, string> Properties { get; }
     }
 }

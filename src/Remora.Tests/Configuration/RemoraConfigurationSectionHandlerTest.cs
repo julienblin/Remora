@@ -8,12 +8,16 @@ using Remora.Configuration;
 namespace Remora.Tests.Configuration
 {
     [TestFixture]
-    public class PipelinesConfigurationSectionHandlerTest : BaseTest
+    public class RemoraConfigurationSectionHandlerTest : BaseTest
     {
         [Test]
         public void It_should_load_configuration_section()
         {
-            var result = PipelinesConfigurationSectionHandler.GetConfiguration();
+            var result = RemoraConfigurationSectionHandler.GetConfiguration();
+
+            Assert.That(result.MaxMessageSize, Is.EqualTo(10));
+            Assert.That(result.Properties.Count(), Is.EqualTo(1));
+            Assert.That(result.Properties["bar"], Is.EqualTo("foo"));
 
             Assert.That(result.PipelineDefinitions.Count(), Is.EqualTo(2));
 

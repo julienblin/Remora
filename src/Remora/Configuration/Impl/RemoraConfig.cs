@@ -10,10 +10,13 @@ namespace Remora.Configuration.Impl
         public RemoraConfig()
         {
             PipelineDefinitions = new IPipelineDefinition[0];
+            Properties = new Dictionary<string, string>();
         }
 
-        public int MaxMessagesSize { get; set; }
+        public int MaxMessageSize { get; set; }
 
         public IEnumerable<IPipelineDefinition> PipelineDefinitions { get; set; }
+
+        public IDictionary<string, string> Properties { get; set; }
     }
 }

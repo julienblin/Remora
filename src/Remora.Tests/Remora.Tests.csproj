@@ -75,7 +75,7 @@
     <Compile Include="BaseTest.cs" />
     <Compile Include="BootstraperTest.cs" />
     <Compile Include="Components\SenderTest.cs" />
-    <Compile Include="Configuration\PipelinesConfigurationSectionHandlerTest.cs" />
+    <Compile Include="Configuration\RemoraConfigurationSectionHandlerTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineEngineTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineFactoryTest.cs" />

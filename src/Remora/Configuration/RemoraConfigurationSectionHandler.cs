@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -9,9 +10,9 @@ using Remora.Exceptions;
 
 namespace Remora.Configuration
 {
-    public class PipelinesConfigurationSectionHandler : IConfigurationSectionHandler
+    public class RemoraConfigurationSectionHandler : IConfigurationSectionHandler
     {
-        public const string ConfigurationSectionName = @"pipelines";
+        public const string ConfigurationSectionName = @"remora";
 
         public static IRemoraConfig GetConfiguration()
         {
@@ -23,7 +24,22 @@ namespace Remora.Configuration
         {
             var result = new RemoraConfig();
 
-            var pipelineNodes = section.SelectNodes("/" + ConfigurationSectionName + "/pipeline");
+            foreach (XmlAttribute attr in section.Attributes)
+            {
+                switch (attr.Name.ToLowerInvariant())
+                {
+                    case "maxmessagesize":
+                        int maxMessageSizeValue;
+                        if (Int32.TryParse(attr.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out maxMessageSizeValue))
+                            result.MaxMessageSize = maxMessageSizeValue;
+                        break;
+                    default:
+                        result.Properties.Add(attr.Name, attr.Value);
+                        break;
+                }
+            }
+
+            var pipelineNodes = section.SelectNodes("/" + ConfigurationSectionName + "/pipelines/pipeline");
 
             var pipelineDefs = new List<IPipelineDefinition>();
             foreach (XmlNode pipelineNode in pipelineNodes)
