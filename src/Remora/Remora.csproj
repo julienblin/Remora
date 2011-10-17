@@ -82,6 +82,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ErrorResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Exceptions\MaxMessageSizeException.cs" />
     <Compile Include="Exceptions\SendException.cs" />
     <Compile Include="Exceptions\InvalidDestinationUriException.cs" />
     <Compile Include="Exceptions\UnknownDestinationException.cs" />

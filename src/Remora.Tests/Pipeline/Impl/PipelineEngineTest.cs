@@ -7,6 +7,8 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using NUnit.Framework;
 using Remora.Components;
+using Remora.Configuration;
+using Remora.Configuration.Impl;
 using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Pipeline;
@@ -43,7 +45,10 @@ namespace Remora.Tests.Pipeline.Impl
         public void It_should_invoke_pipeline_components()
         {
             var container = new WindsorContainer();
-            container.Register(Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId));
+            container.Register(
+                Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
+                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId)
+            );
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation();
 
@@ -68,7 +73,10 @@ namespace Remora.Tests.Pipeline.Impl
         public void It_should_handle_sync_errors_on_Begin()
         {
             var container = new WindsorContainer();
-            container.Register(Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId));
+            container.Register(
+                Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
+                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId)
+            );
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation();
             var exception = new Exception();
@@ -93,7 +101,10 @@ namespace Remora.Tests.Pipeline.Impl
         public void It_should_handle_sync_errors_on_End()
         {
             var container = new WindsorContainer();
-            container.Register(Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId));
+            container.Register(
+                Component.For<IRemoraConfig>().Instance(new RemoraConfig()), 
+                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId)
+            );
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation();
             var exception = new Exception();
@@ -121,7 +132,10 @@ namespace Remora.Tests.Pipeline.Impl
         public void It_should_work_with_empty_pipeline()
         {
             var container = new WindsorContainer();
-            container.Register(Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId));
+            container.Register(
+                Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
+                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId)
+            );
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation
                                 {

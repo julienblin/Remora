@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using NUnit.Framework;
 using Remora.Components;
+using Remora.Configuration.Impl;
 using Remora.Core.Impl;
 using Remora.Exceptions;
 using Remora.Extensions;
@@ -16,11 +17,20 @@ namespace Remora.Tests.Components
     public class SenderTest : BaseTest
     {
         [Test]
+        public void It_should_validate_inputs()
+        {
+            Assert.That(() => new Sender(null),
+                Throws.Exception.TypeOf<ArgumentNullException>()
+                .With.Message.Contains("config"));
+        }
+
+
+        [Test]
         public void It_should_throw_a_UnknownDestinationException_if_no_destination_uri()
         {
             var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
 
-            var sender = new Sender() { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             Assert.That(() => sender.BeginAsyncProcess(operation, (c) => { }),
                 Throws.Exception.TypeOf<UnknownDestinationException>()
@@ -33,7 +43,7 @@ namespace Remora.Tests.Components
             var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
             operation.Request.Uri = new Uri("ftp://localhost");
 
-            var sender = new Sender() { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             Assert.That(() => sender.BeginAsyncProcess(operation, (c) => { }),
                 Throws.Exception.TypeOf<InvalidDestinationUriException>()
@@ -47,7 +57,7 @@ namespace Remora.Tests.Components
             var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
             operation.Request.Uri = new Uri("http://zxsdfsafdd");
 
-            var sender = new Sender() { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             var ended = false;
             sender.BeginAsyncProcess(operation, (c) =>
@@ -82,7 +92,7 @@ namespace Remora.Tests.Components
                     var request = context.Request;
 
                     Assert.That(request.Headers["foo"], Is.EqualTo("bar"));
-                    Assert.That(request.InputStream.ReadFully(), Is.EqualTo(operation.Request.Data));
+                    Assert.That(request.InputStream.ReadFully(0), Is.EqualTo(operation.Request.Data));
 
                     var response = context.Response;
                     response.StatusCode = (int)HttpStatusCode.OK;
@@ -91,7 +101,7 @@ namespace Remora.Tests.Components
                     response.OutputStream.Close();
                 }, listener);
 
-                var sender = new Sender() { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, (c) =>

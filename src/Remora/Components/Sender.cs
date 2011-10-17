@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using Castle.Core.Logging;
+using Remora.Configuration;
 using Remora.Core;
 using Remora.Exceptions;
 using Remora.Extensions;
@@ -14,6 +16,7 @@ namespace Remora.Components
 {
     public class Sender : AbstractPipelineComponent
     {
+        private readonly IRemoraConfig _config;
         public const string SenderComponentId = @"sender";
 
         private ILogger _logger = NullLogger.Instance;
@@ -28,6 +31,13 @@ namespace Remora.Components
 
         private static readonly Regex HttpSchemeRx = new Regex("^http(s)?$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 
+        public Sender(IRemoraConfig config)
+        {
+            if(config == null) throw new ArgumentNullException("config");
+            Contract.EndContractBlock();
+
+            _config = config;
+        }
 
         public override void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback)
         {
@@ -84,7 +94,7 @@ namespace Remora.Components
 
             using (var stream = response.GetResponseStream())
             {
-                operation.Response.Data = stream.ReadFully();
+                operation.Response.Data = stream.ReadFully(_config.MaxMessageSize);
             }
         }
 

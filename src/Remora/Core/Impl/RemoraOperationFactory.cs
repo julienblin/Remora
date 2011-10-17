@@ -10,6 +10,7 @@ using System.Web;
 using System.Xml.Linq;
 using Castle.Core.Logging;
 using Castle.MicroKernel;
+using Remora.Configuration;
 using Remora.Exceptions;
 using Remora.Extensions;
 
@@ -30,13 +31,16 @@ namespace Remora.Core.Impl
         }
 
         private readonly IKernel _kernel;
+        private readonly IRemoraConfig _config;
 
-        public RemoraOperationFactory(IKernel kernel)
+        public RemoraOperationFactory(IKernel kernel, IRemoraConfig config)
         {
-            if(kernel == null) throw new ArgumentNullException("kernel");
+            if (kernel == null) throw new ArgumentNullException("kernel");
+            if (config == null) throw new ArgumentNullException("config");
             Contract.EndContractBlock();
 
             _kernel = kernel;
+            _config = config;
         }
 
         public IRemoraOperation Get(HttpRequest request)
@@ -74,7 +78,7 @@ namespace Remora.Core.Impl
                 operation.Request.HttpHeaders.Add(header, headers[header]);
             }
 
-            operation.Request.Data = inputStream.ReadFully();
+            operation.Request.Data = inputStream.ReadFully(_config.MaxMessageSize);
 
             return operation;
         }
