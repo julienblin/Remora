@@ -77,7 +77,7 @@ namespace Remora.Tests.Components
                 var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
                 var ended = false;
-                sender.BeginAsyncProcess(operation, (c) =>
+                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
                                                         {
                                                             ended = true;
                                                         });
@@ -95,7 +95,7 @@ namespace Remora.Tests.Components
             var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             var ended = false;
-            sender.BeginAsyncProcess(operation, (c) =>
+            sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
             {
                 Assert.That(operation.OnError);
                 Assert.That(operation.Exception, Is.TypeOf<SendException>());
@@ -139,7 +139,7 @@ namespace Remora.Tests.Components
                 var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
                 var ended = false;
-                sender.BeginAsyncProcess(operation, (c) =>
+                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
                 {
                     Assert.That(operation.Response.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
                     Assert.That(operation.Response.HttpHeaders["anotherfoo"], Is.EqualTo("anotherbar"));
@@ -159,7 +159,7 @@ namespace Remora.Tests.Components
 
             var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
-            Assert.That(() => sender.BeginAsyncProcess(operation, (c) => { }),
+            Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
                         Throws.Exception.TypeOf<InvalidDestinationUriException>()
                             .With.Message.Contains("http")
                 );
@@ -172,7 +172,7 @@ namespace Remora.Tests.Components
 
             var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
-            Assert.That(() => sender.BeginAsyncProcess(operation, (c) => { }),
+            Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
                         Throws.Exception.TypeOf<UnknownDestinationException>()
                 );
         }

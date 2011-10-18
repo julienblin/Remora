@@ -23,14 +23,15 @@
 #endregion
 
 using System;
+using Remora.Configuration;
 using Remora.Core;
 
 namespace Remora.Pipeline
 {
     public interface IPipelineComponent
     {
-        void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback);
+        void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback);
 
-        void EndAsyncProcess(IRemoraOperation operation, Action callback);
+        void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action callback);
     }
 }

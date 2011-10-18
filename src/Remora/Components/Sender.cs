@@ -60,7 +60,7 @@ namespace Remora.Components
             set { _logger = value; }
         }
 
-        public override void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback)
+        public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
         {
             if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Preparing to send {0}...", operation);

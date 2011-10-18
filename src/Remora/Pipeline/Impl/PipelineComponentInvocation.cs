@@ -24,6 +24,7 @@
 
 using System;
 using Castle.Core.Logging;
+using Remora.Configuration;
 using Remora.Core;
 
 namespace Remora.Pipeline.Impl
@@ -42,6 +43,8 @@ namespace Remora.Pipeline.Impl
 
         public IPipelineComponent Component { get; set; }
 
+        public IComponentDefinition ComponentDefinition { get; set; }
+
         #region IPipelineComponentInvocation Members
 
         public IRemoraOperation Operation { get; set; }
@@ -56,7 +59,7 @@ namespace Remora.Pipeline.Impl
             {
                 if(Logger.IsDebugEnabled)
                     Logger.DebugFormat("Calling Component[{0}].BeginAsyncProcess({1})...", Component, Operation);
-                Component.BeginAsyncProcess(Operation, BeginProcessCallback);
+                Component.BeginAsyncProcess(Operation, ComponentDefinition, BeginProcessCallback);
             }
             catch (Exception ex)
             {
@@ -75,7 +78,7 @@ namespace Remora.Pipeline.Impl
             {
                 if (Logger.IsDebugEnabled)
                     Logger.DebugFormat("Calling Component[{0}].EndAsyncProcess({1})...", Component, Operation);
-                Component.EndAsyncProcess(Operation, PreviousInvocation.EndProcess);
+                Component.EndAsyncProcess(Operation, ComponentDefinition, PreviousInvocation.EndProcess);
             }
             catch (Exception ex)
             {

@@ -23,6 +23,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using NUnit.Framework;
@@ -43,21 +44,25 @@ namespace Remora.Tests.Pipeline.Impl
         {
             public IRemoraOperation ControlOperation { get; set; }
 
+            public IComponentDefinition ControlComponentDefinition { get; set; }
+
             public int BeginAsyncProcessCalledCount { get; set; }
 
             public int EndAsyncProcessCalledCount { get; set; }
 
-            public override void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback)
+            public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
             {
                 ++BeginAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 callback(true);
             }
 
-            public override void EndAsyncProcess(IRemoraOperation operation, Action callback)
+            public override void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action callback)
             {
                 ++EndAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 callback();
             }
         }
@@ -66,21 +71,25 @@ namespace Remora.Tests.Pipeline.Impl
         {
             public IRemoraOperation ControlOperation { get; set; }
 
+            public IComponentDefinition ControlComponentDefinition { get; set; }
+
             public int BeginAsyncProcessCalledCount { get; set; }
 
             public int EndAsyncProcessCalledCount { get; set; }
 
-            public override void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback)
+            public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
             {
                 ++BeginAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 callback(true);
             }
 
-            public override void EndAsyncProcess(IRemoraOperation operation, Action callback)
+            public override void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action callback)
             {
                 ++EndAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 callback();
             }
         }
@@ -89,21 +98,25 @@ namespace Remora.Tests.Pipeline.Impl
         {
             public IRemoraOperation ControlOperation { get; set; }
 
+            public IComponentDefinition ControlComponentDefinition { get; set; }
+
             public int BeginAsyncProcessCalledCount { get; set; }
 
             public int EndAsyncProcessCalledCount { get; set; }
 
-            public override void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback)
+            public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
             {
                 ++BeginAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 callback(false);
             }
 
-            public override void EndAsyncProcess(IRemoraOperation operation, Action callback)
+            public override void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action callback)
             {
                 ++EndAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 callback();
             }
         }
@@ -112,23 +125,27 @@ namespace Remora.Tests.Pipeline.Impl
         {
             public IRemoraOperation ControlOperation { get; set; }
 
+            public IComponentDefinition ControlComponentDefinition { get; set; }
+
             public Exception Exception { get; set; }
 
             public int BeginAsyncProcessCalledCount { get; set; }
 
             public int EndAsyncProcessCalledCount { get; set; }
 
-            public override void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback)
+            public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
             {
                 ++BeginAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 throw Exception;
             }
 
-            public override void EndAsyncProcess(IRemoraOperation operation, Action callback)
+            public override void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action callback)
             {
                 ++EndAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 callback();
             }
         }
@@ -137,23 +154,27 @@ namespace Remora.Tests.Pipeline.Impl
         {
             public IRemoraOperation ControlOperation { get; set; }
 
+            public IComponentDefinition ControlComponentDefinition { get; set; }
+
             public Exception Exception { get; set; }
 
             public int BeginAsyncProcessCalledCount { get; set; }
 
             public int EndAsyncProcessCalledCount { get; set; }
 
-            public override void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback)
+            public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
             {
                 ++BeginAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 callback(true);
             }
 
-            public override void EndAsyncProcess(IRemoraOperation operation, Action callback)
+            public override void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action callback)
             {
                 ++EndAsyncProcessCalledCount;
                 Assert.That(operation, Is.SameAs(ControlOperation));
+                Assert.That(componentDefinition, Is.SameAs(ControlComponentDefinition));
                 throw Exception;
             }
         }
@@ -191,7 +212,7 @@ namespace Remora.Tests.Pipeline.Impl
         {
             var container = new WindsorContainer();
             container.Register(
-                Component.For<IRemoraConfig>().Instance(new RemoraConfig()), 
+                Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
                 Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.SenderComponentId)
                 );
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
@@ -228,11 +249,16 @@ namespace Remora.Tests.Pipeline.Impl
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation();
 
-            var pcOne = new PcOne { ControlOperation = operation };
-            var pcTwo = new PcTwo { ControlOperation = operation };
-            var pcLast = new LastPc { ControlOperation = operation };
+            var pcOneDefinition = new ComponentDefinition();
+            var pcOne = new PcOne { ControlOperation = operation, ControlComponentDefinition = pcOneDefinition};
+            var pcTwoDefinition = new ComponentDefinition();
+            var pcTwo = new PcTwo { ControlOperation = operation, ControlComponentDefinition = pcTwoDefinition };
+            var pcLastDefinition = new ComponentDefinition();
+            var pcLast = new LastPc { ControlOperation = operation, ControlComponentDefinition = pcLastDefinition };
 
-            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcOne, pcTwo, pcLast }, null);
+            var pipelineDef = new PipelineDefinition { ComponentDefinitions = new List<IComponentDefinition> { pcOneDefinition, pcTwoDefinition, pcLastDefinition } };
+            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcOne, pcTwo, pcLast }, pipelineDef);
+
 
             engine.RunAsync(operation, pipeline, (op) =>
                                                      {

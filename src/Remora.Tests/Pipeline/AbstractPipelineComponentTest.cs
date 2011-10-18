@@ -23,6 +23,7 @@
 #endregion
 
 using NUnit.Framework;
+using Remora.Configuration.Impl;
 using Remora.Core.Impl;
 using Remora.Pipeline;
 
@@ -38,7 +39,7 @@ namespace Remora.Tests.Pipeline
         {
             var apc = new ApcTest();
             var wasCalled = false;
-            apc.EndAsyncProcess(new RemoraOperation(), () =>
+            apc.EndAsyncProcess(new RemoraOperation(), new ComponentDefinition(), () =>
                                                            {
                                                                wasCalled = true;
                                                            });
@@ -50,7 +51,7 @@ namespace Remora.Tests.Pipeline
         {
             var apc = new ApcTest();
             var wasCalled = false;
-            apc.BeginAsyncProcess(new RemoraOperation(), (b) =>
+            apc.BeginAsyncProcess(new RemoraOperation(), new ComponentDefinition(), (b) =>
                                                              {
                                                                  Assert.That(b);
                                                                  wasCalled = true;

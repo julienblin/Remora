@@ -68,6 +68,9 @@ namespace Remora.Pipeline.Impl
         {
             var currentInvocation = new PipelineComponentInvocation { Logger = Logger, Operation = operation, Component = Kernel.Resolve<IPipelineComponent>(Sender.SenderComponentId)};
 
+            var pipelineDefs = pipeline.Definition != null ? pipeline.Definition.ComponentDefinitions.Reverse().ToArray() : null;
+
+            int currentIndex = 0;
             foreach (var pipelineComponent in pipeline.Components.Reverse())
             {
                 if (pipelineComponent != null)
@@ -75,13 +78,15 @@ namespace Remora.Pipeline.Impl
                     var previousInvocation = currentInvocation;
                     currentInvocation = new PipelineComponentInvocation
                     {
-                        Logger = Logger,
-                        Operation = operation,
-                        Component = pipelineComponent,
-                        NextInvocation = currentInvocation
+                        Logger              = Logger,
+                        Operation           = operation,
+                        ComponentDefinition = (pipelineDefs != null && pipelineDefs.Length > currentIndex) ? pipelineDefs[currentIndex] : null,
+                        Component           = pipelineComponent,
+                        NextInvocation      = currentInvocation
                     };
                     previousInvocation.PreviousInvocation = currentInvocation;
                 }
+                ++currentIndex;
             }
 
             var finalInvocation = new FinalCallbackPipelineComponentInvocation { Logger = Logger, Operation = operation, NextInvocation = currentInvocation, FinalCallback = callback };
