@@ -61,6 +61,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Components\Recorder.cs" />
     <Compile Include="Components\Sender.cs" />
     <Compile Include="Configuration\IComponentDefinition.cs" />
     <Compile Include="Configuration\Impl\ComponentDefinition.cs" />
@@ -86,6 +87,7 @@
       <DependentUpon>ErrorResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\ClientCertificateException.cs" />
+    <Compile Include="Exceptions\RecorderException.cs" />
     <Compile Include="Exceptions\IExceptionFormatter.cs" />
     <Compile Include="Exceptions\Impl\ExceptionFormatter.cs" />
     <Compile Include="Exceptions\MaxMessageSizeException.cs" />

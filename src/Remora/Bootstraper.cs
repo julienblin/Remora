@@ -78,13 +78,11 @@ namespace Remora
                 RegisterIfMissing<IExceptionFormatter, ExceptionFormatter>(),
                 RegisterIfMissing<IResponseWriter, ResponseWriter>(),
 
-                Component.For<IRemoraConfig>()
-                    .UsingFactoryMethod(RemoraConfigurationSectionHandler.GetConfiguration),
+                RegisterComponentifMissing<Sender>(Sender.ComponentId),
+                RegisterComponentifMissing<Recorder>(Recorder.ComponentId),
 
-                Component.For<IPipelineComponent>()
-                    .ImplementedBy<Sender>()
-                    .Named(Sender.SenderComponentId)
-                    .Unless((k,m) => k.HasComponent(Sender.SenderComponentId))
+                Component.For<IRemoraConfig>()
+                    .UsingFactoryMethod(RemoraConfigurationSectionHandler.GetConfiguration)
             );
 
             return container;
@@ -106,6 +104,15 @@ namespace Remora
                                 .ImplementedBy<TImpl>()
                                 .Unless((k, m) => k.HasComponent(typeof(TService)));
             }
+        }
+
+        private static ComponentRegistration<IPipelineComponent> RegisterComponentifMissing<TImpl>(string id)
+            where TImpl : IPipelineComponent
+        {
+            return Component.For<IPipelineComponent>()
+                .ImplementedBy<TImpl>()
+                .Named(id)
+                .Unless((k, m) => k.HasComponent(id));
         }
     }
 }

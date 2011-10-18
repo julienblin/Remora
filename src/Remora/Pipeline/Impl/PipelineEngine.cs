@@ -66,7 +66,7 @@ namespace Remora.Pipeline.Impl
 
         private IPipelineComponentInvocation BuildInvocations(IRemoraOperation operation, IPipeline pipeline, Action<IRemoraOperation> callback)
         {
-            var currentInvocation = new PipelineComponentInvocation { Logger = Logger, Operation = operation, Component = Kernel.Resolve<IPipelineComponent>(Sender.SenderComponentId)};
+            var currentInvocation = new PipelineComponentInvocation { Logger = Logger, Operation = operation, Component = Kernel.Resolve<IPipelineComponent>(Sender.ComponentId)};
 
             var pipelineDefs = pipeline.Definition != null ? pipeline.Definition.ComponentDefinitions.Reverse().ToArray() : null;
 

@@ -23,6 +23,7 @@
 #endregion
 
 using NUnit.Framework;
+using Remora.Components;
 using Remora.Configuration;
 using Remora.Configuration.Impl;
 using Remora.Core;
@@ -76,6 +77,9 @@ namespace Remora.Tests
 
             Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.TypeOf<ResponseWriter>());
             Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.SameAs(Bootstraper.Container.Resolve<IResponseWriter>()));
+
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(Sender.ComponentId), Is.TypeOf<Sender>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(Recorder.ComponentId), Is.TypeOf<Recorder>());
         }
     }
 }
