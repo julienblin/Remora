@@ -178,6 +178,80 @@ namespace Remora.Tests.Components
         }
 
         [Test]
+        public void It_should_throw_a_ClientCertificateException_when_client_certificate_does_not_exists()
+        {
+            var operation = new RemoraOperation
+                                {
+                                    IncomingRequest = {Uri = new Uri("http://tempuri.org")},
+                                    Request =  { Uri = new Uri("http://tempuri.org") },
+                                    ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition { ClientCertificateFilePath = @"C:\unknown.pfx" })
+                                };
+            
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+            Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
+                        Throws.Exception.TypeOf<ClientCertificateException>()
+                        .With.Message.Contains(@"C:\unknown.pfx")
+                );
+        }
+
+        [Test]
+        public void It_should_throw_a_ClientCertificateException_when_password_is_wrong()
+        {
+            var operation = new RemoraOperation
+            {
+                IncomingRequest = { Uri = new Uri("http://tempuri.org") },
+                Request = { Uri = new Uri("http://tempuri.org") },
+                ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition { ClientCertificateFilePath = @"Certificates\Remora.Tests.pfx", ClientCertificatePassword = @"wrong"})
+            };
+
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+            Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
+                        Throws.Exception.TypeOf<ClientCertificateException>()
+                        .With.Message.Contains(operation.ExecutingPipeline.Definition.ClientCertificateFilePath)
+                );
+        }
+
+        [Test]
+        public void It_should_send_with_a_client_certificate()
+        {
+            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org") } };
+            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
+            operation.ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition { ClientCertificateFilePath = @"Certificates\Remora.Tests.pfx", ClientCertificatePassword = @"Remora" });
+            operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
+
+            using (var listener = new HttpListener())
+            {
+                listener.Prefixes.Add("http://localhost:8081/foo/");
+                listener.Start();
+
+                listener.BeginGetContext((result) =>
+                {
+                    var l = (HttpListener)result.AsyncState;
+                    var context = l.EndGetContext(result);
+                    var request = context.Request;
+
+                    // Don't want to unit test with Server certificates ;-)
+
+                    var response = context.Response;
+                    response.OutputStream.Close();
+                }, listener);
+
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+                var ended = false;
+                Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
+                {
+                    ended = true;
+                }), Throws.Nothing);
+
+                while (!ended) { Thread.Sleep(10); }
+            }
+        }
+
+
+        [Test]
         public void It_should_validate_inputs()
         {
             Assert.That(() => new Sender(null),

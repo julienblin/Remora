@@ -46,6 +46,8 @@ namespace Remora.Tests.Configuration
             Assert.That(firstPipeline.Id, Is.EqualTo("simpleone"));
             Assert.That(firstPipeline.UriFilterRegex, Is.EqualTo("/foo/(.*)"));
             Assert.That(firstPipeline.UriRewriteRegex, Is.EqualTo("http://tempuri.org/$1"));
+            Assert.That(firstPipeline.ClientCertificateFilePath, Is.EqualTo("filePath"));
+            Assert.That(firstPipeline.ClientCertificatePassword, Is.EqualTo("filePassword"));
             Assert.That(firstPipeline.ComponentDefinitions.Count(), Is.EqualTo(0));
             Assert.That(firstPipeline.Properties.Count(), Is.EqualTo(1));
             Assert.That(firstPipeline.Properties["addProp"], Is.EqualTo("addValue"));

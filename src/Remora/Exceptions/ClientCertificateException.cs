@@ -23,34 +23,31 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Runtime.Serialization;
 
-namespace Remora.Configuration.Impl
+namespace Remora.Exceptions
 {
-    public class PipelineDefinition : IPipelineDefinition
+    [Serializable]
+    public class ClientCertificateException : RemoraException
     {
-        public PipelineDefinition()
+        public ClientCertificateException()
         {
-            ComponentDefinitions = new IComponentDefinition[0];
-            Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        #region IPipelineDefinition Members
+        public ClientCertificateException(string message)
+            : base(message)
+        {
+        }
 
-        public string Id { get; set; }
+        public ClientCertificateException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
 
-        public string UriFilterRegex { get; set; }
-
-        public string UriRewriteRegex { get; set; }
-
-        public string ClientCertificateFilePath { get; set; }
-
-        public string ClientCertificatePassword { get; set; }
-
-        public IEnumerable<IComponentDefinition> ComponentDefinitions { get; set; }
-
-        public IDictionary<string, string> Properties { get; set; }
-
-        #endregion
+        public ClientCertificateException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            
+        }
     }
 }

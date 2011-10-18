@@ -34,6 +34,10 @@ namespace Remora.Configuration
 
         string UriRewriteRegex { get; }
 
+        string ClientCertificateFilePath { get; }
+
+        string ClientCertificatePassword { get; }
+
         IEnumerable<IComponentDefinition> ComponentDefinitions { get; }
 
         IDictionary<string, string> Properties { get; }

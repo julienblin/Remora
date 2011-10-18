@@ -75,11 +75,16 @@ namespace Remora.Tests.Exceptions
             Assert.That(() => new UnknownDestinationException("message"), Throws.Nothing);
             Assert.That(() => new UnknownDestinationException("message", innerException), Throws.Nothing);
             Assert.That(() => SerializeAndDeserialize<UnknownDestinationException>(), Throws.Nothing);
-
+            
             Assert.That(() => new UrlRewriteException(), Throws.Nothing);
             Assert.That(() => new UrlRewriteException("message"), Throws.Nothing);
             Assert.That(() => new UrlRewriteException("message", innerException), Throws.Nothing);
             Assert.That(() => SerializeAndDeserialize<UrlRewriteException>(), Throws.Nothing);
+
+            Assert.That(() => new ClientCertificateException(), Throws.Nothing);
+            Assert.That(() => new ClientCertificateException("message"), Throws.Nothing);
+            Assert.That(() => new ClientCertificateException("message", innerException), Throws.Nothing);
+            Assert.That(() => SerializeAndDeserialize<ClientCertificateException>(), Throws.Nothing);
         }
     }
 }

@@ -75,6 +75,12 @@ namespace Remora.Configuration
                         case "rewrite":
                             pipelineDef.UriRewriteRegex = attr.Value;
                             break;
+                        case "clientcertificatefilepath":
+                            pipelineDef.ClientCertificateFilePath = attr.Value;
+                            break;
+                        case "clientcertificatepassword":
+                            pipelineDef.ClientCertificatePassword = attr.Value;
+                            break;
                         default:
                             pipelineDef.Properties.Add(attr.Name, attr.Value);
                             break;

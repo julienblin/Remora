@@ -24,7 +24,9 @@
 
 using System;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using Castle.Core.Logging;
 using Remora.Configuration;
@@ -76,6 +78,10 @@ namespace Remora.Components
             }
 
             var webRequest = (HttpWebRequest)WebRequest.Create(operation.Request.Uri);
+
+            if((operation.ExecutingPipeline != null) && (operation.ExecutingPipeline.Definition != null))
+                ManageCertificate(webRequest, operation.ExecutingPipeline.Definition.ClientCertificateFilePath, operation.ExecutingPipeline.Definition.ClientCertificatePassword);
+            
             webRequest.Method = operation.Request.Method ?? "POST";
             SetHttpHeaders(operation.Request, webRequest);
 
@@ -102,6 +108,29 @@ namespace Remora.Components
                     callback(false);
                 }
             }, webRequest);
+        }
+
+        protected virtual void ManageCertificate(HttpWebRequest webRequest, string clientCertificateFilePath, string clientCertificatePassword)
+        {
+            if(Logger.IsDebugEnabled)
+                Logger.DebugFormat("Loading client certificate {0}...", clientCertificateFilePath);
+            X509Certificate2 clientCertificate;
+            try
+            {
+                if(string.IsNullOrEmpty(clientCertificatePassword))
+                    clientCertificate = new X509Certificate2(clientCertificateFilePath);
+                else
+                    clientCertificate = new X509Certificate2(clientCertificateFilePath, clientCertificatePassword);
+
+                if (Logger.IsDebugEnabled)
+                    Logger.DebugFormat("Client certificate {0} loaded successfully.", clientCertificateFilePath);
+            }
+            catch (Exception ex)
+            {
+                throw new ClientCertificateException(string.Format("There has been an error while opening client certificate {0}.", clientCertificateFilePath), ex);
+            }
+
+            webRequest.ClientCertificates.Add(clientCertificate);
         }
 
         protected virtual void ReadResponse(IRemoraOperation operation, HttpWebResponse response)
