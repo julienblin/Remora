@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Castle.Core.Logging;
 using Remora.Core;
 
@@ -19,9 +16,11 @@ namespace Remora.Pipeline.Impl
             set { _logger = value; }
         }
 
-        public IRemoraOperation Operation { get; set; }
-
         public IPipelineComponent Component { get; set; }
+
+        #region IPipelineComponentInvocation Members
+
+        public IRemoraOperation Operation { get; set; }
 
         public IPipelineComponentInvocation NextInvocation { get; set; }
 
@@ -64,6 +63,8 @@ namespace Remora.Pipeline.Impl
                 PreviousInvocation.EndProcess();
             }
         }
+
+        #endregion
 
         public virtual void BeginProcessCallback(bool continueProcess)
         {

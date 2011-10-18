@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Web;
 using NUnit.Framework;
 using Remora.Core.Impl;
@@ -16,8 +12,7 @@ namespace Remora.Tests.Handler.Impl
     [TestFixture]
     public class ResponseWriterTest : BaseTest
     {
-        private MockRepository _mocks;
-        private IExceptionFormatter _exceptionFormatter;
+        #region Setup/Teardown
 
         [SetUp]
         public void SetUp()
@@ -26,26 +21,10 @@ namespace Remora.Tests.Handler.Impl
             _exceptionFormatter = _mocks.StrictMock<IExceptionFormatter>();
         }
 
-        [Test]
-        public void It_should_validate_arguments()
-        {
-            Assert.That(() => new ResponseWriter(null),
-                Throws.Exception.TypeOf<ArgumentNullException>()
-                .With.Message.Contains("exceptionFormatter")
-            );
+        #endregion
 
-            var responseWriter = new ResponseWriter(_exceptionFormatter) { Logger = GetConsoleLogger() };
-
-            Assert.That(() => responseWriter.Write(null, null),
-                Throws.Exception.TypeOf<ArgumentNullException>()
-                .With.Message.Contains("operation")
-            );
-
-            Assert.That(() => responseWriter.Write(new RemoraOperation(), null),
-                Throws.Exception.TypeOf<ArgumentNullException>()
-                .With.Message.Contains("response")
-            );
-        }
+        private MockRepository _mocks;
+        private IExceptionFormatter _exceptionFormatter;
 
         [Test]
         public void It_should_use_the_exception_formatter_in_case_of_error()
@@ -64,6 +43,27 @@ namespace Remora.Tests.Handler.Impl
                     responseWriter.Write(operation, response);
                 });
             }
+        }
+
+        [Test]
+        public void It_should_validate_arguments()
+        {
+            Assert.That(() => new ResponseWriter(null),
+                        Throws.Exception.TypeOf<ArgumentNullException>()
+                            .With.Message.Contains("exceptionFormatter")
+                );
+
+            var responseWriter = new ResponseWriter(_exceptionFormatter) { Logger = GetConsoleLogger() };
+
+            Assert.That(() => responseWriter.Write(null, null),
+                        Throws.Exception.TypeOf<ArgumentNullException>()
+                            .With.Message.Contains("operation")
+                );
+
+            Assert.That(() => responseWriter.Write(new RemoraOperation(), null),
+                        Throws.Exception.TypeOf<ArgumentNullException>()
+                            .With.Message.Contains("response")
+                );
         }
     }
 }

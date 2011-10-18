@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
@@ -11,6 +9,8 @@ namespace Remora.Exceptions.Impl
 {
     public class ExceptionFormatter : IExceptionFormatter
     {
+        #region IExceptionFormatter Members
+
         public void WriteException(IRemoraOperation operation, HttpResponse response)
         {
             if (operation == null) throw new ArgumentNullException("operation");
@@ -36,6 +36,8 @@ namespace Remora.Exceptions.Impl
             response.Write(string.Format(ErrorResources.GenericHtmlError, exception.GetType().Name.Replace("Exception", ""), exception.Message));
             response.Flush();
         }
+
+        #endregion
 
         protected virtual void WriteSoap(IRemoraOperation operation, HttpResponse response)
         {

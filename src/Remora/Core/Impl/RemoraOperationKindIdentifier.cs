@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
 using Castle.Core.Logging;
 
 namespace Remora.Core.Impl
@@ -18,6 +15,8 @@ namespace Remora.Core.Impl
             get { return _logger; }
             set { _logger = value; }
         }
+
+        #region IRemoraOperationKindIdentifier Members
 
         public RemoraOperationKind Identify(IRemoraOperation operation)
         {
@@ -39,5 +38,7 @@ namespace Remora.Core.Impl
                 Logger.DebugFormat("Unable to identify operation {0}.", operation);
             return RemoraOperationKind.Unknown;
         }
+
+        #endregion
     }
 }

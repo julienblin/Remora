@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using Remora.Configuration.Impl;
-using Remora.Exceptions;
 
 namespace Remora.Configuration
 {
@@ -14,11 +11,7 @@ namespace Remora.Configuration
     {
         public const string ConfigurationSectionName = @"remora";
 
-        public static IRemoraConfig GetConfiguration()
-        {
-            var config = (IRemoraConfig)ConfigurationManager.GetSection(ConfigurationSectionName);;
-            return config ?? new RemoraConfig();
-        }
+        #region IConfigurationSectionHandler Members
 
         public object Create(object parent, object configContext, XmlNode section)
         {
@@ -72,6 +65,14 @@ namespace Remora.Configuration
             result.PipelineDefinitions = pipelineDefs;
 
             return result;
+        }
+
+        #endregion
+
+        public static IRemoraConfig GetConfiguration()
+        {
+            var config = (IRemoraConfig)ConfigurationManager.GetSection(ConfigurationSectionName);;
+            return config ?? new RemoraConfig();
         }
 
         private IEnumerable<IComponentDefinition> ParseComponents(XmlNode node)

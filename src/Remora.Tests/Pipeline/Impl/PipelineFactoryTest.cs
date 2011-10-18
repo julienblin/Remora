@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using NUnit.Framework;
@@ -17,27 +15,15 @@ namespace Remora.Tests.Pipeline.Impl
     [TestFixture]
     public class PipelineFactoryTest : BaseTest
     {
-        [Test]
-        public void It_should_validate_arguments()
+        private IPipelineDefinition PDef(string id, string filter, string rewrite, params string[] componentRef)
         {
-            Assert.That(() => new PipelineFactory(null, new RemoraConfig()),
-                Throws.Exception.TypeOf<ArgumentNullException>()
-                .With.Message.Contains("kernel")
-            );
-
-            var container = new WindsorContainer();
-
-            Assert.That(() => new PipelineFactory(container.Kernel, null),
-                Throws.Exception.TypeOf<ArgumentNullException>()
-                .With.Message.Contains("config")
-            );
-
-            var factory = new PipelineFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
-
-            Assert.That(() => factory.Get(null),
-                Throws.Exception.TypeOf<ArgumentNullException>()
-                .With.Message.Contains("operation")
-            );
+            return new PipelineDefinition
+                       {
+                           Id = id,
+                           UriFilterRegex = filter,
+                           UriRewriteRegex = rewrite,
+                           ComponentDefinitions = componentRef.Select(cmpRef => new ComponentDefinition { RefId = cmpRef })
+                       };
         }
 
         [Test]
@@ -58,6 +44,38 @@ namespace Remora.Tests.Pipeline.Impl
 
             Assert.That(result1.Id, Is.EqualTo(pipelineDef1.Id));
             Assert.That(result1.Components.Count(), Is.EqualTo(0));
+        }
+
+        [Test]
+        public void It_should_return_null_when_not_found()
+        {
+            var container = new WindsorContainer();
+            var factory = new PipelineFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/bar/foobar?welcome")} };
+            Assert.That(factory.Get(operation), Is.Null);
+        }
+
+        [Test]
+        public void It_should_rewrite_url_if_present()
+        {
+            var container = new WindsorContainer();
+
+            var pipelineDef1 = PDef("pipe1", "http(s)?://.*/bar/(.*)", "http://tempuri2.org/$2");
+            var pipelineDef2 = PDef("pipe2", "/(.*)", "");
+            var config = new RemoraConfig { PipelineDefinitions = new[] { pipelineDef1, pipelineDef2 } };
+
+            var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
+
+            var operation1 = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/bar/foobar?welcome")} };
+            var result1 = factory.Get(operation1);
+
+            Assert.That(operation1.Request.Uri, Is.EqualTo(new Uri("http://tempuri2.org/foobar?welcome")));
+
+            var operation2 = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/foo")} };
+            var result2 = factory.Get(operation2);
+
+            Assert.That(operation2.Request.Uri, Is.Null);
         }
 
         [Test]
@@ -84,55 +102,6 @@ namespace Remora.Tests.Pipeline.Impl
         }
 
         [Test]
-        public void It_should_rewrite_url_if_present()
-        {
-            var container = new WindsorContainer();
-
-            var pipelineDef1 = PDef("pipe1", "http(s)?://.*/bar/(.*)", "http://tempuri2.org/$2");
-            var pipelineDef2 = PDef("pipe2", "/(.*)", "");
-            var config = new RemoraConfig { PipelineDefinitions = new[] { pipelineDef1, pipelineDef2 } };
-
-            var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
-
-            var operation1 = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/bar/foobar?welcome")} };
-            var result1 = factory.Get(operation1);
-
-            Assert.That(operation1.Request.Uri, Is.EqualTo(new Uri("http://tempuri2.org/foobar?welcome")));
-
-            var operation2 = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/foo")} };
-            var result2 = factory.Get(operation2);
-
-            Assert.That(operation2.Request.Uri, Is.Null);
-        }
-
-        [Test]
-        public void It_should_return_null_when_not_found()
-        {
-            var container = new WindsorContainer();
-            var factory = new PipelineFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
-
-            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/bar/foobar?welcome")} };
-            Assert.That(factory.Get(operation), Is.Null);
-        }
-
-        [Test]
-        public void It_should_throw_InvalidConfigurationException_when_filter_regex_is_invalid()
-        {
-            var container = new WindsorContainer();
-
-            var pipelineDef1 = PDef("pipe", "(((", "");
-            var config = new RemoraConfig { PipelineDefinitions = new[] { pipelineDef1 } };
-
-            var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
-
-            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/")} };
-            Assert.That(() => factory.Get(operation),
-                Throws.Exception.TypeOf<InvalidConfigurationException>()
-                .With.Message.Contains("(((")
-            );
-        }
-
-        [Test]
         public void It_should_throw_InvalidConfigurationException_when_component_not_registered()
         {
             var container = new WindsorContainer();
@@ -147,6 +116,23 @@ namespace Remora.Tests.Pipeline.Impl
                 Throws.Exception.TypeOf<InvalidConfigurationException>()
                 .With.Message.Contains("comp1")
             );
+        }
+
+        [Test]
+        public void It_should_throw_InvalidConfigurationException_when_filter_regex_is_invalid()
+        {
+            var container = new WindsorContainer();
+
+            var pipelineDef1 = PDef("pipe", "(((", "");
+            var config = new RemoraConfig { PipelineDefinitions = new[] { pipelineDef1 } };
+
+            var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
+
+            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/")} };
+            Assert.That(() => factory.Get(operation),
+                        Throws.Exception.TypeOf<InvalidConfigurationException>()
+                            .With.Message.Contains("(((")
+                );
         }
 
         [Test]
@@ -167,15 +153,27 @@ namespace Remora.Tests.Pipeline.Impl
             );
         }
 
-        private IPipelineDefinition PDef(string id, string filter, string rewrite, params string[] componentRef)
+        [Test]
+        public void It_should_validate_arguments()
         {
-            return new PipelineDefinition
-            {
-                Id = id,
-                UriFilterRegex = filter,
-                UriRewriteRegex = rewrite,
-                ComponentDefinitions = componentRef.Select(cmpRef => new ComponentDefinition { RefId = cmpRef })
-            };
+            Assert.That(() => new PipelineFactory(null, new RemoraConfig()),
+                        Throws.Exception.TypeOf<ArgumentNullException>()
+                            .With.Message.Contains("kernel")
+                );
+
+            var container = new WindsorContainer();
+
+            Assert.That(() => new PipelineFactory(container.Kernel, null),
+                        Throws.Exception.TypeOf<ArgumentNullException>()
+                            .With.Message.Contains("config")
+                );
+
+            var factory = new PipelineFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+            Assert.That(() => factory.Get(null),
+                        Throws.Exception.TypeOf<ArgumentNullException>()
+                            .With.Message.Contains("operation")
+                );
         }
     }
 }

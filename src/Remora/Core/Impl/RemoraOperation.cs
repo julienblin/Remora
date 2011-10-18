@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Remora.Core.Impl
 {
@@ -15,9 +12,11 @@ namespace Remora.Core.Impl
             Response = new RemoraResponse();
         }
 
-        public Guid OperationId { get; private set; }
-
         public string IncomingContentType { get; set; }
+
+        #region IRemoraOperation Members
+
+        public Guid OperationId { get; private set; }
 
         public IRemoraRequest IncomingRequest { get; private set; }
 
@@ -30,6 +29,8 @@ namespace Remora.Core.Impl
         public Exception Exception { get; set; }
 
         public bool OnError { get { return Exception != null; } }
+
+        #endregion
 
         public override string ToString()
         {

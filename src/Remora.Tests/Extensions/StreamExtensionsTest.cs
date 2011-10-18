@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using NUnit.Framework;
 using Remora.Exceptions;
 using Remora.Extensions;
@@ -17,7 +13,7 @@ namespace Remora.Tests.Extensions
         {
             const int sampleDataSize = 90000;
             var sampleData = new byte[sampleDataSize];
-            for (int i = 0; i < sampleDataSize; i++)
+            for (var i = 0; i < sampleDataSize; i++)
             {
                 sampleData[i] = 5;
             }
@@ -34,7 +30,7 @@ namespace Remora.Tests.Extensions
         {
             const int sampleDataSize = 90000;
             var sampleData = new byte[sampleDataSize];
-            for (int i = 0; i < sampleDataSize; i++)
+            for (var i = 0; i < sampleDataSize; i++)
             {
                 sampleData[i] = 5;
             }

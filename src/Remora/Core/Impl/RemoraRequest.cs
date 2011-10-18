@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 
 namespace Remora.Core.Impl
 {
@@ -13,6 +10,8 @@ namespace Remora.Core.Impl
             HttpHeaders = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         }
 
+        #region IRemoraRequest Members
+
         public Uri Uri { get; set; }
 
         public IDictionary<string, string> HttpHeaders { get; private set; }
@@ -20,5 +19,7 @@ namespace Remora.Core.Impl
         public string Method { get; set; }
 
         public byte[] Data { get; set; }
+
+        #endregion
     }
 }

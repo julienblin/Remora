@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Web;
-using System.Xml.Linq;
 using Castle.Core.Logging;
 using Castle.MicroKernel;
 using Remora.Configuration;
@@ -21,18 +16,9 @@ namespace Remora.Core.Impl
     {
         public const string SoapEnvelopeSchema = @"http://schemas.xmlsoap.org/soap/envelope/";
 
-        private ILogger _logger = NullLogger.Instance;
-        /// <summary>
-        /// Logger
-        /// </summary>
-        public ILogger Logger
-        {
-            get { return _logger; }
-            set { _logger = value; }
-        }
-
-        private readonly IKernel _kernel;
         private readonly IRemoraConfig _config;
+        private readonly IKernel _kernel;
+        private ILogger _logger = NullLogger.Instance;
 
         public RemoraOperationFactory(IKernel kernel, IRemoraConfig config)
         {
@@ -43,6 +29,17 @@ namespace Remora.Core.Impl
             _kernel = kernel;
             _config = config;
         }
+
+        /// <summary>
+        /// Logger
+        /// </summary>
+        public ILogger Logger
+        {
+            get { return _logger; }
+            set { _logger = value; }
+        }
+
+        #region IRemoraOperationFactory Members
 
         public IRemoraOperation Get(HttpRequest request)
         {
@@ -59,6 +56,8 @@ namespace Remora.Core.Impl
 
             return InternalGet(request.Url, request.Headers, request.InputStream);
         }
+
+        #endregion
 
         public virtual IRemoraOperation InternalGet(Uri uri, NameValueCollection headers, Stream inputStream)
         {

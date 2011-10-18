@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
 using Castle.Core.Logging;
 using Castle.MicroKernel;
 using Remora.Components;
@@ -24,6 +22,8 @@ namespace Remora.Pipeline.Impl
 
         public IKernel Kernel { get; set; }
 
+        #region IPipelineEngine Members
+
         public void RunAsync(IRemoraOperation operation, IPipeline pipeline, Action<IRemoraOperation> callback)
         {
             if (operation == null) throw new ArgumentNullException("operation");
@@ -37,6 +37,8 @@ namespace Remora.Pipeline.Impl
             var topInvocation = BuildInvocations(operation, pipeline, callback);
             topInvocation.BeginProcess();
         }
+
+        #endregion
 
         private IPipelineComponentInvocation BuildInvocations(IRemoraOperation operation, IPipeline pipeline, Action<IRemoraOperation> callback)
         {

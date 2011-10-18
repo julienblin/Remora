@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Remora.Configuration.Impl
 {
@@ -13,6 +11,8 @@ namespace Remora.Configuration.Impl
             Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         }
 
+        #region IPipelineDefinition Members
+
         public string Id { get; set; }
 
         public string UriFilterRegex { get; set; }
@@ -22,5 +22,7 @@ namespace Remora.Configuration.Impl
         public IEnumerable<IComponentDefinition> ComponentDefinitions { get; set; }
 
         public IDictionary<string, string> Properties { get; set; }
+
+        #endregion
     }
 }

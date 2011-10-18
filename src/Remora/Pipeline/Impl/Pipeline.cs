@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Remora.Pipeline.Impl
 {
@@ -13,8 +10,12 @@ namespace Remora.Pipeline.Impl
             Components = components;
         }
 
+        #region IPipeline Members
+
         public string Id { get; private set; }
 
         public IEnumerable<IPipelineComponent> Components { get; private set; }
+
+        #endregion
     }
 }

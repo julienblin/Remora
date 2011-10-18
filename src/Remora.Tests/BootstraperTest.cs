@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Castle.MicroKernel.Registration;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Remora.Configuration;
 using Remora.Configuration.Impl;
 using Remora.Core;
@@ -20,6 +15,16 @@ namespace Remora.Tests
     [TestFixture]
     public class BootstraperTest : BaseTest
     {
+        [Test]
+        public void It_should_init_only_once()
+        {
+            Bootstraper.Init();
+            var container = Bootstraper.Container;
+
+            Bootstraper.Init();
+            Assert.That(Bootstraper.Container, Is.SameAs(container));
+        }
+
         [Test]
         public void It_should_register_default_components()
         {
@@ -47,16 +52,6 @@ namespace Remora.Tests
 
             Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.TypeOf<ResponseWriter>());
             Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.SameAs(Bootstraper.Container.Resolve<IResponseWriter>()));
-        }
-
-        [Test]
-        public void It_should_init_only_once()
-        {
-            Bootstraper.Init();
-            var container = Bootstraper.Container;
-
-            Bootstraper.Init();
-            Assert.That(Bootstraper.Container, Is.SameAs(container));
         }
     }
 }

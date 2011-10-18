@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using Remora.Exceptions;
 
 namespace Remora.Extensions
@@ -17,7 +13,7 @@ namespace Remora.Extensions
             {
                 while (true)
                 {
-                    int read = stream.Read(buffer, 0, buffer.Length);
+                    var read = stream.Read(buffer, 0, buffer.Length);
                     if (read <= 0)
                         return ms.ToArray();
 

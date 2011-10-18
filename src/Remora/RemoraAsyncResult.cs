@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading;
 using System.Web;
 using Castle.Core.Logging;
@@ -29,11 +25,16 @@ namespace Remora
             AsyncState = state;
         }
 
+        public HttpContext Context { get; private set; }
+
+        #region IAsyncResult Members
+
         public bool IsCompleted { get; private set; }
         public WaitHandle AsyncWaitHandle { get { return null; } }
         public object AsyncState { get; private set; }
         public bool CompletedSynchronously { get { return false; } }
-        public HttpContext Context { get; private set; }
+
+        #endregion
 
         public void Process()
         {

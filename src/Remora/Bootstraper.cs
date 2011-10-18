@@ -21,6 +21,9 @@ namespace Remora
     public sealed class Bootstraper
     {
         private static readonly object SyncRoot = new object();
+        public static bool IsInitialized { get; private set; }
+
+        public static IWindsorContainer Container { get; private set; }
 
         public static void Init(IWindsorContainer container = null)
         {
@@ -80,9 +83,5 @@ namespace Remora
                                 .Unless((k, m) => k.HasComponent(typeof(TService)));
             }
         }
-
-        public static bool IsInitialized { get; private set; }
-
-        public static IWindsorContainer Container { get; private set; }
     }
 }

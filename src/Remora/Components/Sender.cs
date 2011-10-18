@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using Castle.Core.Logging;
 using Remora.Configuration;
@@ -16,20 +13,11 @@ namespace Remora.Components
 {
     public class Sender : AbstractPipelineComponent
     {
-        private readonly IRemoraConfig _config;
         public const string SenderComponentId = @"sender";
 
-        private ILogger _logger = NullLogger.Instance;
-        /// <summary>
-        /// Logger
-        /// </summary>
-        public ILogger Logger
-        {
-            get { return _logger; }
-            set { _logger = value; }
-        }
-
         private static readonly Regex HttpSchemeRx = new Regex("^http(s)?$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+        private readonly IRemoraConfig _config;
+        private ILogger _logger = NullLogger.Instance;
 
         public Sender(IRemoraConfig config)
         {
@@ -37,6 +25,15 @@ namespace Remora.Components
             Contract.EndContractBlock();
 
             _config = config;
+        }
+
+        /// <summary>
+        /// Logger
+        /// </summary>
+        public ILogger Logger
+        {
+            get { return _logger; }
+            set { _logger = value; }
         }
 
         public override void BeginAsyncProcess(IRemoraOperation operation, Action<bool> callback)

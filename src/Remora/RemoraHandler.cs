@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web;
 
 namespace Remora
 {
     public class RemoraHandler : IHttpAsyncHandler
     {
+        #region IHttpAsyncHandler Members
+
         public void ProcessRequest(HttpContext context)
         {
             throw new InvalidOperationException("This http handler is asynchronous.");
@@ -30,5 +29,7 @@ namespace Remora
         public void EndProcessRequest(IAsyncResult result)
         {
         }
+
+        #endregion
     }
 }

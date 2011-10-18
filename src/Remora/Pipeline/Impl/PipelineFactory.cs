@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Castle.Core.Logging;
 using Castle.MicroKernel;
@@ -14,18 +12,9 @@ namespace Remora.Pipeline.Impl
 {
     public class PipelineFactory : IPipelineFactory
     {
-        private ILogger _logger = NullLogger.Instance;
-        /// <summary>
-        /// Logger
-        /// </summary>
-        public ILogger Logger
-        {
-            get { return _logger; }
-            set { _logger = value; }
-        }
-
+        private readonly IRemoraConfig _config;
         private readonly IKernel _kernel;
-        private IRemoraConfig _config;
+        private ILogger _logger = NullLogger.Instance;
 
         public PipelineFactory(IKernel kernel, IRemoraConfig config)
         {
@@ -36,6 +25,17 @@ namespace Remora.Pipeline.Impl
             _kernel = kernel;
             _config = config;
         }
+
+        /// <summary>
+        /// Logger
+        /// </summary>
+        public ILogger Logger
+        {
+            get { return _logger; }
+            set { _logger = value; }
+        }
+
+        #region IPipelineFactory Members
 
         public IPipeline Get(IRemoraOperation operation)
         {
@@ -90,7 +90,7 @@ namespace Remora.Pipeline.Impl
                             }
                             catch (Exception ex)
                             {
-                                throw new UrlRewriteException(string.Format("There has been an error while rewriting uri {0} with filter {1} and rewrite {2}.", operation.IncomingRequest.Uri.ToString(), pipelineDef.UriFilterRegex, pipelineDef.UriRewriteRegex), ex);
+                                throw new UrlRewriteException(string.Format("There has been an error while rewriting uri {0} with filter {1} and rewrite {2}.", operation.IncomingRequest.Uri, pipelineDef.UriFilterRegex, pipelineDef.UriRewriteRegex), ex);
                             }
                         }
 
@@ -106,5 +106,7 @@ namespace Remora.Pipeline.Impl
 
             return null;
         }
+
+        #endregion
     }
 }

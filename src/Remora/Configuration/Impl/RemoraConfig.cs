@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Remora.Configuration.Impl
 {
@@ -13,10 +11,14 @@ namespace Remora.Configuration.Impl
             Properties = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         }
 
+        #region IRemoraConfig Members
+
         public int MaxMessageSize { get; set; }
 
         public IEnumerable<IPipelineDefinition> PipelineDefinitions { get; set; }
 
         public IDictionary<string, string> Properties { get; set; }
+
+        #endregion
     }
 }

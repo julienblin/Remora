@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
 using System.Web;
 using Castle.Core.Logging;
 using Remora.Core;
@@ -15,6 +12,15 @@ namespace Remora.Handler.Impl
         private readonly IExceptionFormatter _exceptionformatter;
 
         private ILogger _logger = NullLogger.Instance;
+
+        public ResponseWriter(IExceptionFormatter exceptionformatter)
+        {
+            if(exceptionformatter == null) throw new ArgumentNullException("exceptionFormatter");
+            Contract.EndContractBlock();
+
+            _exceptionformatter = exceptionformatter;
+        }
+
         /// <summary>
         /// Logger
         /// </summary>
@@ -24,13 +30,7 @@ namespace Remora.Handler.Impl
             set { _logger = value; }
         }
 
-        public ResponseWriter(IExceptionFormatter exceptionformatter)
-        {
-            if(exceptionformatter == null) throw new ArgumentNullException("exceptionFormatter");
-            Contract.EndContractBlock();
-
-            _exceptionformatter = exceptionformatter;
-        }
+        #region IResponseWriter Members
 
         public void Write(IRemoraOperation operation, HttpResponse response)
         {
@@ -58,5 +58,7 @@ namespace Remora.Handler.Impl
                 response.OutputStream.Flush();
             }
         }
+
+        #endregion
     }
 }
