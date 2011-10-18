@@ -95,6 +95,7 @@
     <Compile Include="Exceptions\InvalidConfigurationException.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandler.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Handler\Impl\ResponseWriter.cs" />
     <Compile Include="Pipeline\AbstractPipelineComponent.cs" />
     <Compile Include="Pipeline\Impl\FinalCallbackPipelineComponentInvocation.cs" />
     <Compile Include="Pipeline\Impl\PipelineComponentInvocation.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoraAsyncResult.cs" />
     <Compile Include="RemoraHandler.cs" />
+    <Compile Include="Handler\IResponseWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

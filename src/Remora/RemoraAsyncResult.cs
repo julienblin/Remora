@@ -10,6 +10,7 @@ using Castle.Windsor;
 using Remora.Core;
 using Remora.Exceptions;
 using Remora.Exceptions.Impl;
+using Remora.Handler;
 using Remora.Pipeline;
 
 namespace Remora
@@ -76,33 +77,11 @@ namespace Remora
             if (_logger.IsDebugEnabled)
                 _logger.DebugFormat("Async process ended for request coming from {0}. Writing results...", Context.Request.Url);
 
-            if (operation.OnError)
-            {
-                _logger.ErrorFormat(operation.Exception, "There has been an error when processing request coming from {0}.", Context.Request.Url);
-                WriteOperationException(operation);
-            }
-            else
-            {
-                Context.Response.StatusCode = operation.Response.StatusCode;
-                foreach (var header in operation.Response.HttpHeaders)
-                {
-                    Context.Response.AppendHeader(header.Key, header.Value);
-                }
-
-                if (operation.Response.Data != null)
-                {
-                    Context.Response.OutputStream.Write(operation.Response.Data, 0, operation.Response.Data.Length);
-                }
-            }
+            var writer = _container.Resolve<IResponseWriter>();
+            writer.Write(operation, Context.Response);
 
             IsCompleted = true;
             _callback(this);
-        }
-
-        private void WriteOperationException(IRemoraOperation operation)
-        {
-            var formatter = _container.Resolve<IExceptionFormatter>();
-            formatter.WriteException(operation, Context.Response);
         }
 
         private void WriteGenericException(Exception exception)

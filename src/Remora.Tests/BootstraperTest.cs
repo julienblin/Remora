@@ -10,6 +10,8 @@ using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Exceptions;
 using Remora.Exceptions.Impl;
+using Remora.Handler;
+using Remora.Handler.Impl;
 using Remora.Pipeline;
 using Remora.Pipeline.Impl;
 
@@ -42,6 +44,9 @@ namespace Remora.Tests
 
             Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(), Is.TypeOf<ExceptionFormatter>());
             Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(), Is.SameAs(Bootstraper.Container.Resolve<IExceptionFormatter>()));
+
+            Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.TypeOf<ResponseWriter>());
+            Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.SameAs(Bootstraper.Container.Resolve<IResponseWriter>()));
         }
 
         [Test]

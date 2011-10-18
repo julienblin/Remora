@@ -80,6 +80,7 @@
     <Compile Include="Exceptions\ExceptionsTest.cs" />
     <Compile Include="Exceptions\Impl\ExceptionFormatterTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
+    <Compile Include="Handler\Impl\ResponseWriterTest.cs" />
     <Compile Include="Pipeline\AbstractPipelineComponentTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineEngineTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineFactoryTest.cs" />

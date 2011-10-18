@@ -11,6 +11,8 @@ using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Exceptions;
 using Remora.Exceptions.Impl;
+using Remora.Handler;
+using Remora.Handler.Impl;
 using Remora.Pipeline;
 using Remora.Pipeline.Impl;
 
@@ -47,6 +49,7 @@ namespace Remora
                 RegisterIfMissing<IPipelineFactory, PipelineFactory>(),
                 RegisterIfMissing<IPipelineEngine, PipelineEngine>(),
                 RegisterIfMissing<IExceptionFormatter, ExceptionFormatter>(),
+                RegisterIfMissing<IResponseWriter, ResponseWriter>(),
 
                 Component.For<IRemoraConfig>()
                     .UsingFactoryMethod(RemoraConfigurationSectionHandler.GetConfiguration),
