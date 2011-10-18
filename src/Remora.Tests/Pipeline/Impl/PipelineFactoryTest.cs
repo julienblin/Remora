@@ -68,6 +68,7 @@ namespace Remora.Tests.Pipeline.Impl
 
             Assert.That(result1.Id, Is.EqualTo(pipelineDef1.Id));
             Assert.That(result1.Components.Count(), Is.EqualTo(0));
+            Assert.That(result1.Definition, Is.SameAs(pipelineDef1));
             Assert.That(operation1.ExecutingPipeline, Is.SameAs(result1));
         }
 

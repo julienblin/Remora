@@ -23,15 +23,17 @@
 #endregion
 
 using System.Collections.Generic;
+using Remora.Configuration;
 
 namespace Remora.Pipeline.Impl
 {
     public class Pipeline : IPipeline
     {
-        public Pipeline(string id, IEnumerable<IPipelineComponent> components)
+        public Pipeline(string id, IEnumerable<IPipelineComponent> components, IPipelineDefinition definition)
         {
             Id = id;
             Components = components;
+            Definition = definition;
         }
 
         #region IPipeline Members
@@ -39,6 +41,8 @@ namespace Remora.Pipeline.Impl
         public string Id { get; private set; }
 
         public IEnumerable<IPipelineComponent> Components { get; private set; }
+
+        public IPipelineDefinition Definition { get; private set; }
 
         #endregion
     }

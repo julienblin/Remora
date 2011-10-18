@@ -173,7 +173,7 @@ namespace Remora.Tests.Pipeline.Impl
             var pcErrorBegin = new PcWithErrorOnBegin { ControlOperation = operation, Exception = exception };
             var pcOne = new PcOne { ControlOperation = operation };
 
-            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcErrorBegin, pcOne });
+            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcErrorBegin, pcOne }, null);
 
             engine.RunAsync(operation, pipeline, (op) =>
                                                      {
@@ -202,7 +202,7 @@ namespace Remora.Tests.Pipeline.Impl
             var pcErrorLast = new PcWithErrorOnEnd { ControlOperation = operation, Exception = exception };
             var pcLast = new LastPc { ControlOperation = operation };
 
-            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcOne, pcErrorLast, pcLast });
+            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcOne, pcErrorLast, pcLast }, null);
 
             engine.RunAsync(operation, pipeline, (op) =>
                                                      {
@@ -232,7 +232,7 @@ namespace Remora.Tests.Pipeline.Impl
             var pcTwo = new PcTwo { ControlOperation = operation };
             var pcLast = new LastPc { ControlOperation = operation };
 
-            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcOne, pcTwo, pcLast });
+            var pipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[] { pcOne, pcTwo, pcLast }, null);
 
             engine.RunAsync(operation, pipeline, (op) =>
                                                      {
@@ -251,7 +251,7 @@ namespace Remora.Tests.Pipeline.Impl
             var engine = new PipelineEngine { Logger = GetConsoleLogger() };
             var operation = new RemoraOperation();
 
-            Assert.That(() => engine.RunAsync(null, new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0]), (op) => { }),
+            Assert.That(() => engine.RunAsync(null, new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0], null), (op) => { }),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("operation")
                 );
@@ -261,7 +261,7 @@ namespace Remora.Tests.Pipeline.Impl
                             .With.Message.Contains("pipeline")
                 );
 
-            Assert.That(() => engine.RunAsync(operation, new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0]), null),
+            Assert.That(() => engine.RunAsync(operation, new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0], null), null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("callback")
                 );

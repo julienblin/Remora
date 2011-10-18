@@ -23,6 +23,7 @@
 #endregion
 
 using System.Collections.Generic;
+using Remora.Configuration;
 
 namespace Remora.Pipeline
 {
@@ -31,5 +32,7 @@ namespace Remora.Pipeline
         string Id { get; }
 
         IEnumerable<IPipelineComponent> Components { get; }
+
+        IPipelineDefinition Definition { get; }
     }
 }
