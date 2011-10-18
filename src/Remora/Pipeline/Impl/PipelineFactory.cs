@@ -118,7 +118,9 @@ namespace Remora.Pipeline.Impl
                             }
                         }
 
-                        return new Pipeline(pipelineDef.Id, components);
+                        var pipeline = new Pipeline(pipelineDef.Id, components);
+                        operation.ExecutingPipeline = pipeline;
+                        return pipeline;
                     }
                     else
                     {

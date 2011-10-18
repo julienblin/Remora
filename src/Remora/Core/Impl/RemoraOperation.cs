@@ -23,6 +23,7 @@
 #endregion
 
 using System;
+using Remora.Pipeline;
 
 namespace Remora.Core.Impl
 {
@@ -49,6 +50,8 @@ namespace Remora.Core.Impl
         public IRemoraResponse Response { get; private set; }
 
         public RemoraOperationKind Kind { get; set; }
+
+        public IPipeline ExecutingPipeline { get; set; }
 
         public Exception Exception { get; set; }
 
