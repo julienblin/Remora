@@ -23,6 +23,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Remora.Pipeline;
 
 namespace Remora.Core.Impl
@@ -35,6 +36,7 @@ namespace Remora.Core.Impl
             IncomingRequest = new RemoraRequest();
             Request = new RemoraRequest();
             Response = new RemoraResponse();
+            ExecutionProperties = new Dictionary<string, object>();
         }
 
         public string IncomingContentType { get; set; }
@@ -52,6 +54,8 @@ namespace Remora.Core.Impl
         public RemoraOperationKind Kind { get; set; }
 
         public IPipeline ExecutingPipeline { get; set; }
+
+        public IDictionary<string, object> ExecutionProperties { get; private set; }
 
         public Exception Exception { get; set; }
 

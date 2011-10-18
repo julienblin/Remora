@@ -24,6 +24,7 @@
 
 using System;
 using Remora.Pipeline;
+using System.Collections.Generic;
 
 namespace Remora.Core
 {
@@ -43,6 +44,8 @@ namespace Remora.Core
         RemoraOperationKind Kind { get; set; }
 
         IPipeline ExecutingPipeline { get; set; }
+
+        IDictionary<string, object> ExecutionProperties { get; }
 
         Exception Exception { get; set; }
 
