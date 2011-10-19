@@ -73,6 +73,7 @@
     <Compile Include="Core\Impl\RemoraOperationKindIdentifier.cs" />
     <Compile Include="Core\Impl\RemoraRequest.cs" />
     <Compile Include="Core\Impl\RemoraResponse.cs" />
+    <Compile Include="Core\IRemoraMessage.cs" />
     <Compile Include="Core\IRemoraOperation.cs" />
     <Compile Include="Core\IRemoraOperationFactory.cs" />
     <Compile Include="Core\IRemoraOperationKindIdentifier.cs" />
