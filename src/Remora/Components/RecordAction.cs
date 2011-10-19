@@ -26,6 +26,9 @@ namespace Remora.Components
         [DataMember(Name = "response")]
         public string Response { get; set; }
 
+        [DataMember(Name = "responseStatusCode")]
+        public int ResponseStatusCode { get; set; }
+
         [DataMember(Name = "onError")]
         public bool OnError { get; set; }
     }

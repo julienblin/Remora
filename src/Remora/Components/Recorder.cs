@@ -122,8 +122,9 @@ namespace Remora.Components
             var recordAction = new RecordAction
             {
                 Headers = operation.Response.HttpHeaders.Select(k => new RecordActionHeader(k.Key, k.Value)).ToArray(),
-                RequestContentEncoding = operation.Request.ContentEncoding.EncodingName,
+                RequestContentEncoding = operation.Request.ContentEncoding.HeaderName,
                 Request = Encoding.UTF8.GetString(operation.Request.Data),
+                ResponseStatusCode = operation.Response.StatusCode,
                 OnError = operation.OnError
             };
 
@@ -133,7 +134,7 @@ namespace Remora.Components
             }
             else
             {
-                recordAction.ResponseContentEncoding = operation.Response.ContentEncoding.EncodingName;
+                recordAction.ResponseContentEncoding = operation.Response.ContentEncoding.HeaderName;
                 recordAction.Response = Encoding.UTF8.GetString(operation.Response.Data);
             }
 

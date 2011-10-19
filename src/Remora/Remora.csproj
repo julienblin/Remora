@@ -62,6 +62,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Components\Player.cs" />
     <Compile Include="Components\RecordAction.cs" />
     <Compile Include="Components\Recorder.cs" />
     <Compile Include="Components\Sender.cs" />
@@ -76,6 +77,8 @@
     <Compile Include="Core\Impl\RemoraOperationKindIdentifier.cs" />
     <Compile Include="Core\Impl\RemoraRequest.cs" />
     <Compile Include="Core\Impl\RemoraResponse.cs" />
+    <Compile Include="Core\Impl\SerializableOperation.cs" />
+    <Compile Include="Core\Impl\SerializationConstants.cs" />
     <Compile Include="Core\IRemoraMessage.cs" />
     <Compile Include="Core\IRemoraOperation.cs" />
     <Compile Include="Core\IRemoraOperationFactory.cs" />
