@@ -27,6 +27,7 @@ using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Web;
 using Castle.Core.Logging;
 using Castle.MicroKernel;
@@ -70,7 +71,15 @@ namespace Remora.Core.Impl
             if (request == null) throw new ArgumentNullException("request");
             Contract.EndContractBlock();
 
-            return InternalGet(request.Url, request.Headers, request.InputStream);
+            var args = new InternalGetArgs
+            {
+                Uri = request.Url,
+                Headers = request.Headers,
+                InputStream = request.InputStream,
+                ContentEncoding = request.ContentEncoding
+            };
+
+            return InternalGet(args);
         }
 
         public IRemoraOperation Get(HttpListenerRequest request)
@@ -78,16 +87,24 @@ namespace Remora.Core.Impl
             if (request == null) throw new ArgumentNullException("request");
             Contract.EndContractBlock();
 
-            return InternalGet(request.Url, request.Headers, request.InputStream);
+            var args = new InternalGetArgs
+            {
+                Uri = request.Url,
+                Headers = request.Headers,
+                InputStream = request.InputStream,
+                ContentEncoding = request.ContentEncoding
+            };
+
+            return InternalGet(args);
         }
 
         #endregion
 
-        public virtual IRemoraOperation InternalGet(Uri uri, NameValueCollection headers, Stream inputStream)
+        public virtual IRemoraOperation InternalGet(InternalGetArgs args)
         {
 
             if(Logger.IsDebugEnabled)
-                Logger.DebugFormat("Creating IRemoraOperation for {0}...", uri);
+                Logger.DebugFormat("Creating IRemoraOperation for {0}...", args.Uri);
 
             IRemoraOperation operation;
             try
@@ -99,20 +116,32 @@ namespace Remora.Core.Impl
                 throw new InvalidConfigurationException("Error while resolving IRemoraOperation from Windsor. Please make sure that the IRemoraOperation component is correctly registered.", ex);
             }
 
-            operation.Request.Data = inputStream.ReadFully(_config.MaxMessageSize);
+            operation.Request.Data = args.InputStream.ReadFully(_config.MaxMessageSize);
 
-            operation.IncomingUri = uri;
-            operation.Request.Uri = uri;
+            operation.IncomingUri = args.Uri;
+            operation.Request.Uri = args.Uri;
+            operation.Request.ContentEncoding = args.ContentEncoding;
 
-            foreach (string header in headers)
+            foreach (string header in args.Headers)
             {
-                operation.Request.HttpHeaders.Add(header, headers[header]);
+                operation.Request.HttpHeaders.Add(header, args.Headers[header]);
             }
 
             if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("IRemoraOperation {0} created.", operation);
 
             return operation;
+        }
+
+        public class InternalGetArgs
+        {
+            public Uri Uri { get; set; }
+            
+            public NameValueCollection Headers  { get; set; }
+
+            public Stream InputStream { get; set; }
+
+            public Encoding ContentEncoding { get; set; }
         }
     }
 }
