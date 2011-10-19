@@ -97,6 +97,7 @@
     <Compile Include="Exceptions\UrlRewriteException.cs" />
     <Compile Include="Exceptions\InvalidConfigurationException.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandler.cs" />
+    <Compile Include="Extensions\RemoraMessageExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Handler\Impl\ResponseWriter.cs" />
     <Compile Include="Pipeline\AbstractPipelineComponent.cs" />

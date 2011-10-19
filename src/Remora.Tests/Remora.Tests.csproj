@@ -79,6 +79,7 @@
     <Compile Include="Core\Impl\RemoraOperationKindIdentifierTest.cs" />
     <Compile Include="Exceptions\ExceptionsTest.cs" />
     <Compile Include="Exceptions\Impl\ExceptionFormatterTest.cs" />
+    <Compile Include="Extensions\RemoraMessageExtensionsTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
     <Compile Include="Handler\Impl\ResponseWriterTest.cs" />
     <Compile Include="Pipeline\AbstractPipelineComponentTest.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestComponentOne.cs" />
     <Compile Include="TestComponentTwo.cs" />
+    <Compile Include="Transformers\Impl\SoapTransformerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Remora\Remora.csproj">
