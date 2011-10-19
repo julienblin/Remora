@@ -85,6 +85,11 @@ namespace Remora.Tests.Exceptions
             Assert.That(() => new ClientCertificateException("message"), Throws.Nothing);
             Assert.That(() => new ClientCertificateException("message", innerException), Throws.Nothing);
             Assert.That(() => SerializeAndDeserialize<ClientCertificateException>(), Throws.Nothing);
+
+            Assert.That(() => new SoapTransformerException(), Throws.Nothing);
+            Assert.That(() => new SoapTransformerException("message"), Throws.Nothing);
+            Assert.That(() => new SoapTransformerException("message", innerException), Throws.Nothing);
+            Assert.That(() => SerializeAndDeserialize<SoapTransformerException>(), Throws.Nothing);
         }
     }
 }

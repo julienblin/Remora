@@ -87,6 +87,7 @@
       <DependentUpon>ErrorResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\ClientCertificateException.cs" />
+    <Compile Include="Exceptions\SoapTransformerException.cs" />
     <Compile Include="Exceptions\IExceptionFormatter.cs" />
     <Compile Include="Exceptions\Impl\ExceptionFormatter.cs" />
     <Compile Include="Exceptions\MaxMessageSizeException.cs" />
@@ -114,6 +115,8 @@
     <Compile Include="RemoraAsyncResult.cs" />
     <Compile Include="RemoraHandler.cs" />
     <Compile Include="Handler\IResponseWriter.cs" />
+    <Compile Include="Transformers\Impl\SoapTransformer.cs" />
+    <Compile Include="Transformers\ISoapTransformer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

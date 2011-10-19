@@ -33,6 +33,8 @@ using Remora.Handler;
 using Remora.Handler.Impl;
 using Remora.Pipeline;
 using Remora.Pipeline.Impl;
+using Remora.Transformers;
+using Remora.Transformers.Impl;
 
 namespace Remora.Tests
 {
@@ -76,6 +78,9 @@ namespace Remora.Tests
 
             Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.TypeOf<ResponseWriter>());
             Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.SameAs(Bootstraper.Container.Resolve<IResponseWriter>()));
+
+            Assert.That(Bootstraper.Container.Resolve<ISoapTransformer>(), Is.TypeOf<SoapTransformer>());
+            Assert.That(Bootstraper.Container.Resolve<ISoapTransformer>(), Is.SameAs(Bootstraper.Container.Resolve<ISoapTransformer>()));
         }
     }
 }

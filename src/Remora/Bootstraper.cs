@@ -39,6 +39,8 @@ using Remora.Handler;
 using Remora.Handler.Impl;
 using Remora.Pipeline;
 using Remora.Pipeline.Impl;
+using Remora.Transformers;
+using Remora.Transformers.Impl;
 
 namespace Remora
 {
@@ -84,7 +86,9 @@ namespace Remora
                 Component.For<IPipelineComponent>()
                     .ImplementedBy<Sender>()
                     .Named(Sender.SenderComponentId)
-                    .Unless((k,m) => k.HasComponent(Sender.SenderComponentId))
+                    .Unless((k,m) => k.HasComponent(Sender.SenderComponentId)),
+                
+                RegisterIfMissing<ISoapTransformer, SoapTransformer>()
             );
 
             return container;
