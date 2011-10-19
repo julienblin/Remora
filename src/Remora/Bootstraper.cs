@@ -83,10 +83,8 @@ namespace Remora
                 Component.For<IRemoraConfig>()
                     .UsingFactoryMethod(RemoraConfigurationSectionHandler.GetConfiguration),
 
-                Component.For<IPipelineComponent>()
-                    .ImplementedBy<Sender>()
-                    .Named(Sender.SenderComponentId)
-                    .Unless((k,m) => k.HasComponent(Sender.SenderComponentId)),
+                RegisterPipelineComponent<Sender>(Sender.SenderComponentId),
+                RegisterPipelineComponent<Recorder>(Recorder.ComponentId),
                 
                 RegisterIfMissing<ISoapTransformer, SoapTransformer>()
             );
@@ -110,6 +108,15 @@ namespace Remora
                                 .ImplementedBy<TImpl>()
                                 .Unless((k, m) => k.HasComponent(typeof(TService)));
             }
+        }
+
+        private static ComponentRegistration<IPipelineComponent> RegisterPipelineComponent<TImpl>(string id)
+            where TImpl : IPipelineComponent
+        {
+            return Component.For<IPipelineComponent>()
+                .ImplementedBy<TImpl>()
+                .Named(id)
+                .Unless((k, m) => k.HasComponent(id));
         }
     }
 }
