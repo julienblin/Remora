@@ -10,5 +10,11 @@ namespace Remora.Transformers
     public interface ISoapTransformer
     {
         XDocument LoadSoapDocument(IRemoraMessage message);
+
+        XElement GetHeaders(XDocument soapDocument);
+
+        XElement GetBody(XDocument soapDocument);
+
+        string GetSoapActionName(XDocument soapDocument);
     }
 }

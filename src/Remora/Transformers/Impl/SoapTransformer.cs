@@ -15,6 +15,8 @@ namespace Remora.Transformers.Impl
     {
         public const string SoapEnvelopeNamespace = @"http://schemas.xmlsoap.org/soap/envelope/";
         public const string SoapEnvelopeNamespaceLinq = "{" + SoapEnvelopeNamespace + "}";
+        public const string SoapHeadersLinq = SoapEnvelopeNamespaceLinq + "Header";
+        public const string SoapBodyLinq = SoapEnvelopeNamespaceLinq + "Body";
 
         private ILogger _logger = NullLogger.Instance;
         /// <summary>
@@ -28,7 +30,7 @@ namespace Remora.Transformers.Impl
 
         public XDocument LoadSoapDocument(IRemoraMessage message)
         {
-            if(message == null) throw new ArgumentNullException("message");
+            if (message == null) throw new ArgumentNullException("message");
             Contract.EndContractBlock();
 
             try
@@ -42,6 +44,38 @@ namespace Remora.Transformers.Impl
             {
                 throw new SoapTransformerException(string.Format("Unable to create a XDocument from message {0}.", message), ex);
             }
+        }
+
+        public XElement GetHeaders(XDocument soapDocument)
+        {
+            if (soapDocument == null) throw new ArgumentNullException("soapDocument");
+            Contract.EndContractBlock();
+
+            return soapDocument.Descendants(SoapHeadersLinq).FirstOrDefault();
+        }
+
+        public XElement GetBody(XDocument soapDocument)
+        {
+            if (soapDocument == null) throw new ArgumentNullException("soapDocument");
+            Contract.EndContractBlock();
+
+            return soapDocument.Descendants(SoapBodyLinq).FirstOrDefault();
+        }
+
+        public string GetSoapActionName(XDocument soapDocument)
+        {
+            if (soapDocument == null) throw new ArgumentNullException("soapDocument");
+            Contract.EndContractBlock();
+
+            var body = GetBody(soapDocument);
+            if (body == null)
+                return null;
+
+            var firstChild = body.Descendants().FirstOrDefault();
+            if (firstChild == null)
+                return null;
+
+            return firstChild.Name.LocalName;
         }
     }
 }
