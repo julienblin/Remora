@@ -142,6 +142,7 @@ namespace Remora.Components
         protected virtual void ReadResponse(IRemoraOperation operation, HttpWebResponse response, IComponentDefinition componentDefinition)
         {
             operation.Response.StatusCode = (int)response.StatusCode;
+            operation.Response.Uri = response.ResponseUri;
 
             foreach (var header in response.Headers.AllKeys)
             {

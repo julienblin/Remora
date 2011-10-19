@@ -143,6 +143,7 @@ namespace Remora.Tests.Components
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
                 {
                     Assert.That(operation.Response.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
+                    Assert.That(operation.Response.Uri, Is.EqualTo(new Uri("http://localhost:8081/foo/")));
                     Assert.That(operation.Response.HttpHeaders["anotherfoo"], Is.EqualTo("anotherbar"));
                     Assert.That(operation.Response.Data, Is.EqualTo(responseBuffer));
                     Assert.That(!operation.OnError);

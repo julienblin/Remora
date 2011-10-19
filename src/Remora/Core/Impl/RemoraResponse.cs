@@ -37,6 +37,8 @@ namespace Remora.Core.Impl
 
         #region IRemoraResponse Members
 
+        public Uri Uri { get; set; }
+
         public IDictionary<string, string> HttpHeaders { get; private set; }
 
         public int StatusCode { get; set; }

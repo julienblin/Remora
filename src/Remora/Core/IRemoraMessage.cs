@@ -7,6 +7,8 @@ namespace Remora.Core
 {
     public interface IRemoraMessage
     {
+        Uri Uri { get; set; }
+
         Encoding ContentEncoding { get; set; }
 
         byte[] Data { get; set; }

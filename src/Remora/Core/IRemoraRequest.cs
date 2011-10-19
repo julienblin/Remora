@@ -32,8 +32,6 @@ namespace Remora.Core
     /// </summary>
     public interface IRemoraRequest : IRemoraMessage
     {
-        Uri Uri { get; set; }
-
         IDictionary<string, string> HttpHeaders { get; }
 
         string Method { get; set; }
