@@ -23,18 +23,31 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
 
-namespace Remora.Core
+namespace Remora.Exceptions
 {
-    /// <summary>
-    /// Abstract request
-    /// </summary>
-    public interface IRemoraRequest : IRemoraMessage
+    [Serializable]
+    public class SoapHelperException : RemoraException
     {
-        Uri Uri { get; set; }
+        public SoapHelperException()
+        {
+        }
 
-        string Method { get; set; }
+        public SoapHelperException(string message)
+            : base(message)
+        {
+        }
+
+        public SoapHelperException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+
+        public SoapHelperException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            
+        }
     }
 }

@@ -29,12 +29,8 @@ namespace Remora.Core
     /// <summary>
     /// Abstract response
     /// </summary>
-    public interface IRemoraResponse
+    public interface IRemoraResponse : IRemoraMessage
     {
-        IDictionary<string, string> HttpHeaders { get; }
-
         int StatusCode { get; set; }
-
-        byte[] Data { get; set; }
     }
 }

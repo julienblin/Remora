@@ -55,8 +55,8 @@ namespace Remora.Components
             if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Extracting SOAP action from operation {0}...", operation);
 
-            //var doc = XDocument.Load(operation.IncomingRequest.Data);
-            throw new NotImplementedException();
+            var soapDocument = SoapHelper.GetSoapDocument(operation.Request);
+            return null;
         }
 
         protected virtual string GetPath(IComponentDefinition componentDefinition)

@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Remora.Core.Impl
 {
@@ -41,6 +42,8 @@ namespace Remora.Core.Impl
         public IDictionary<string, string> HttpHeaders { get; private set; }
 
         public string Method { get; set; }
+
+        public Encoding ContentEncoding { get; set; }
 
         public byte[] Data { get; set; }
 

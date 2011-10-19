@@ -27,6 +27,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using Castle.Core.Logging;
 using Remora.Configuration;
@@ -136,6 +137,14 @@ namespace Remora.Components
         protected virtual void ReadResponse(IRemoraOperation operation, HttpWebResponse response)
         {
             operation.Response.StatusCode = (int)response.StatusCode;
+            if (!string.IsNullOrEmpty(response.CharacterSet))
+            {
+                operation.Response.ContentEncoding = Encoding.GetEncoding(response.CharacterSet);
+            }
+            else
+            {
+                operation.Response.ContentEncoding = Encoding.UTF8;
+            }
 
             foreach (var header in response.Headers.AllKeys)
             {

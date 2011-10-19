@@ -26,6 +26,7 @@ using System;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
@@ -47,21 +48,38 @@ namespace Remora.Tests.Core.Impl
             var container = new WindsorContainer();
             container.Register(Component.For<IRemoraOperation>().ImplementedBy<RemoraOperation>());
 
-            var uri = new Uri("http://tempuri.org/uri/?foo=bar");
-            var headers = new NameValueCollection {{"Content-Type", "text/xml"}};
-            var sampleStream = LoadSample("SimpleHelloWorldRequest.xml");
-
             var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
 
-            var result = factory.InternalGet(uri, headers, sampleStream);
+            var args = new RemoraOperationFactory.InternalGetArgs
+            {
+                Uri = new Uri("http://tempuri.org/uri/?foo=bar"),
+                Headers = new NameValueCollection { { "Content-Type", "text/xml" } },
+                InputStream = LoadSample("SimpleHelloWorldRequest.xml"),
+                ContentEncoding = Encoding.UTF8,
+                Method = "POST"
+            };
 
-            Assert.That(result.IncomingRequest.Uri, Is.EqualTo(uri));
-            Assert.That(result.Request.Uri, Is.EqualTo(uri));
+            var result = factory.InternalGet(args);
+
+            Assert.That(result.IncomingRequest.Uri, Is.EqualTo(args.Uri));
+            Assert.That(result.Request.Uri, Is.EqualTo(args.Uri));
+
             Assert.That(result.Request.HttpHeaders.Count(), Is.EqualTo(1));
             Assert.That(result.Request.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
             Assert.That(result.Request.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
 
+            Assert.That(result.IncomingRequest.HttpHeaders.Count(), Is.EqualTo(1));
+            Assert.That(result.IncomingRequest.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
+            Assert.That(result.IncomingRequest.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
+
             Assert.That(result.Request.Data, Is.EqualTo(LoadSample("SimpleHelloWorldRequest.xml").ReadFully(0)));
+            Assert.That(result.IncomingRequest.Data, Is.EqualTo(LoadSample("SimpleHelloWorldRequest.xml").ReadFully(0)));
+
+            Assert.That(result.IncomingRequest.ContentEncoding, Is.EqualTo(args.ContentEncoding));
+            Assert.That(result.Request.ContentEncoding, Is.EqualTo(args.ContentEncoding));
+
+            Assert.That(result.IncomingRequest.Method, Is.EqualTo(args.Method));
+            Assert.That(result.Request.Method, Is.EqualTo(args.Method));
         }
 
         [Test]
@@ -70,7 +88,9 @@ namespace Remora.Tests.Core.Impl
             var container = new WindsorContainer();
             var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
 
-            Assert.That(() => factory.InternalGet(new Uri("http://tempuri.org"), new NameValueCollection(), null),
+            var args = new RemoraOperationFactory.InternalGetArgs {Uri = new Uri("http://tempuri.org")};
+
+            Assert.That(() => factory.InternalGet(args),
                 Throws.Exception.TypeOf<InvalidConfigurationException>()
                 .With.Message.Contains("IRemoraOperation"));
         }

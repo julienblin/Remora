@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="Components\Recorder.cs" />
     <Compile Include="Components\Sender.cs" />
+    <Compile Include="Components\SoapHelper.cs" />
     <Compile Include="Configuration\IComponentDefinition.cs" />
     <Compile Include="Configuration\Impl\ComponentDefinition.cs" />
     <Compile Include="Configuration\Impl\PipelineDefinition.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Core\Impl\RemoraOperationKindIdentifier.cs" />
     <Compile Include="Core\Impl\RemoraRequest.cs" />
     <Compile Include="Core\Impl\RemoraResponse.cs" />
+    <Compile Include="Core\IRemoraMessage.cs" />
     <Compile Include="Core\IRemoraOperation.cs" />
     <Compile Include="Core\IRemoraOperationFactory.cs" />
     <Compile Include="Core\IRemoraOperationKindIdentifier.cs" />
@@ -87,6 +89,7 @@
       <DependentUpon>ErrorResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\ClientCertificateException.cs" />
+    <Compile Include="Exceptions\SoapHelperException.cs" />
     <Compile Include="Exceptions\RecorderException.cs" />
     <Compile Include="Exceptions\IExceptionFormatter.cs" />
     <Compile Include="Exceptions\Impl\ExceptionFormatter.cs" />

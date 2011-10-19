@@ -76,6 +76,7 @@
     <Compile Include="BootstraperTest.cs" />
     <Compile Include="Components\RecorderTest.cs" />
     <Compile Include="Components\SenderTest.cs" />
+    <Compile Include="Components\SoapHelperTest.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandlerTest.cs" />
     <Compile Include="Core\Impl\RemoraOperationKindIdentifierTest.cs" />
     <Compile Include="Exceptions\ExceptionsTest.cs" />
@@ -106,7 +107,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Samples\SampleRequestHello.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

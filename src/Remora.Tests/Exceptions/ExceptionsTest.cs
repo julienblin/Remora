@@ -90,6 +90,11 @@ namespace Remora.Tests.Exceptions
             Assert.That(() => new RecorderException("message"), Throws.Nothing);
             Assert.That(() => new RecorderException("message", innerException), Throws.Nothing);
             Assert.That(() => SerializeAndDeserialize<RecorderException>(), Throws.Nothing);
+
+            Assert.That(() => new SoapHelperException(), Throws.Nothing);
+            Assert.That(() => new SoapHelperException("message"), Throws.Nothing);
+            Assert.That(() => new SoapHelperException("message", innerException), Throws.Nothing);
+            Assert.That(() => SerializeAndDeserialize<SoapHelperException>(), Throws.Nothing);
         }
     }
 }

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+  <s:Header>
+    <Action s:mustUnderstand="1" xmlns="http://schemas.microsoft.com/ws/2005/05/addressing/none">http://tempuri.org/IHelloWorldService/Hello</Action>
+  </s:Header>
+  <s:Body>
+    <Hello xmlns="http://tempuri.org/">
+      <name>foo</name>
+    </Hello>
+  </s:Body>
+</s:Envelope>
