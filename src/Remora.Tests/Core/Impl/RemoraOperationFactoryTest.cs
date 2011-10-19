@@ -55,7 +55,7 @@ namespace Remora.Tests.Core.Impl
 
             var result = factory.InternalGet(uri, headers, sampleStream);
 
-            Assert.That(result.IncomingRequest.Uri, Is.EqualTo(uri));
+            Assert.That(result.IncomingUri, Is.EqualTo(uri));
             Assert.That(result.Request.Uri, Is.EqualTo(uri));
             Assert.That(result.Request.HttpHeaders.Count(), Is.EqualTo(1));
             Assert.That(result.Request.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));

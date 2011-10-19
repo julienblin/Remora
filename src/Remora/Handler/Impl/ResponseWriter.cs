@@ -64,7 +64,7 @@ namespace Remora.Handler.Impl
 
             if (operation.OnError)
             {
-                Logger.ErrorFormat(operation.Exception, "There has been an error when processing request coming from {0}.", operation.IncomingRequest.Uri);
+                Logger.ErrorFormat(operation.Exception, "There has been an error when processing request coming from {0}.", operation.IncomingUri);
                 _exceptionformatter.WriteException(operation, response);
             }
             else

@@ -63,7 +63,7 @@ namespace Remora.Tests.Pipeline.Impl
 
             var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
 
-            var operation1 = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/foo/something")} };
+            var operation1 = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/foo/something")};
             var result1 = factory.Get(operation1);
 
             Assert.That(result1.Id, Is.EqualTo(pipelineDef1.Id));
@@ -78,7 +78,7 @@ namespace Remora.Tests.Pipeline.Impl
             var container = new WindsorContainer();
             var factory = new PipelineFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
 
-            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/bar/foobar?welcome")} };
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/bar/foobar?welcome")};
             Assert.That(factory.Get(operation), Is.Null);
         }
 
@@ -93,12 +93,12 @@ namespace Remora.Tests.Pipeline.Impl
 
             var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
 
-            var operation1 = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/bar/foobar?welcome")} };
+            var operation1 = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/bar/foobar?welcome")};
             var result1 = factory.Get(operation1);
 
             Assert.That(operation1.Request.Uri, Is.EqualTo(new Uri("http://tempuri2.org/foobar?welcome")));
 
-            var operation2 = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/foo")} };
+            var operation2 = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/foo")};
             var result2 = factory.Get(operation2);
 
             Assert.That(operation2.Request.Uri, Is.Null);
@@ -118,7 +118,7 @@ namespace Remora.Tests.Pipeline.Impl
 
             var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
 
-            var operation1 = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/foo/something")} };
+            var operation1 = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/foo/something")};
             var result1 = factory.Get(operation1);
 
             Assert.That(result1.Id, Is.EqualTo(pipelineDef2.Id));
@@ -137,7 +137,7 @@ namespace Remora.Tests.Pipeline.Impl
 
             var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
 
-            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/")} };
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/")};
             Assert.That(() => factory.Get(operation),
                 Throws.Exception.TypeOf<InvalidConfigurationException>()
                 .With.Message.Contains("comp1")
@@ -154,7 +154,7 @@ namespace Remora.Tests.Pipeline.Impl
 
             var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
 
-            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/")} };
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/")};
             Assert.That(() => factory.Get(operation),
                         Throws.Exception.TypeOf<InvalidConfigurationException>()
                             .With.Message.Contains("(((")
@@ -171,7 +171,7 @@ namespace Remora.Tests.Pipeline.Impl
 
             var factory = new PipelineFactory(container.Kernel, config) { Logger = GetConsoleLogger() };
 
-            var operation = new RemoraOperation { IncomingRequest = { Uri = new Uri("http://tempuri.org/")} };
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org/")};
             Assert.That(() => factory.Get(operation),
                 Throws.Exception.TypeOf<UrlRewriteException>()
                 .With.Message.Contains(".*")

@@ -35,7 +35,7 @@ namespace Remora.Core
     {
         Guid OperationId { get; }
 
-        IRemoraRequest IncomingRequest { get; }
+        Uri IncomingUri { get; set; }
 
         IRemoraRequest Request { get; }
 

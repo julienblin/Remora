@@ -101,12 +101,11 @@ namespace Remora.Core.Impl
 
             operation.Request.Data = inputStream.ReadFully(_config.MaxMessageSize);
 
-            operation.IncomingRequest.Uri = uri;
+            operation.IncomingUri = uri;
             operation.Request.Uri = uri;
 
             foreach (string header in headers)
             {
-                operation.IncomingRequest.HttpHeaders.Add(header, headers[header]);
                 operation.Request.HttpHeaders.Add(header, headers[header]);
             }
 
