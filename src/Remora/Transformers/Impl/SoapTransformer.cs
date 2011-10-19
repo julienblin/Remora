@@ -46,6 +46,15 @@ namespace Remora.Transformers.Impl
             }
         }
 
+        public void SaveSoapDocument(IRemoraMessage message, XDocument soapDocument)
+        {
+            if (message == null) throw new ArgumentNullException("message");
+            if (soapDocument == null) throw new ArgumentNullException("soapDocument");
+            Contract.EndContractBlock();
+
+            message.SetData(soapDocument.ToString());
+        }
+
         public XElement GetHeaders(XDocument soapDocument)
         {
             if (soapDocument == null) throw new ArgumentNullException("soapDocument");

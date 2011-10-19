@@ -11,6 +11,8 @@ namespace Remora.Transformers
     {
         XDocument LoadSoapDocument(IRemoraMessage message);
 
+        void SaveSoapDocument(IRemoraMessage message, XDocument soapDocument);
+
         XElement GetHeaders(XDocument soapDocument);
 
         XElement GetBody(XDocument soapDocument);

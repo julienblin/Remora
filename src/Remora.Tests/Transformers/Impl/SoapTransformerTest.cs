@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using NUnit.Framework;
 using Remora.Core.Impl;
 using Remora.Extensions;
@@ -27,6 +28,14 @@ namespace Remora.Tests.Transformers.Impl
                 Throws.Exception.TypeOf<ArgumentNullException>()
                 .With.Message.Contains("message"));
 
+            Assert.That(() => _transformer.SaveSoapDocument(null, null),
+                Throws.Exception.TypeOf<ArgumentNullException>()
+                .With.Message.Contains("message"));
+
+            Assert.That(() => _transformer.SaveSoapDocument(new RemoraRequest(), null),
+                Throws.Exception.TypeOf<ArgumentNullException>()
+                .With.Message.Contains("soapDocument"));
+
             Assert.That(() => _transformer.GetSoapActionName(null),
                 Throws.Exception.TypeOf<ArgumentNullException>()
                 .With.Message.Contains("soapDocument"));
@@ -51,6 +60,20 @@ namespace Remora.Tests.Transformers.Impl
 
             var result = _transformer.LoadSoapDocument(message);
             Assert.That(result.Descendants(SoapTransformer.SoapEnvelopeNamespaceLinq + "Body").Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void It_should_save_a_soap_document()
+        {
+            var refDoc = XDocument.Load(LoadSample("SimpleHelloWorldRequest.xml"));
+
+            var message = new RemoraRequest
+            {
+                ContentEncoding = Encoding.UTF8,
+            };
+
+             _transformer.SaveSoapDocument(message, refDoc);
+             Assert.That(message.GetDataAsString(), Is.EqualTo(refDoc.ToString()));
         }
 
         [Test]
