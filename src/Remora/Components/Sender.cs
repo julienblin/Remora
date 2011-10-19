@@ -40,7 +40,7 @@ namespace Remora.Components
 {
     public class Sender : AbstractPipelineComponent
     {
-        public const string SenderComponentId = @"sender";
+        public const string ComponentId = @"sender";
 
         private static readonly Regex HttpSchemeRx = new Regex("^http(s)?$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         private readonly IRemoraConfig _config;
