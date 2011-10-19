@@ -8,6 +8,7 @@ using System.Text;
 using Castle.Core.Logging;
 using Remora.Configuration;
 using Remora.Core;
+using Remora.Core.Impl;
 using Remora.Pipeline;
 using Remora.Transformers;
 
@@ -119,31 +120,13 @@ namespace Remora.Components
             if(Logger.IsDebugEnabled)
                 Logger.DebugFormat("Operation {0}: saving record for {1} in {2}...", operation, soapActionName, fileName);
 
-            var recordAction = new RecordAction
-            {
-                Headers = operation.Response.HttpHeaders.Select(k => new RecordActionHeader(k.Key, k.Value)).ToArray(),
-                RequestContentEncoding = operation.Request.ContentEncoding.HeaderName,
-                Request = Encoding.UTF8.GetString(operation.Request.Data),
-                ResponseStatusCode = operation.Response.StatusCode,
-                OnError = operation.OnError
-            };
-
-            if (operation.OnError)
-            {
-                // TODO
-            }
-            else
-            {
-                recordAction.ResponseContentEncoding = operation.Response.ContentEncoding.HeaderName;
-                recordAction.Response = Encoding.UTF8.GetString(operation.Response.Data);
-            }
+            var serializableOperation = new SerializableOperation(operation);
 
             try
             {
                 using (var writeStream = File.OpenWrite(fileName))
                 {
-                    var serializer = new DataContractSerializer(typeof (RecordAction));
-                    serializer.WriteObject(writeStream, recordAction);
+                    serializableOperation.Serialize(writeStream);
                 }
 
                 if (Logger.IsDebugEnabled)

@@ -8,6 +8,7 @@ using System.Text;
 using Castle.Core.Logging;
 using Remora.Configuration;
 using Remora.Core;
+using Remora.Core.Impl;
 using Remora.Pipeline;
 using Remora.Transformers;
 
@@ -67,20 +68,19 @@ namespace Remora.Components
 
             var fileName = Path.Combine(directoryPath, string.Format("{0}.xml", soapAction));
 
-            RecordAction recordAction;
+            SerializableOperation serializableOperation;
             using (var readStream = File.OpenRead(fileName))
             {
-                var serializer = new DataContractSerializer(typeof (RecordAction));
-                recordAction = (RecordAction) serializer.ReadObject(readStream);
+                serializableOperation = SerializableOperation.Deserialize(readStream);
             }
 
-            operation.Response.ContentEncoding = Encoding.GetEncoding(recordAction.ResponseContentEncoding);
-            foreach (var recordActionHeader in recordAction.Headers)
+            operation.Response.ContentEncoding = Encoding.GetEncoding(serializableOperation.Response.ContentEncoding);
+            foreach (var header in serializableOperation.Response.Headers)
             {
-                operation.Response.HttpHeaders.Add(recordActionHeader.Name, recordActionHeader.Value);
+                operation.Response.HttpHeaders.Add(header.Name, header.Value);
             }
-            operation.Response.StatusCode = recordAction.ResponseStatusCode;
-            operation.Response.Data = operation.Response.ContentEncoding.GetBytes(recordAction.Response);
+            operation.Response.StatusCode = serializableOperation.Response.StatusCode;
+            operation.Response.Data = serializableOperation.Response.GetData();
         }
     }
 }
