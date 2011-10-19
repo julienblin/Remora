@@ -32,6 +32,7 @@ using Remora.Configuration.Impl;
 using Remora.Core.Impl;
 using Remora.Exceptions;
 using Remora.Extensions;
+using Remora.Pipeline;
 
 namespace Remora.Tests.Components
 {
@@ -144,6 +145,88 @@ namespace Remora.Tests.Components
                     Assert.That(operation.Response.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
                     Assert.That(operation.Response.HttpHeaders["anotherfoo"], Is.EqualTo("anotherbar"));
                     Assert.That(operation.Response.Data, Is.EqualTo(responseBuffer));
+                    Assert.That(!operation.OnError);
+                    ended = true;
+                });
+
+                while (!ended) { Thread.Sleep(10); }
+            }
+        }
+
+        [Test]
+        public void It_should_use_force_response_encoding_if_defined()
+        {
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
+            operation.Request.HttpHeaders.Add("foo", "bar");
+            operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
+
+            var pipelineDefinition = new PipelineDefinition
+            {
+                Properties = { { "forceResponseEncoding", "ibm861" } }
+            };
+            operation.ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0], pipelineDefinition);
+
+            using (var listener = new HttpListener())
+            {
+                listener.Prefixes.Add("http://localhost:8081/foo/");
+                listener.Start();
+
+                listener.BeginGetContext((result) =>
+                {
+                    var l = (HttpListener)result.AsyncState;
+                    var context = l.EndGetContext(result);
+                    var response = context.Response;
+                    response.OutputStream.Close();
+                }, listener);
+
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+                var ended = false;
+                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
+                {
+                    Assert.That(!operation.OnError);
+                    Assert.That(operation.Response.ContentEncoding, Is.EqualTo(Encoding.GetEncoding("ibm861")));
+                    ended = true;
+                });
+
+                while (!ended) { Thread.Sleep(10); }
+            }
+        }
+
+        [Test]
+        public void It_should_use_CharacterSet_to_define_encoding()
+        {
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
+            operation.Request.HttpHeaders.Add("foo", "bar");
+            operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
+
+            var responseBuffer = Encoding.UTF8.GetBytes("theresponse");
+
+            using (var listener = new HttpListener())
+            {
+                listener.Prefixes.Add("http://localhost:8081/foo/");
+                listener.Start();
+
+                listener.BeginGetContext((result) =>
+                {
+                    var l = (HttpListener)result.AsyncState;
+                    var context = l.EndGetContext(result);
+                    var response = context.Response;
+                    response.ContentType = string.Format("text/html; charset={0}", Encoding.GetEncoding("IBM01143").HeaderName);
+
+                    response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
+                    response.OutputStream.Close();
+                }, listener);
+
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+                var ended = false;
+                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
+                {
+                    Assert.That(!operation.OnError);
+                    Assert.That(operation.Response.ContentEncoding, Is.EqualTo(Encoding.GetEncoding("IBM01143")));
                     ended = true;
                 });
 

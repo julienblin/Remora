@@ -27,6 +27,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using Castle.Core.Logging;
 using Remora.Configuration;
@@ -79,9 +80,14 @@ namespace Remora.Components
 
             var webRequest = (HttpWebRequest)WebRequest.Create(operation.Request.Uri);
 
-            if((operation.ExecutingPipeline != null) && (operation.ExecutingPipeline.Definition != null))
+            if ((operation.ExecutingPipeline != null)
+                && (operation.ExecutingPipeline.Definition != null)
+                && (!string.IsNullOrEmpty(operation.ExecutingPipeline.Definition.ClientCertificateFilePath))
+            )
+            { 
                 ManageCertificate(webRequest, operation.ExecutingPipeline.Definition.ClientCertificateFilePath, operation.ExecutingPipeline.Definition.ClientCertificatePassword);
-            
+            }
+
             webRequest.Method = operation.Request.Method ?? "POST";
             SetHttpHeaders(operation.Request, webRequest);
 
@@ -93,7 +99,7 @@ namespace Remora.Components
                 try
                 {
                     var response = (HttpWebResponse)webRequest.EndGetResponse(result);
-                    ReadResponse(operation, response);
+                    ReadResponse(operation, response, componentDefinition);
                     if(Logger.IsDebugEnabled)
                         Logger.DebugFormat("Successfully received response from {0} for {1}.", webRequest.RequestUri, operation);
                 }
@@ -133,7 +139,7 @@ namespace Remora.Components
             webRequest.ClientCertificates.Add(clientCertificate);
         }
 
-        protected virtual void ReadResponse(IRemoraOperation operation, HttpWebResponse response)
+        protected virtual void ReadResponse(IRemoraOperation operation, HttpWebResponse response, IComponentDefinition componentDefinition)
         {
             operation.Response.StatusCode = (int)response.StatusCode;
 
@@ -145,6 +151,57 @@ namespace Remora.Components
             using (var stream = response.GetResponseStream())
             {
                 operation.Response.Data = stream.ReadFully(_config.MaxMessageSize);
+            }
+
+            ReadEncoding(operation, response, componentDefinition);
+        }
+
+        protected virtual void ReadEncoding(IRemoraOperation operation, HttpWebResponse response, IComponentDefinition componentDefinition)
+        {
+            if(Logger.IsDebugEnabled)
+                Logger.DebugFormat("Determining encoding for response from {0} for operation {1}...", response.ResponseUri, operation);
+
+            if ((operation.ExecutingPipeline != null)
+                && (operation.ExecutingPipeline.Definition != null)
+                && (operation.ExecutingPipeline.Definition.Properties.ContainsKey("forceResponseEncoding"))
+                )
+            {
+                try
+                {
+                    operation.Response.ContentEncoding = Encoding.GetEncoding(operation.ExecutingPipeline.Definition.Properties["forceResponseEncoding"]);
+                    if (Logger.IsDebugEnabled)
+                        Logger.DebugFormat("Operation {0}: encoding forced to {1}.", operation, operation.Response.ContentEncoding);
+                }
+                catch (ArgumentException ex)
+                {
+                    Logger.ErrorFormat(ex, "There has been an error while loading encoding defined in forceResponseEncoding property: {0}", operation.ExecutingPipeline.Definition.Properties["forceResponseEncoding"]);
+                    throw;
+                }
+            }
+            else
+            {
+                var encoding = Encoding.UTF8; // default;
+                if (!string.IsNullOrEmpty(response.CharacterSet))
+                {
+                    try
+                    {
+                        encoding = Encoding.GetEncoding(response.CharacterSet);
+
+                        if (Logger.IsDebugEnabled)
+                            Logger.DebugFormat("Operation {0}: loaded encoding {1} from character set: {2}", operation, encoding.EncodingName, response.CharacterSet);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        Logger.WarnFormat(ex, "Operation {0}: unable to load a proper encoding for character set {1}", operation, response.CharacterSet);
+                    }
+                }
+                else
+                {
+                    if (Logger.IsDebugEnabled)
+                        Logger.DebugFormat("Operation {0}: using default encoding {0}", operation, encoding.EncodingName);
+                }
+
+                operation.Response.ContentEncoding = encoding;
             }
         }
 
