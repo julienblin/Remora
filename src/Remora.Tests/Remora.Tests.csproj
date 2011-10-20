@@ -75,6 +75,7 @@
     <Compile Include="BaseTest.cs" />
     <Compile Include="BootstraperTest.cs" />
     <Compile Include="Components\SenderTest.cs" />
+    <Compile Include="Components\SoapPlayerTest.cs" />
     <Compile Include="Components\SoapRecorderTest.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandlerTest.cs" />
     <Compile Include="Core\Impl\RemoraOperationKindIdentifierTest.cs" />
@@ -83,6 +84,8 @@
     <Compile Include="Exceptions\Impl\ExceptionFormatterTest.cs" />
     <Compile Include="Extensions\RemoraMessageExtensionsTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
+    <Compile Include="Extensions\StringExtensionsTest.cs" />
+    <Compile Include="Extensions\XDocumentExtensionsTest.cs" />
     <Compile Include="Handler\Impl\ResponseWriterTest.cs" />
     <Compile Include="Pipeline\AbstractPipelineComponentTest.cs" />
     <Compile Include="Pipeline\Impl\PipelineEngineTest.cs" />
@@ -109,7 +112,23 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Samples\SampleHelloWorldServiceHelloVariantOK.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Samples\SampleHelloWorldServiceHelloOK.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Samples\SampleHelloWorldServiceHelloFail.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Content Include="Samples\http_tempuri.org_IHelloWorldService_Hello.0.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\http_tempuri.org_IHelloWorldService_Hello.1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

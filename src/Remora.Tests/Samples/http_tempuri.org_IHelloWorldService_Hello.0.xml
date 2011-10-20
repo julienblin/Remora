@@ -1,0 +1,76 @@
+<operation xmlns="http://remora/" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <exceptionMessage i:nil="true"/>
+  <exceptionType i:nil="true"/>
+  <incomingUri>http://localhost:1925/HelloWorldService.svc</incomingUri>
+  <kind>Soap</kind>
+  <onError>false</onError>
+  <operationId>60e9b8b7-0131-4362-b78b-0274a60379bc</operationId>
+  <request>
+    <content><![CDATA[<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><Hello xmlns="http://tempuri.org/"><name>foo</name></Hello></s:Body></s:Envelope>]]></content>
+    <contentEncoding>utf-8</contentEncoding>
+    <headers>
+      <header>
+        <name>Content-Length</name>
+        <value>153</value>
+      </header>
+      <header>
+        <name>Content-Type</name>
+        <value>text/xml; charset=utf-8</value>
+      </header>
+      <header>
+        <name>Accept-Encoding</name>
+        <value>gzip, deflate</value>
+      </header>
+      <header>
+        <name>Expect</name>
+        <value>100-continue</value>
+      </header>
+      <header>
+        <name>Host</name>
+        <value>localhost:1925</value>
+      </header>
+      <header>
+        <name>SOAPAction</name>
+        <value>"http://tempuri.org/IHelloWorldService/Hello"</value>
+      </header>
+    </headers>
+    <method i:nil="true"/>
+    <uri>http://localhost:1911/HelloWorldService.svc</uri>
+  </request>
+  <response>
+    <content><![CDATA[<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><HelloResponse xmlns="http://tempuri.org/"><HelloResult>Hello, foo</HelloResult></HelloResponse></s:Body></s:Envelope>]]></content>
+    <contentEncoding>utf-8</contentEncoding>
+    <headers>
+      <header>
+        <name>Connection</name>
+        <value>Close</value>
+      </header>
+      <header>
+        <name>Content-Length</name>
+        <value>190</value>
+      </header>
+      <header>
+        <name>Cache-Control</name>
+        <value>private</value>
+      </header>
+      <header>
+        <name>Content-Type</name>
+        <value>text/xml; charset=utf-8</value>
+      </header>
+      <header>
+        <name>Date</name>
+        <value>Thu, 20 Oct 2011 14:55:56 GMT</value>
+      </header>
+      <header>
+        <name>Server</name>
+        <value>ASP.NET Development Server/10.0.0.0</value>
+      </header>
+      <header>
+        <name>X-AspNet-Version</name>
+        <value>4.0.30319</value>
+      </header>
+    </headers>
+    <statusCode>200</statusCode>
+    <uri>http://localhost:1925/HelloWorldService.svc</uri>
+  </response>
+</operation>

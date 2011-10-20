@@ -83,9 +83,9 @@ namespace Remora
                 Component.For<IRemoraConfig>()
                     .UsingFactoryMethod(RemoraConfigurationSectionHandler.GetConfiguration),
 
-                RegisterPipelineComponent<SoapSender>(SoapSender.ComponentId),
+                RegisterPipelineComponent<Sender>(Sender.ComponentId),
                 RegisterPipelineComponent<SoapRecorder>(SoapRecorder.ComponentId),
-                RegisterPipelineComponent<Player>(Player.ComponentId),
+                RegisterPipelineComponent<SoapPlayer>(SoapPlayer.ComponentId),
                 
                 RegisterIfMissing<ISoapTransformer, SoapTransformer>()
             );

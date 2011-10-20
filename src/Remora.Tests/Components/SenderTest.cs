@@ -75,7 +75,7 @@ namespace Remora.Tests.Components
                                                  response.OutputStream.Close();
                                              }, listener);
 
-                var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
@@ -93,7 +93,7 @@ namespace Remora.Tests.Components
             var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org")};
             operation.Request.Uri = new Uri("http://zxsdfsafdd");
 
-            var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             var ended = false;
             sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
@@ -137,7 +137,7 @@ namespace Remora.Tests.Components
                     response.OutputStream.Close();
                 }, listener);
 
-                var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
@@ -181,7 +181,7 @@ namespace Remora.Tests.Components
                     response.OutputStream.Close();
                 }, listener);
 
-                var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
@@ -221,7 +221,7 @@ namespace Remora.Tests.Components
                     response.OutputStream.Close();
                 }, listener);
 
-                var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
@@ -241,7 +241,7 @@ namespace Remora.Tests.Components
             var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org")};
             operation.Request.Uri = new Uri("ftp://localhost");
 
-            var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
                         Throws.Exception.TypeOf<InvalidDestinationUriException>()
@@ -254,7 +254,7 @@ namespace Remora.Tests.Components
         {
             var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org")};
 
-            var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
                         Throws.Exception.TypeOf<UnknownDestinationException>()
@@ -271,7 +271,7 @@ namespace Remora.Tests.Components
                                     ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition { ClientCertificateFilePath = @"C:\unknown.pfx" })
                                 };
             
-            var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
                         Throws.Exception.TypeOf<ClientCertificateException>()
@@ -289,7 +289,7 @@ namespace Remora.Tests.Components
                 ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition { ClientCertificateFilePath = @"Certificates\Remora.Tests.pfx", ClientCertificatePassword = @"wrong"})
             };
 
-            var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
             Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
                         Throws.Exception.TypeOf<ClientCertificateException>()
@@ -322,7 +322,7 @@ namespace Remora.Tests.Components
                     response.OutputStream.Close();
                 }, listener);
 
-                var sender = new SoapSender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
 
                 var ended = false;
                 Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
@@ -338,7 +338,7 @@ namespace Remora.Tests.Components
         [Test]
         public void It_should_validate_inputs()
         {
-            Assert.That(() => new SoapSender(null),
+            Assert.That(() => new Sender(null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("config"));
         }

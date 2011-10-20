@@ -90,6 +90,11 @@ namespace Remora.Tests.Exceptions
             Assert.That(() => new SoapTransformerException("message"), Throws.Nothing);
             Assert.That(() => new SoapTransformerException("message", innerException), Throws.Nothing);
             Assert.That(() => SerializeAndDeserialize<SoapTransformerException>(), Throws.Nothing);
+
+            Assert.That(() => new SoapPlayerException(), Throws.Nothing);
+            Assert.That(() => new SoapPlayerException("message"), Throws.Nothing);
+            Assert.That(() => new SoapPlayerException("message", innerException), Throws.Nothing);
+            Assert.That(() => SerializeAndDeserialize<SoapPlayerException>(), Throws.Nothing);
         }
     }
 }
