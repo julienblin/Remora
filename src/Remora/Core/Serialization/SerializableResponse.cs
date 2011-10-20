@@ -21,7 +21,8 @@ namespace Remora.Core.Serialization
 
             Headers = response.HttpHeaders.Select(k => new SerializableHeader(k.Key, k.Value)).ToArray();
             ContentEncoding = response.ContentEncoding != null ? response.ContentEncoding.HeaderName : null;
-            Content = Encoding.UTF8.GetString(response.Data);
+            if (response.Data != null)
+                Content = Encoding.UTF8.GetString(response.Data);
             StatusCode = response.StatusCode;
             Uri = response.Uri != null ? response.Uri.ToString() : null;
         }

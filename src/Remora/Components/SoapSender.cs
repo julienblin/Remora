@@ -38,15 +38,15 @@ using Remora.Pipeline;
 
 namespace Remora.Components
 {
-    public class Sender : AbstractPipelineComponent
+    public class SoapSender : AbstractPipelineComponent
     {
-        public const string ComponentId = @"sender";
+        public const string ComponentId = @"soapSender";
 
         private static readonly Regex HttpSchemeRx = new Regex("^http(s)?$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         private readonly IRemoraConfig _config;
         private ILogger _logger = NullLogger.Instance;
 
-        public Sender(IRemoraConfig config)
+        public SoapSender(IRemoraConfig config)
         {
             if(config == null) throw new ArgumentNullException("config");
             Contract.EndContractBlock();

@@ -185,7 +185,7 @@ namespace Remora.Tests.Pipeline.Impl
             var container = new WindsorContainer();
             container.Register(
                 Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
-                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.ComponentId)
+                Component.For<IPipelineComponent>().ImplementedBy<SoapSender>().Named(SoapSender.ComponentId)
                 );
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation();
@@ -213,7 +213,7 @@ namespace Remora.Tests.Pipeline.Impl
             var container = new WindsorContainer();
             container.Register(
                 Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
-                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.ComponentId)
+                Component.For<IPipelineComponent>().ImplementedBy<SoapSender>().Named(SoapSender.ComponentId)
                 );
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation();
@@ -244,7 +244,7 @@ namespace Remora.Tests.Pipeline.Impl
             var container = new WindsorContainer();
             container.Register(
                 Component.For<IRemoraConfig>().Instance(new RemoraConfig()),
-                Component.For<IPipelineComponent>().ImplementedBy<Sender>().Named(Sender.ComponentId)
+                Component.For<IPipelineComponent>().ImplementedBy<SoapSender>().Named(SoapSender.ComponentId)
                 );
             var engine = new PipelineEngine { Logger = GetConsoleLogger(), Kernel = container.Kernel };
             var operation = new RemoraOperation();

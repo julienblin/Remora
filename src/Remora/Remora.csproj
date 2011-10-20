@@ -63,8 +63,8 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Components\Player.cs" />
-    <Compile Include="Components\Recorder.cs" />
-    <Compile Include="Components\Sender.cs" />
+    <Compile Include="Components\SoapRecorder.cs" />
+    <Compile Include="Components\SoapSender.cs" />
     <Compile Include="Configuration\IComponentDefinition.cs" />
     <Compile Include="Configuration\Impl\ComponentDefinition.cs" />
     <Compile Include="Configuration\Impl\PipelineDefinition.cs" />
