@@ -76,7 +76,8 @@ namespace Remora.Core.Impl
                 Uri = request.Url,
                 Headers = request.Headers,
                 InputStream = request.InputStream,
-                ContentEncoding = request.ContentEncoding
+                ContentEncoding = request.ContentEncoding,
+                Method = request.HttpMethod
             };
 
             return InternalGet(args);
@@ -92,7 +93,8 @@ namespace Remora.Core.Impl
                 Uri = request.Url,
                 Headers = request.Headers,
                 InputStream = request.InputStream,
-                ContentEncoding = request.ContentEncoding
+                ContentEncoding = request.ContentEncoding,
+                Method = request.HttpMethod
             };
 
             return InternalGet(args);
@@ -121,6 +123,7 @@ namespace Remora.Core.Impl
             operation.IncomingUri = args.Uri;
             operation.Request.Uri = args.Uri;
             operation.Request.ContentEncoding = args.ContentEncoding;
+            operation.Request.Method = args.Method;
 
             foreach (string header in args.Headers)
             {
@@ -142,6 +145,8 @@ namespace Remora.Core.Impl
             public Stream InputStream { get; set; }
 
             public Encoding ContentEncoding { get; set; }
+
+            public string Method { get; set; }
         }
     }
 }

@@ -91,7 +91,10 @@ namespace Remora.Components
             webRequest.Method = operation.Request.Method ?? "POST";
             SetHttpHeaders(operation.Request, webRequest);
 
-            WriteData(operation, webRequest);
+            if (webRequest.Method.ToLowerInvariant() != "get")
+            { 
+                WriteData(operation, webRequest);
+            }
 
             webRequest.BeginGetResponse((result) =>
             {
@@ -222,6 +225,9 @@ namespace Remora.Components
         {
             foreach (var header in remoraRequest.HttpHeaders)
             {
+                if(Logger.IsDebugEnabled)
+                    Logger.DebugFormat("Header: {0}={1}", header.Key, header.Value);
+
                 switch (header.Key.Trim().ToLowerInvariant())
                 {
                     case "accept":
@@ -242,7 +248,7 @@ namespace Remora.Components
                             webRequest.Date = dateValue;
                         break;
                     case "host":
-                        webRequest.Host = header.Value;
+                        webRequest.Host = remoraRequest.Uri.Host;
                         break;
                     case "if-modified-since":
                         DateTime ifModifiedSinceValue;
