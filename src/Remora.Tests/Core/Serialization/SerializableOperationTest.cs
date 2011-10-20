@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -7,8 +6,9 @@ using System.Text;
 using NUnit.Framework;
 using Remora.Core;
 using Remora.Core.Impl;
+using Remora.Core.Serialization;
 
-namespace Remora.Tests.Core.Impl
+namespace Remora.Tests.Core.Serialization
 {
     [TestFixture]
     public class SerializableOperationTest : BaseTest

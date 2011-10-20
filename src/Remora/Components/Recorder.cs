@@ -9,6 +9,8 @@ using Castle.Core.Logging;
 using Remora.Configuration;
 using Remora.Core;
 using Remora.Core.Impl;
+using Remora.Core.Serialization;
+using Remora.Extensions;
 using Remora.Pipeline;
 using Remora.Transformers;
 
@@ -116,7 +118,8 @@ namespace Remora.Components
                 return;
             }
 
-            var fileName = Path.Combine(directoryPath, string.Format("{0}.xml", soapActionName));
+            var fileName = Path.Combine(directoryPath, string.Format("{0}.xml", soapActionName.MakeValidFileName()));
+
             if(Logger.IsDebugEnabled)
                 Logger.DebugFormat("Operation {0}: saving record for {1} in {2}...", operation, soapActionName, fileName);
 

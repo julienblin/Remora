@@ -9,6 +9,7 @@ using Castle.Core.Logging;
 using Remora.Configuration;
 using Remora.Core;
 using Remora.Core.Impl;
+using Remora.Core.Serialization;
 using Remora.Pipeline;
 using Remora.Transformers;
 

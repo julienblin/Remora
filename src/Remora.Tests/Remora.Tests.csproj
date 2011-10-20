@@ -77,7 +77,7 @@
     <Compile Include="Components\SenderTest.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandlerTest.cs" />
     <Compile Include="Core\Impl\RemoraOperationKindIdentifierTest.cs" />
-    <Compile Include="Core\Impl\SerializableOperationTest.cs" />
+    <Compile Include="Core\Serialization\SerializableOperationTest.cs" />
     <Compile Include="Exceptions\ExceptionsTest.cs" />
     <Compile Include="Exceptions\Impl\ExceptionFormatterTest.cs" />
     <Compile Include="Extensions\RemoraMessageExtensionsTest.cs" />

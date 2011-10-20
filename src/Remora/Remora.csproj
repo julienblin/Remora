@@ -76,8 +76,11 @@
     <Compile Include="Core\Impl\RemoraOperationKindIdentifier.cs" />
     <Compile Include="Core\Impl\RemoraRequest.cs" />
     <Compile Include="Core\Impl\RemoraResponse.cs" />
-    <Compile Include="Core\Impl\SerializableOperation.cs" />
-    <Compile Include="Core\Impl\SerializationConstants.cs" />
+    <Compile Include="Core\Serialization\CDataWrapper.cs" />
+    <Compile Include="Core\Serialization\SerializableHeader.cs" />
+    <Compile Include="Core\Serialization\SerializableOperation.cs" />
+    <Compile Include="Core\Serialization\SerializableResponse.cs" />
+    <Compile Include="Core\Serialization\SerializationConstants.cs" />
     <Compile Include="Core\IRemoraMessage.cs" />
     <Compile Include="Core\IRemoraOperation.cs" />
     <Compile Include="Core\IRemoraOperationFactory.cs" />
@@ -86,6 +89,7 @@
     <Compile Include="Core\IRemoraResponse.cs" />
     <Compile Include="Bootstraper.cs" />
     <Compile Include="Core\RemoraOperationKind.cs" />
+    <Compile Include="Core\Serialization\SerializableRequest.cs" />
     <Compile Include="ErrorResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -104,6 +108,7 @@
     <Compile Include="Configuration\RemoraConfigurationSectionHandler.cs" />
     <Compile Include="Extensions\RemoraMessageExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Handler\Impl\ResponseWriter.cs" />
     <Compile Include="Pipeline\AbstractPipelineComponent.cs" />
     <Compile Include="Pipeline\Impl\FinalCallbackPipelineComponentInvocation.cs" />
