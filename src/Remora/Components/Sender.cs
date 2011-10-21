@@ -48,7 +48,7 @@ namespace Remora.Components
 
         public Sender(IRemoraConfig config)
         {
-            if(config == null) throw new ArgumentNullException("config");
+            if (config == null) throw new ArgumentNullException("config");
             Contract.EndContractBlock();
 
             _config = config;
@@ -84,16 +84,20 @@ namespace Remora.Components
                 && (operation.ExecutingPipeline.Definition != null)
                 && (!string.IsNullOrEmpty(operation.ExecutingPipeline.Definition.ClientCertificateFilePath))
             )
-            { 
+            {
                 ManageCertificate(webRequest, operation.ExecutingPipeline.Definition.ClientCertificateFilePath, operation.ExecutingPipeline.Definition.ClientCertificatePassword);
             }
 
             webRequest.Method = operation.Request.Method ?? "POST";
-            SetHttpHeaders(operation.Request, webRequest);
+            SetHttpHeaders(operation, webRequest);
 
             if (webRequest.Method.ToLowerInvariant() != "get")
-            { 
+            {
                 WriteData(operation, webRequest);
+            }
+            else
+            {
+                webRequest.ContentLength = 0;
             }
 
             webRequest.BeginGetResponse((result) =>
@@ -103,8 +107,23 @@ namespace Remora.Components
                 {
                     var response = (HttpWebResponse)webRequest.EndGetResponse(result);
                     ReadResponse(operation, response, componentDefinition);
-                    if(Logger.IsDebugEnabled)
+                    if (Logger.IsDebugEnabled)
                         Logger.DebugFormat("Successfully received response from {0} for {1}.", webRequest.RequestUri, operation);
+                }
+                catch (WebException webEx)
+                {
+                    if (webEx.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        ReadResponse(operation, (HttpWebResponse)webEx.Response, componentDefinition);
+                        if (Logger.IsDebugEnabled)
+                            Logger.DebugFormat("Successfully received response from {0} for {1}.", webRequest.RequestUri, operation);
+                    }
+                    else
+                    {
+                        var message = string.Format("There has been an error while sending {0} to {1}.", operation, webRequest.RequestUri);
+                        Logger.Error(message, webEx);
+                        operation.Exception = new SendException(message, webEx);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -121,12 +140,12 @@ namespace Remora.Components
 
         protected virtual void ManageCertificate(HttpWebRequest webRequest, string clientCertificateFilePath, string clientCertificatePassword)
         {
-            if(Logger.IsDebugEnabled)
+            if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Loading client certificate {0}...", clientCertificateFilePath);
             X509Certificate2 clientCertificate;
             try
             {
-                if(string.IsNullOrEmpty(clientCertificatePassword))
+                if (string.IsNullOrEmpty(clientCertificatePassword))
                     clientCertificate = new X509Certificate2(clientCertificateFilePath);
                 else
                     clientCertificate = new X509Certificate2(clientCertificateFilePath, clientCertificatePassword);
@@ -162,7 +181,7 @@ namespace Remora.Components
 
         protected virtual void ReadEncoding(IRemoraOperation operation, HttpWebResponse response, IComponentDefinition componentDefinition)
         {
-            if(Logger.IsDebugEnabled)
+            if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Determining encoding for response from {0} for operation {1}...", response.ResponseUri, operation);
 
             if ((operation.ExecutingPipeline != null)
@@ -219,15 +238,16 @@ namespace Remora.Components
                     requestStream.Write(operation.Request.Data, 0, operation.Request.Data.Length);
                 }
             }
+            else
+            {
+                webRequest.ContentLength = 0;
+            }
         }
 
-        protected virtual void SetHttpHeaders(IRemoraRequest remoraRequest, HttpWebRequest webRequest)
+        protected virtual void SetHttpHeaders(IRemoraOperation operation, HttpWebRequest webRequest)
         {
-            foreach (var header in remoraRequest.HttpHeaders)
+            foreach (var header in operation.Request.HttpHeaders)
             {
-                if(Logger.IsDebugEnabled)
-                    Logger.DebugFormat("Header: {0}={1}", header.Key, header.Value);
-
                 switch (header.Key.Trim().ToLowerInvariant())
                 {
                     case "accept":
@@ -248,7 +268,18 @@ namespace Remora.Components
                             webRequest.Date = dateValue;
                         break;
                     case "host":
-                        webRequest.Host = remoraRequest.Uri.Host;
+                        if ((operation.ExecutingPipeline != null)
+                            && (operation.ExecutingPipeline.Definition != null)
+                            && (operation.ExecutingPipeline.Definition.Properties.ContainsKey("doNotAlterHost"))
+                            && (operation.ExecutingPipeline.Definition.Properties["doNotAlterHost"].Equals("true", StringComparison.InvariantCultureIgnoreCase))
+                          )
+                        {
+                            webRequest.Host = header.Value;
+                        }
+                        else
+                        {
+                            webRequest.Host = operation.Request.Uri.Host;
+                        }
                         break;
                     case "if-modified-since":
                         DateTime ifModifiedSinceValue;

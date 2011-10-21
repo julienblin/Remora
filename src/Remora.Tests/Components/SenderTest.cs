@@ -50,7 +50,7 @@ namespace Remora.Tests.Components
             operation.Request.HttpHeaders.Add("content-type", "text/html");
             operation.Request.HttpHeaders.Add("expect", "foo");
             operation.Request.HttpHeaders.Add("date", "2011-01-01");
-            operation.Request.HttpHeaders.Add("host", "localhost");
+            operation.Request.HttpHeaders.Add("host", "foobar");
             operation.Request.HttpHeaders.Add("if-modified-since", "2011-01-01");
             operation.Request.HttpHeaders.Add("range", "foo");
             operation.Request.HttpHeaders.Add("referer", "localhost");
@@ -70,8 +70,12 @@ namespace Remora.Tests.Components
                                                  var context = l.EndGetContext(result);
                                                  var request = context.Request;
 
+                                                 Assert.That(request.Headers["host"], Is.EqualTo("localhost"));
                                                  var response = context.Response;
                                                  response.StatusCode = (int)HttpStatusCode.OK;
+                                                 response.ContentEncoding = Encoding.UTF8;
+                                                 response.ContentLength64 = responseBuffer.LongLength;
+                                                 response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
                                                  response.OutputStream.Close();
                                              }, listener);
 
@@ -81,7 +85,54 @@ namespace Remora.Tests.Components
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
                                                         {
                                                             ended = true;
+                                                            Assert.That(!operation.OnError);
                                                         });
+
+                while (!ended) { Thread.Sleep(10); }
+            }
+        }
+
+        [Test]
+        public void It_should_not_alter_host_if_option_activated()
+        {
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
+            operation.Request.HttpHeaders.Add("host", "foobar");
+            operation.ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition
+                                                                                                 {
+                                                                                                     Properties = { { "doNotAlterHost", "true" } }
+                                                                                                 });
+
+            var responseBuffer = Encoding.UTF8.GetBytes("theresponse");
+
+            using (var listener = new HttpListener())
+            {
+                listener.Prefixes.Add("http://localhost:8081/foo/");
+                listener.Start();
+
+                listener.BeginGetContext((result) =>
+                {
+                    var l = (HttpListener)result.AsyncState;
+                    var context = l.EndGetContext(result);
+                    var request = context.Request;
+
+                    Assert.That(request.Headers["host"], Is.EqualTo("foobar"));
+                    var response = context.Response;
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    response.ContentEncoding = Encoding.UTF8;
+                    response.ContentLength64 = responseBuffer.LongLength;
+                    response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
+                    response.OutputStream.Close();
+                }, listener);
+
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+                var ended = false;
+                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
+                {
+                    ended = true;
+                    Assert.That(!operation.OnError);
+                });
 
                 while (!ended) { Thread.Sleep(10); }
             }
@@ -146,6 +197,42 @@ namespace Remora.Tests.Components
                     Assert.That(operation.Response.Uri, Is.EqualTo(new Uri("http://localhost:8081/foo/")));
                     Assert.That(operation.Response.HttpHeaders["anotherfoo"], Is.EqualTo("anotherbar"));
                     Assert.That(operation.Response.Data, Is.EqualTo(responseBuffer));
+                    Assert.That(!operation.OnError);
+                    ended = true;
+                });
+
+                while (!ended) { Thread.Sleep(10); }
+            }
+        }
+
+        [Test]
+        public void It_should_not_throw_an_exception_if_response_status_code_is_not_200()
+        {
+            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
+
+
+            using (var listener = new HttpListener())
+            {
+                listener.Prefixes.Add("http://localhost:8081/foo/");
+                listener.Start();
+
+                listener.BeginGetContext((result) =>
+                {
+                    var l = (HttpListener)result.AsyncState;
+                    var context = l.EndGetContext(result);
+
+                    var response = context.Response;
+                    response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
+                    response.OutputStream.Close();
+                }, listener);
+
+                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+
+                var ended = false;
+                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
+                {
+                    Assert.That(operation.Response.StatusCode, Is.EqualTo((int)HttpStatusCode.ServiceUnavailable));
                     Assert.That(!operation.OnError);
                     ended = true;
                 });
