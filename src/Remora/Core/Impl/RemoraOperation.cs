@@ -38,8 +38,6 @@ namespace Remora.Core.Impl
             Response = new RemoraResponse();
             ExecutionProperties = new Dictionary<string, object>();
             CreatedAtUtc = DateTime.UtcNow;
-            Stopwatch = new Stopwatch();
-            Stopwatch.Start();
         }
 
         #region IRemoraOperation Members
@@ -63,8 +61,6 @@ namespace Remora.Core.Impl
         public bool OnError { get { return Exception != null; } }
 
         public DateTime CreatedAtUtc { get; private set; }
-
-        public Stopwatch Stopwatch { get; private set; }
 
         #endregion
 

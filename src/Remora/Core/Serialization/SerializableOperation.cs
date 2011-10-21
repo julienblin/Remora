@@ -45,8 +45,11 @@ namespace Remora.Core.Serialization
 
             CreatedAtUtc = operation.CreatedAtUtc;
 
-            if(operation.Stopwatch != null)
-                ElapsedMilliseconds = operation.Stopwatch.ElapsedMilliseconds;
+            if (operation.ExecutingPipeline != null) { 
+                PipelineName = operation.ExecutingPipeline.Id;
+                if (operation.ExecutingPipeline.Definition != null)
+                    PipelineComponents = string.Join(",", operation.ExecutingPipeline.Definition.ComponentDefinitions.Select(x => x.RefId));
+            }
         }
 
         public void Serialize(Stream stream)
@@ -83,5 +86,11 @@ namespace Remora.Core.Serialization
 
         [DataMember(Name = "elapsedMs")]
         public long ElapsedMilliseconds { get; set; }
+
+        [DataMember(Name = "pipeline")]
+        public string PipelineName { get; set; }
+
+        [DataMember(Name = "pipelineComponents")]
+        public string PipelineComponents { get; set; }
     }
 }

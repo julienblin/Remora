@@ -53,7 +53,5 @@ namespace Remora.Core
         bool OnError { get; }
 
         DateTime CreatedAtUtc { get; }
-
-        Stopwatch Stopwatch { get; }
     }
 }

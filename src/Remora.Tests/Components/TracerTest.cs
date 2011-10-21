@@ -75,6 +75,12 @@ namespace Remora.Tests.Components
                     IncomingUri = new Uri(@"http://tempuri.org")
                 };
 
+                Assert.That(() => _tracer.BeginAsyncProcess(operation1, componentDefinition, (b) =>
+                {
+                    Assert.That(b);
+                    Assert.That(!operation1.OnError);
+                }), Throws.Nothing);
+
                 Assert.That(() => _tracer.EndAsyncProcess(operation1, componentDefinition, () =>
                 {
                     Assert.That(!operation1.OnError);
@@ -100,6 +106,12 @@ namespace Remora.Tests.Components
                         StatusCode = 200
                     }
                 };
+
+                Assert.That(() => _tracer.BeginAsyncProcess(operation2, componentDefinition, (b) =>
+                {
+                    Assert.That(b);
+                    Assert.That(!operation2.OnError);
+                }), Throws.Nothing);
 
                 Assert.That(() => _tracer.EndAsyncProcess(operation2, componentDefinition, () =>
                 {
