@@ -62,6 +62,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Components\PerfCounter.cs" />
     <Compile Include="Components\SetHttpHeader.cs" />
     <Compile Include="Components\SoapPlayer.cs" />
     <Compile Include="Components\SoapRecorder.cs" />

@@ -88,6 +88,7 @@ namespace Remora
                 RegisterPipelineComponent<SoapPlayer>(SoapPlayer.ComponentId),
                 RegisterPipelineComponent<SetHttpHeader>(SetHttpHeader.ComponentId),
                 RegisterPipelineComponent<Tracer>(Tracer.ComponentId),
+                RegisterPipelineComponent<PerfCounter>(PerfCounter.ComponentId),
                 
                 RegisterIfMissing<ISoapTransformer, SoapTransformer>()
             );

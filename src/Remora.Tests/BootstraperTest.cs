@@ -88,6 +88,7 @@ namespace Remora.Tests
             Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SoapPlayer.ComponentId), Is.TypeOf<SoapPlayer>());
             Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SetHttpHeader.ComponentId), Is.TypeOf<SetHttpHeader>());
             Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(Tracer.ComponentId), Is.TypeOf<Tracer>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(PerfCounter.ComponentId), Is.TypeOf<PerfCounter>());
         }
     }
 }

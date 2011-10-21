@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="BaseTest.cs" />
     <Compile Include="BootstraperTest.cs" />
+    <Compile Include="Components\PerfCounterTest.cs" />
     <Compile Include="Components\SenderTest.cs" />
     <Compile Include="Components\SetHttpHeaderTest.cs" />
     <Compile Include="Components\SoapPlayerTest.cs" />
