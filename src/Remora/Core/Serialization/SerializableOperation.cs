@@ -34,7 +34,7 @@ namespace Remora.Core.Serialization
             if (operation.Exception != null)
             {
                 ExceptionType = operation.Exception.GetType().AssemblyQualifiedName;
-                ExceptionMessage = operation.Exception.Message;
+                ExceptionMessage = operation.Exception.ToString();
             }
 
             if(operation.Request != null)
@@ -42,6 +42,11 @@ namespace Remora.Core.Serialization
 
             if (operation.Response != null)
                 Response = new SerializableResponse(operation.Response);
+
+            CreatedAtUtc = operation.CreatedAtUtc;
+
+            if(operation.Stopwatch != null)
+                ElapsedMilliseconds = operation.Stopwatch.ElapsedMilliseconds;
         }
 
         public void Serialize(Stream stream)
@@ -72,5 +77,11 @@ namespace Remora.Core.Serialization
 
         [DataMember(Name = "onError")]
         public bool OnError { get; set; }
+
+        [DataMember(Name = "createdAtUtc")]
+        public DateTime CreatedAtUtc { get; set; }
+
+        [DataMember(Name = "elapsedMs")]
+        public long ElapsedMilliseconds { get; set; }
     }
 }

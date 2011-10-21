@@ -23,6 +23,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using Remora.Pipeline;
 using System.Collections.Generic;
 
@@ -50,5 +51,9 @@ namespace Remora.Core
         Exception Exception { get; set; }
 
         bool OnError { get; }
+
+        DateTime CreatedAtUtc { get; }
+
+        Stopwatch Stopwatch { get; }
     }
 }

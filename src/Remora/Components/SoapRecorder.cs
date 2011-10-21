@@ -114,7 +114,7 @@ namespace Remora.Components
                 }
 
                 if (Logger.IsDebugEnabled)
-                    Logger.DebugFormat("Operation {0}: succefully recorded in {1}.", operation, fileName);
+                    Logger.DebugFormat("Operation {0}: successfully recorded in {1}.", operation, fileName);
             }
             catch (Exception ex)
             {

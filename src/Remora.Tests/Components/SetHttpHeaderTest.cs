@@ -58,6 +58,7 @@ namespace Remora.Tests.Components
                                           };
             _setHttpHeader.BeginAsyncProcess(operation, componentDefinition, b =>
             {
+                Assert.That(b);
                 Assert.That(!operation.OnError);
                 Assert.That(operation.Request.HttpHeaders["foo"], Is.EqualTo("bar"));                                                      
             });

@@ -66,6 +66,7 @@
     <Compile Include="Components\SoapPlayer.cs" />
     <Compile Include="Components\SoapRecorder.cs" />
     <Compile Include="Components\Sender.cs" />
+    <Compile Include="Components\Tracer.cs" />
     <Compile Include="Configuration\IComponentDefinition.cs" />
     <Compile Include="Configuration\Impl\ComponentDefinition.cs" />
     <Compile Include="Configuration\Impl\PipelineDefinition.cs" />

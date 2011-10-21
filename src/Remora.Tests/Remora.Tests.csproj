@@ -78,6 +78,7 @@
     <Compile Include="Components\SetHttpHeaderTest.cs" />
     <Compile Include="Components\SoapPlayerTest.cs" />
     <Compile Include="Components\SoapRecorderTest.cs" />
+    <Compile Include="Components\TracerTest.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandlerTest.cs" />
     <Compile Include="Core\Impl\RemoraOperationKindIdentifierTest.cs" />
     <Compile Include="Core\Serialization\SerializableOperationTest.cs" />
