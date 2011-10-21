@@ -95,6 +95,11 @@ namespace Remora.Tests.Exceptions
             Assert.That(() => new SoapPlayerException("message"), Throws.Nothing);
             Assert.That(() => new SoapPlayerException("message", innerException), Throws.Nothing);
             Assert.That(() => SerializeAndDeserialize<SoapPlayerException>(), Throws.Nothing);
+
+            Assert.That(() => new SetHttpHeaderException(), Throws.Nothing);
+            Assert.That(() => new SetHttpHeaderException("message"), Throws.Nothing);
+            Assert.That(() => new SetHttpHeaderException("message", innerException), Throws.Nothing);
+            Assert.That(() => SerializeAndDeserialize<SetHttpHeaderException>(), Throws.Nothing);
         }
     }
 }

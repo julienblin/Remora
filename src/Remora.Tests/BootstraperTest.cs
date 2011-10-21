@@ -23,6 +23,7 @@
 #endregion
 
 using NUnit.Framework;
+using Remora.Components;
 using Remora.Configuration;
 using Remora.Configuration.Impl;
 using Remora.Core;
@@ -81,6 +82,11 @@ namespace Remora.Tests
 
             Assert.That(Bootstraper.Container.Resolve<ISoapTransformer>(), Is.TypeOf<SoapTransformer>());
             Assert.That(Bootstraper.Container.Resolve<ISoapTransformer>(), Is.SameAs(Bootstraper.Container.Resolve<ISoapTransformer>()));
+
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(Sender.ComponentId), Is.TypeOf<Sender>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SoapRecorder.ComponentId), Is.TypeOf<SoapRecorder>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SoapPlayer.ComponentId), Is.TypeOf<SoapPlayer>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SetHttpHeader.ComponentId), Is.TypeOf<SetHttpHeader>());
         }
     }
 }

@@ -62,7 +62,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Components\SetHeader.cs" />
+    <Compile Include="Components\SetHttpHeader.cs" />
     <Compile Include="Components\SoapPlayer.cs" />
     <Compile Include="Components\SoapRecorder.cs" />
     <Compile Include="Components\Sender.cs" />
@@ -97,6 +97,7 @@
       <DependentUpon>ErrorResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\ClientCertificateException.cs" />
+    <Compile Include="Exceptions\SetHttpHeaderException.cs" />
     <Compile Include="Exceptions\SoapPlayerException.cs" />
     <Compile Include="Exceptions\SoapTransformerException.cs" />
     <Compile Include="Exceptions\IExceptionFormatter.cs" />
