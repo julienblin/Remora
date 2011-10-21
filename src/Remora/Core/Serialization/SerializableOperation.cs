@@ -1,22 +1,42 @@
-﻿using System;
+﻿#region Licence
+
+// The MIT License
+// 
+// Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+using System;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using Remora.Core.Impl;
 
 namespace Remora.Core.Serialization
 {
-    [DataContract(Name="operation", Namespace = SerializationConstants.Namespace)]
+    [DataContract(Name = "operation", Namespace = SerializationConstants.Namespace)]
     public class SerializableOperation
     {
-        private static DataContractSerializer _serializer = new DataContractSerializer(typeof(SerializableOperation));
-
-        public static SerializableOperation Deserialize(Stream stream)
-        {
-            return (SerializableOperation)_serializer.ReadObject(stream);
-        }
+        private static readonly DataContractSerializer _serializer =
+            new DataContractSerializer(typeof (SerializableOperation));
 
         public SerializableOperation()
         {
@@ -24,7 +44,7 @@ namespace Remora.Core.Serialization
 
         public SerializableOperation(IRemoraOperation operation)
         {
-            if(operation == null) throw new ArgumentNullException("operation");
+            if (operation == null) throw new ArgumentNullException("operation");
             Contract.EndContractBlock();
 
             OperationId = operation.OperationId;
@@ -37,7 +57,7 @@ namespace Remora.Core.Serialization
                 ExceptionMessage = operation.Exception.ToString();
             }
 
-            if(operation.Request != null)
+            if (operation.Request != null)
                 Request = new SerializableRequest(operation.Request);
 
             if (operation.Response != null)
@@ -45,16 +65,14 @@ namespace Remora.Core.Serialization
 
             CreatedAtUtc = operation.CreatedAtUtc;
 
-            if (operation.ExecutingPipeline != null) { 
+            if (operation.ExecutingPipeline != null)
+            {
                 PipelineName = operation.ExecutingPipeline.Id;
                 if (operation.ExecutingPipeline.Definition != null)
-                    PipelineComponents = string.Join(",", operation.ExecutingPipeline.Definition.ComponentDefinitions.Select(x => x.RefId));
+                    PipelineComponents = string.Join(",",
+                                                     operation.ExecutingPipeline.Definition.ComponentDefinitions.Select(
+                                                         x => x.RefId));
             }
-        }
-
-        public void Serialize(Stream stream)
-        {
-            _serializer.WriteObject(stream, this);
         }
 
         [DataMember(Name = "operationId")]
@@ -92,5 +110,15 @@ namespace Remora.Core.Serialization
 
         [DataMember(Name = "pipelineComponents")]
         public string PipelineComponents { get; set; }
+
+        public static SerializableOperation Deserialize(Stream stream)
+        {
+            return (SerializableOperation) _serializer.ReadObject(stream);
+        }
+
+        public void Serialize(Stream stream)
+        {
+            _serializer.WriteObject(stream, this);
+        }
     }
 }

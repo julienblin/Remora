@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using NUnit.Framework;
@@ -32,17 +34,16 @@ namespace Remora.Tests.Pipeline
     [TestFixture]
     public class AbstractPipelineComponentTest : BaseTest
     {
-        public class ApcTest : AbstractPipelineComponent {}
+        public class ApcTest : AbstractPipelineComponent
+        {
+        }
 
         [Test]
         public void It_should_call_callback_on_EndAsyncProcess()
         {
             var apc = new ApcTest();
             var wasCalled = false;
-            apc.EndAsyncProcess(new RemoraOperation(), new ComponentDefinition(), () =>
-                                                           {
-                                                               wasCalled = true;
-                                                           });
+            apc.EndAsyncProcess(new RemoraOperation(), new ComponentDefinition(), () => { wasCalled = true; });
             Assert.That(wasCalled);
         }
 
@@ -52,10 +53,10 @@ namespace Remora.Tests.Pipeline
             var apc = new ApcTest();
             var wasCalled = false;
             apc.BeginAsyncProcess(new RemoraOperation(), new ComponentDefinition(), (b) =>
-                                                             {
-                                                                 Assert.That(b);
-                                                                 wasCalled = true;
-                                                             });
+                                                                                        {
+                                                                                            Assert.That(b);
+                                                                                            wasCalled = true;
+                                                                                        });
             Assert.That(wasCalled);
         }
     }

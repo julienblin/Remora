@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,7 +21,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
+
 namespace Remora.Core
 {
     public enum RemoraOperationKind

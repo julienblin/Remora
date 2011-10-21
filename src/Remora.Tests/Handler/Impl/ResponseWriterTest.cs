@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -53,19 +55,14 @@ namespace Remora.Tests.Handler.Impl
         [Test]
         public void It_should_use_the_exception_formatter_in_case_of_error()
         {
-            var operation = new RemoraOperation { Exception = new Exception() };
-            var responseWriter = new ResponseWriter(_exceptionFormatter) { Logger = GetConsoleLogger() };
+            var operation = new RemoraOperation {Exception = new Exception()};
+            var responseWriter = new ResponseWriter(_exceptionFormatter) {Logger = GetConsoleLogger()};
 
             using (var writer = new StringWriter())
             {
                 var response = new HttpResponse(writer);
-                With.Mocks(_mocks).Expecting(() =>
-                {
-                    _exceptionFormatter.WriteException(operation, response);    
-                }).Verify(() =>
-                {
-                    responseWriter.Write(operation, response);
-                });
+                With.Mocks(_mocks).Expecting(() => { _exceptionFormatter.WriteException(operation, response); }).Verify(
+                    () => { responseWriter.Write(operation, response); });
             }
         }
 
@@ -77,7 +74,7 @@ namespace Remora.Tests.Handler.Impl
                             .With.Message.Contains("exceptionFormatter")
                 );
 
-            var responseWriter = new ResponseWriter(_exceptionFormatter) { Logger = GetConsoleLogger() };
+            var responseWriter = new ResponseWriter(_exceptionFormatter) {Logger = GetConsoleLogger()};
 
             Assert.That(() => responseWriter.Write(null, null),
                         Throws.Exception.TypeOf<ArgumentNullException>()

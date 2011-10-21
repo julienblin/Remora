@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,11 +21,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Remora.Pipeline;
 
 namespace Remora.Core.Impl
@@ -58,7 +59,10 @@ namespace Remora.Core.Impl
 
         public Exception Exception { get; set; }
 
-        public bool OnError { get { return Exception != null; } }
+        public bool OnError
+        {
+            get { return Exception != null; }
+        }
 
         public DateTime CreatedAtUtc { get; private set; }
 

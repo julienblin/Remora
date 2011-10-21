@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -42,7 +44,7 @@ namespace Remora.Tests.Components
         [Test]
         public void It_should_be_able_to_work_with_reserved_headers()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
             operation.Request.Uri = new Uri("http://localhost:8081/foo/");
             operation.Request.HttpHeaders.Add("accept", "image/*");
             operation.Request.HttpHeaders.Add("connection", "foo");
@@ -66,41 +68,51 @@ namespace Remora.Tests.Components
 
                 listener.BeginGetContext((result) =>
                                              {
-                                                 var l = (HttpListener)result.AsyncState;
+                                                 var l = (HttpListener) result.AsyncState;
                                                  var context = l.EndGetContext(result);
                                                  var request = context.Request;
 
                                                  Assert.That(request.Headers["host"], Is.EqualTo("localhost"));
                                                  var response = context.Response;
-                                                 response.StatusCode = (int)HttpStatusCode.OK;
+                                                 response.StatusCode = (int) HttpStatusCode.OK;
                                                  response.ContentEncoding = Encoding.UTF8;
                                                  response.ContentLength64 = responseBuffer.LongLength;
                                                  response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
                                                  response.OutputStream.Close();
                                              }, listener);
 
-                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
-                                                        {
-                                                            ended = true;
-                                                            Assert.That(!operation.OnError);
-                                                        });
+                                                                                   {
+                                                                                       ended = true;
+                                                                                       Assert.That(!operation.OnError);
+                                                                                   });
 
-                while (!ended) { Thread.Sleep(10); }
+                while (!ended)
+                {
+                    Thread.Sleep(10);
+                }
             }
         }
 
         [Test]
         public void It_should_not_alter_host_if_option_activated()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
             operation.Request.Uri = new Uri("http://localhost:8081/foo/");
             operation.Request.HttpHeaders.Add("host", "foobar");
             operation.ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition
                                                                                                  {
-                                                                                                     Properties = { { "doNotAlterHost", "true" } }
+                                                                                                     Properties =
+                                                                                                         {
+                                                                                                             {
+                                                                                                                 "doNotAlterHost"
+                                                                                                                 ,
+                                                                                                                 "true"
+                                                                                                                 }
+                                                                                                         }
                                                                                                  });
 
             var responseBuffer = Encoding.UTF8.GetBytes("theresponse");
@@ -111,104 +123,40 @@ namespace Remora.Tests.Components
                 listener.Start();
 
                 listener.BeginGetContext((result) =>
-                {
-                    var l = (HttpListener)result.AsyncState;
-                    var context = l.EndGetContext(result);
-                    var request = context.Request;
+                                             {
+                                                 var l = (HttpListener) result.AsyncState;
+                                                 var context = l.EndGetContext(result);
+                                                 var request = context.Request;
 
-                    Assert.That(request.Headers["host"], Is.EqualTo("foobar"));
-                    var response = context.Response;
-                    response.StatusCode = (int)HttpStatusCode.OK;
-                    response.ContentEncoding = Encoding.UTF8;
-                    response.ContentLength64 = responseBuffer.LongLength;
-                    response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
-                    response.OutputStream.Close();
-                }, listener);
+                                                 Assert.That(request.Headers["host"], Is.EqualTo("foobar"));
+                                                 var response = context.Response;
+                                                 response.StatusCode = (int) HttpStatusCode.OK;
+                                                 response.ContentEncoding = Encoding.UTF8;
+                                                 response.ContentLength64 = responseBuffer.LongLength;
+                                                 response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
+                                                 response.OutputStream.Close();
+                                             }, listener);
 
-                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
-
-                var ended = false;
-                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
-                {
-                    ended = true;
-                    Assert.That(!operation.OnError);
-                });
-
-                while (!ended) { Thread.Sleep(10); }
-            }
-        }
-
-        [Test]
-        public void It_should_position_an_operation_SendException_if_server_not_ready()
-        {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org")};
-            operation.Request.Uri = new Uri("http://zxsdfsafdd");
-
-            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
-
-            var ended = false;
-            sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
-            {
-                Assert.That(operation.OnError);
-                Assert.That(operation.Exception, Is.TypeOf<SendException>());
-                ended = true;
-            });
-
-            while(!ended) { Thread.Sleep(10); }
-        }
-
-        [Test]
-        public void It_should_send_and_get_response()
-        {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org")};
-            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
-            operation.Request.HttpHeaders.Add("foo", "bar");
-            operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
-
-            var responseBuffer = Encoding.UTF8.GetBytes("theresponse");
-
-            using (var listener = new HttpListener())
-            {
-                listener.Prefixes.Add("http://localhost:8081/foo/");
-                listener.Start();
-
-                listener.BeginGetContext((result) =>
-                {
-                    var l = (HttpListener)result.AsyncState;
-                    var context = l.EndGetContext(result);
-                    var request = context.Request;
-
-                    Assert.That(request.Headers["foo"], Is.EqualTo("bar"));
-                    Assert.That(request.InputStream.ReadFully(0), Is.EqualTo(operation.Request.Data));
-
-                    var response = context.Response;
-                    response.StatusCode = (int)HttpStatusCode.OK;
-                    response.AddHeader("anotherfoo", "anotherbar");
-                    response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
-                    response.OutputStream.Close();
-                }, listener);
-
-                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
-                {
-                    Assert.That(operation.Response.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-                    Assert.That(operation.Response.Uri, Is.EqualTo(new Uri("http://localhost:8081/foo/")));
-                    Assert.That(operation.Response.HttpHeaders["anotherfoo"], Is.EqualTo("anotherbar"));
-                    Assert.That(operation.Response.Data, Is.EqualTo(responseBuffer));
-                    Assert.That(!operation.OnError);
-                    ended = true;
-                });
+                                                                                   {
+                                                                                       ended = true;
+                                                                                       Assert.That(!operation.OnError);
+                                                                                   });
 
-                while (!ended) { Thread.Sleep(10); }
+                while (!ended)
+                {
+                    Thread.Sleep(10);
+                }
             }
         }
 
         [Test]
         public void It_should_not_throw_an_exception_if_response_status_code_is_not_200()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
             operation.Request.Uri = new Uri("http://localhost:8081/foo/");
 
 
@@ -218,74 +166,64 @@ namespace Remora.Tests.Components
                 listener.Start();
 
                 listener.BeginGetContext((result) =>
-                {
-                    var l = (HttpListener)result.AsyncState;
-                    var context = l.EndGetContext(result);
+                                             {
+                                                 var l = (HttpListener) result.AsyncState;
+                                                 var context = l.EndGetContext(result);
 
-                    var response = context.Response;
-                    response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
-                    response.OutputStream.Close();
-                }, listener);
+                                                 var response = context.Response;
+                                                 response.StatusCode = (int) HttpStatusCode.ServiceUnavailable;
+                                                 response.OutputStream.Close();
+                                             }, listener);
 
-                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
-                {
-                    Assert.That(operation.Response.StatusCode, Is.EqualTo((int)HttpStatusCode.ServiceUnavailable));
-                    Assert.That(!operation.OnError);
-                    ended = true;
-                });
+                                                                                   {
+                                                                                       Assert.That(
+                                                                                           operation.Response.StatusCode,
+                                                                                           Is.EqualTo(
+                                                                                               (int)
+                                                                                               HttpStatusCode.
+                                                                                                   ServiceUnavailable));
+                                                                                       Assert.That(!operation.OnError);
+                                                                                       ended = true;
+                                                                                   });
 
-                while (!ended) { Thread.Sleep(10); }
+                while (!ended)
+                {
+                    Thread.Sleep(10);
+                }
             }
         }
 
         [Test]
-        public void It_should_use_force_response_encoding_if_defined()
+        public void It_should_position_an_operation_SendException_if_server_not_ready()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
-            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
-            operation.Request.HttpHeaders.Add("foo", "bar");
-            operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
+            operation.Request.Uri = new Uri("http://zxsdfsafdd");
 
-            var pipelineDefinition = new PipelineDefinition
+            var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
+
+            var ended = false;
+            sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
+                                                                               {
+                                                                                   Assert.That(operation.OnError);
+                                                                                   Assert.That(operation.Exception,
+                                                                                               Is.TypeOf<SendException>());
+                                                                                   ended = true;
+                                                                               });
+
+            while (!ended)
             {
-                Properties = { { "forceResponseEncoding", "ibm861" } }
-            };
-            operation.ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0], pipelineDefinition);
-
-            using (var listener = new HttpListener())
-            {
-                listener.Prefixes.Add("http://localhost:8081/foo/");
-                listener.Start();
-
-                listener.BeginGetContext((result) =>
-                {
-                    var l = (HttpListener)result.AsyncState;
-                    var context = l.EndGetContext(result);
-                    var response = context.Response;
-                    response.OutputStream.Close();
-                }, listener);
-
-                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
-
-                var ended = false;
-                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
-                {
-                    Assert.That(!operation.OnError);
-                    Assert.That(operation.Response.ContentEncoding, Is.EqualTo(Encoding.GetEncoding("ibm861")));
-                    ended = true;
-                });
-
-                while (!ended) { Thread.Sleep(10); }
+                Thread.Sleep(10);
             }
         }
 
         [Test]
-        public void It_should_use_CharacterSet_to_define_encoding()
+        public void It_should_send_and_get_response()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
             operation.Request.Uri = new Uri("http://localhost:8081/foo/");
             operation.Request.HttpHeaders.Add("foo", "bar");
             operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
@@ -298,37 +236,156 @@ namespace Remora.Tests.Components
                 listener.Start();
 
                 listener.BeginGetContext((result) =>
-                {
-                    var l = (HttpListener)result.AsyncState;
-                    var context = l.EndGetContext(result);
-                    var response = context.Response;
-                    response.ContentType = string.Format("text/html; charset={0}", Encoding.GetEncoding("IBM01143").HeaderName);
+                                             {
+                                                 var l = (HttpListener) result.AsyncState;
+                                                 var context = l.EndGetContext(result);
+                                                 var request = context.Request;
 
-                    response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
-                    response.OutputStream.Close();
-                }, listener);
+                                                 Assert.That(request.Headers["foo"], Is.EqualTo("bar"));
+                                                 Assert.That(request.InputStream.ReadFully(0),
+                                                             Is.EqualTo(operation.Request.Data));
 
-                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                                                 var response = context.Response;
+                                                 response.StatusCode = (int) HttpStatusCode.OK;
+                                                 response.AddHeader("anotherfoo", "anotherbar");
+                                                 response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
+                                                 response.OutputStream.Close();
+                                             }, listener);
+
+                var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
 
                 var ended = false;
                 sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
-                {
-                    Assert.That(!operation.OnError);
-                    Assert.That(operation.Response.ContentEncoding, Is.EqualTo(Encoding.GetEncoding("IBM01143")));
-                    ended = true;
-                });
+                                                                                   {
+                                                                                       Assert.That(
+                                                                                           operation.Response.StatusCode,
+                                                                                           Is.EqualTo(
+                                                                                               (int) HttpStatusCode.OK));
+                                                                                       Assert.That(
+                                                                                           operation.Response.Uri,
+                                                                                           Is.EqualTo(
+                                                                                               new Uri(
+                                                                                                   "http://localhost:8081/foo/")));
+                                                                                       Assert.That(
+                                                                                           operation.Response.
+                                                                                               HttpHeaders["anotherfoo"],
+                                                                                           Is.EqualTo("anotherbar"));
+                                                                                       Assert.That(
+                                                                                           operation.Response.Data,
+                                                                                           Is.EqualTo(responseBuffer));
+                                                                                       Assert.That(!operation.OnError);
+                                                                                       ended = true;
+                                                                                   });
 
-                while (!ended) { Thread.Sleep(10); }
+                while (!ended)
+                {
+                    Thread.Sleep(10);
+                }
             }
+        }
+
+        [Test]
+        public void It_should_send_with_a_client_certificate()
+        {
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
+            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
+            operation.ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null,
+                                                                            new PipelineDefinition
+                                                                                {
+                                                                                    ClientCertificateFilePath =
+                                                                                        @"Certificates\Remora.Tests.pfx",
+                                                                                    ClientCertificatePassword =
+                                                                                        @"Remora"
+                                                                                });
+            operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
+
+            using (var listener = new HttpListener())
+            {
+                listener.Prefixes.Add("http://localhost:8081/foo/");
+                listener.Start();
+
+                listener.BeginGetContext((result) =>
+                                             {
+                                                 var l = (HttpListener) result.AsyncState;
+                                                 var context = l.EndGetContext(result);
+                                                 var request = context.Request;
+
+                                                 // Don't want to unit test with Server certificates ;-)
+
+                                                 var response = context.Response;
+                                                 response.OutputStream.Close();
+                                             }, listener);
+
+                var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
+
+                var ended = false;
+                Assert.That(
+                    () => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { ended = true; }),
+                    Throws.Nothing);
+
+                while (!ended)
+                {
+                    Thread.Sleep(10);
+                }
+            }
+        }
+
+        [Test]
+        public void It_should_throw_a_ClientCertificateException_when_client_certificate_does_not_exists()
+        {
+            var operation = new RemoraOperation
+                                {
+                                    IncomingUri = new Uri("http://tempuri.org"),
+                                    Request = {Uri = new Uri("http://tempuri.org")},
+                                    ExecutingPipeline =
+                                        new Remora.Pipeline.Impl.Pipeline("default", null,
+                                                                          new PipelineDefinition
+                                                                              {
+                                                                                  ClientCertificateFilePath =
+                                                                                      @"C:\unknown.pfx"
+                                                                              })
+                                };
+
+            var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
+
+            Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
+                        Throws.Exception.TypeOf<ClientCertificateException>()
+                            .With.Message.Contains(@"C:\unknown.pfx")
+                );
+        }
+
+        [Test]
+        public void It_should_throw_a_ClientCertificateException_when_password_is_wrong()
+        {
+            var operation = new RemoraOperation
+                                {
+                                    IncomingUri = new Uri("http://tempuri.org"),
+                                    Request = {Uri = new Uri("http://tempuri.org")},
+                                    ExecutingPipeline =
+                                        new Remora.Pipeline.Impl.Pipeline("default", null,
+                                                                          new PipelineDefinition
+                                                                              {
+                                                                                  ClientCertificateFilePath =
+                                                                                      @"Certificates\Remora.Tests.pfx",
+                                                                                  ClientCertificatePassword = @"wrong"
+                                                                              })
+                                };
+
+            var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
+
+            Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
+                        Throws.Exception.TypeOf<ClientCertificateException>()
+                            .With.Message.Contains(operation.ExecutingPipeline.Definition.ClientCertificateFilePath)
+                );
         }
 
         [Test]
         public void It_should_throw_a_InvalidDestinationUriException_if_scheme_is_not_http()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org")};
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
             operation.Request.Uri = new Uri("ftp://localhost");
 
-            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
 
             Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
                         Throws.Exception.TypeOf<InvalidDestinationUriException>()
@@ -339,9 +396,9 @@ namespace Remora.Tests.Components
         [Test]
         public void It_should_throw_a_UnknownDestinationException_if_no_destination_uri()
         {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org")};
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
 
-            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
 
             Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
                         Throws.Exception.TypeOf<UnknownDestinationException>()
@@ -349,48 +406,14 @@ namespace Remora.Tests.Components
         }
 
         [Test]
-        public void It_should_throw_a_ClientCertificateException_when_client_certificate_does_not_exists()
+        public void It_should_use_CharacterSet_to_define_encoding()
         {
-            var operation = new RemoraOperation
-                                {
-                                    IncomingUri = new Uri("http://tempuri.org"),
-                                    Request =  { Uri = new Uri("http://tempuri.org") },
-                                    ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition { ClientCertificateFilePath = @"C:\unknown.pfx" })
-                                };
-            
-            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
-
-            Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
-                        Throws.Exception.TypeOf<ClientCertificateException>()
-                        .With.Message.Contains(@"C:\unknown.pfx")
-                );
-        }
-
-        [Test]
-        public void It_should_throw_a_ClientCertificateException_when_password_is_wrong()
-        {
-            var operation = new RemoraOperation
-            {
-                IncomingUri = new Uri("http://tempuri.org"),
-                Request = { Uri = new Uri("http://tempuri.org") },
-                ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition { ClientCertificateFilePath = @"Certificates\Remora.Tests.pfx", ClientCertificatePassword = @"wrong"})
-            };
-
-            var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
-
-            Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) => { }),
-                        Throws.Exception.TypeOf<ClientCertificateException>()
-                        .With.Message.Contains(operation.ExecutingPipeline.Definition.ClientCertificateFilePath)
-                );
-        }
-
-        [Test]
-        public void It_should_send_with_a_client_certificate()
-        {
-            var operation = new RemoraOperation { IncomingUri = new Uri("http://tempuri.org") };
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
             operation.Request.Uri = new Uri("http://localhost:8081/foo/");
-            operation.ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", null, new PipelineDefinition { ClientCertificateFilePath = @"Certificates\Remora.Tests.pfx", ClientCertificatePassword = @"Remora" });
+            operation.Request.HttpHeaders.Add("foo", "bar");
             operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
+
+            var responseBuffer = Encoding.UTF8.GetBytes("theresponse");
 
             using (var listener = new HttpListener())
             {
@@ -398,26 +421,87 @@ namespace Remora.Tests.Components
                 listener.Start();
 
                 listener.BeginGetContext((result) =>
-                {
-                    var l = (HttpListener)result.AsyncState;
-                    var context = l.EndGetContext(result);
-                    var request = context.Request;
+                                             {
+                                                 var l = (HttpListener) result.AsyncState;
+                                                 var context = l.EndGetContext(result);
+                                                 var response = context.Response;
+                                                 response.ContentType = string.Format("text/html; charset={0}",
+                                                                                      Encoding.GetEncoding("IBM01143").
+                                                                                          HeaderName);
 
-                    // Don't want to unit test with Server certificates ;-)
+                                                 response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
+                                                 response.OutputStream.Close();
+                                             }, listener);
 
-                    var response = context.Response;
-                    response.OutputStream.Close();
-                }, listener);
-
-                var sender = new Sender(new RemoraConfig()) { Logger = GetConsoleLogger() };
+                var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
 
                 var ended = false;
-                Assert.That(() => sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
-                {
-                    ended = true;
-                }), Throws.Nothing);
+                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
+                                                                                   {
+                                                                                       Assert.That(!operation.OnError);
+                                                                                       Assert.That(
+                                                                                           operation.Response.
+                                                                                               ContentEncoding,
+                                                                                           Is.EqualTo(
+                                                                                               Encoding.GetEncoding(
+                                                                                                   "IBM01143")));
+                                                                                       ended = true;
+                                                                                   });
 
-                while (!ended) { Thread.Sleep(10); }
+                while (!ended)
+                {
+                    Thread.Sleep(10);
+                }
+            }
+        }
+
+        [Test]
+        public void It_should_use_force_response_encoding_if_defined()
+        {
+            var operation = new RemoraOperation {IncomingUri = new Uri("http://tempuri.org")};
+            operation.Request.Uri = new Uri("http://localhost:8081/foo/");
+            operation.Request.HttpHeaders.Add("foo", "bar");
+            operation.Request.Data = Encoding.UTF8.GetBytes("bonjour");
+
+            var pipelineDefinition = new PipelineDefinition
+                                         {
+                                             Properties = {{"forceResponseEncoding", "ibm861"}}
+                                         };
+            operation.ExecutingPipeline = new Remora.Pipeline.Impl.Pipeline("default", new IPipelineComponent[0],
+                                                                            pipelineDefinition);
+
+            using (var listener = new HttpListener())
+            {
+                listener.Prefixes.Add("http://localhost:8081/foo/");
+                listener.Start();
+
+                listener.BeginGetContext((result) =>
+                                             {
+                                                 var l = (HttpListener) result.AsyncState;
+                                                 var context = l.EndGetContext(result);
+                                                 var response = context.Response;
+                                                 response.OutputStream.Close();
+                                             }, listener);
+
+                var sender = new Sender(new RemoraConfig()) {Logger = GetConsoleLogger()};
+
+                var ended = false;
+                sender.BeginAsyncProcess(operation, new ComponentDefinition(), (c) =>
+                                                                                   {
+                                                                                       Assert.That(!operation.OnError);
+                                                                                       Assert.That(
+                                                                                           operation.Response.
+                                                                                               ContentEncoding,
+                                                                                           Is.EqualTo(
+                                                                                               Encoding.GetEncoding(
+                                                                                                   "ibm861")));
+                                                                                       ended = true;
+                                                                                   });
+
+                while (!ended)
+                {
+                    Thread.Sleep(10);
+                }
             }
         }
 

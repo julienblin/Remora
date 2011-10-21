@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using NUnit.Framework;
@@ -58,37 +60,50 @@ namespace Remora.Tests
             Bootstraper.Init();
 
             Assert.That(Bootstraper.Container.Resolve<IRemoraOperation>(), Is.TypeOf<RemoraOperation>());
-            Assert.That(Bootstraper.Container.Resolve<IRemoraOperation>(), Is.Not.SameAs(Bootstraper.Container.Resolve<IRemoraOperation>()));
+            Assert.That(Bootstraper.Container.Resolve<IRemoraOperation>(),
+                        Is.Not.SameAs(Bootstraper.Container.Resolve<IRemoraOperation>()));
 
             Assert.That(Bootstraper.Container.Resolve<IPipelineEngine>(), Is.TypeOf<PipelineEngine>());
-            Assert.That(Bootstraper.Container.Resolve<IPipelineEngine>(), Is.SameAs(Bootstraper.Container.Resolve<IPipelineEngine>()));
+            Assert.That(Bootstraper.Container.Resolve<IPipelineEngine>(),
+                        Is.SameAs(Bootstraper.Container.Resolve<IPipelineEngine>()));
 
-            Assert.That(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>(), Is.TypeOf<RemoraOperationKindIdentifier>());
-            Assert.That(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>(), Is.SameAs(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>()));
+            Assert.That(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>(),
+                        Is.TypeOf<RemoraOperationKindIdentifier>());
+            Assert.That(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>(),
+                        Is.SameAs(Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>()));
 
             Assert.That(Bootstraper.Container.Resolve<IRemoraOperationFactory>(), Is.TypeOf<RemoraOperationFactory>());
-            Assert.That(Bootstraper.Container.Resolve<IRemoraOperationFactory>(), Is.SameAs(Bootstraper.Container.Resolve<IRemoraOperationFactory>()));
+            Assert.That(Bootstraper.Container.Resolve<IRemoraOperationFactory>(),
+                        Is.SameAs(Bootstraper.Container.Resolve<IRemoraOperationFactory>()));
 
             Assert.That(Bootstraper.Container.Resolve<IRemoraConfig>(), Is.TypeOf<RemoraConfig>());
 
             Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(), Is.TypeOf<PipelineFactory>());
-            Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(), Is.SameAs(Bootstraper.Container.Resolve<IPipelineFactory>()));
+            Assert.That(Bootstraper.Container.Resolve<IPipelineFactory>(),
+                        Is.SameAs(Bootstraper.Container.Resolve<IPipelineFactory>()));
 
             Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(), Is.TypeOf<ExceptionFormatter>());
-            Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(), Is.SameAs(Bootstraper.Container.Resolve<IExceptionFormatter>()));
+            Assert.That(Bootstraper.Container.Resolve<IExceptionFormatter>(),
+                        Is.SameAs(Bootstraper.Container.Resolve<IExceptionFormatter>()));
 
             Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.TypeOf<ResponseWriter>());
-            Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(), Is.SameAs(Bootstraper.Container.Resolve<IResponseWriter>()));
+            Assert.That(Bootstraper.Container.Resolve<IResponseWriter>(),
+                        Is.SameAs(Bootstraper.Container.Resolve<IResponseWriter>()));
 
             Assert.That(Bootstraper.Container.Resolve<ISoapTransformer>(), Is.TypeOf<SoapTransformer>());
-            Assert.That(Bootstraper.Container.Resolve<ISoapTransformer>(), Is.SameAs(Bootstraper.Container.Resolve<ISoapTransformer>()));
+            Assert.That(Bootstraper.Container.Resolve<ISoapTransformer>(),
+                        Is.SameAs(Bootstraper.Container.Resolve<ISoapTransformer>()));
 
             Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(Sender.ComponentId), Is.TypeOf<Sender>());
-            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SoapRecorder.ComponentId), Is.TypeOf<SoapRecorder>());
-            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SoapPlayer.ComponentId), Is.TypeOf<SoapPlayer>());
-            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SetHttpHeader.ComponentId), Is.TypeOf<SetHttpHeader>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SoapRecorder.ComponentId),
+                        Is.TypeOf<SoapRecorder>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SoapPlayer.ComponentId),
+                        Is.TypeOf<SoapPlayer>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SetHttpHeader.ComponentId),
+                        Is.TypeOf<SetHttpHeader>());
             Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(Tracer.ComponentId), Is.TypeOf<Tracer>());
-            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(PerfCounter.ComponentId), Is.TypeOf<PerfCounter>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(PerfCounter.ComponentId),
+                        Is.TypeOf<PerfCounter>());
         }
     }
 }

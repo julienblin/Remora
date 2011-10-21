@@ -1,9 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Licence
+
+// The MIT License
+// 
+// Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Castle.Core.Logging;
 using Remora.Configuration;
 using Remora.Core;
@@ -18,8 +41,9 @@ namespace Remora.Components
         public const string ComponentId = @"tracer";
 
         private ILogger _logger = NullLogger.Instance;
+
         /// <summary>
-        /// Logger
+        ///   Logger
         /// </summary>
         public ILogger Logger
         {
@@ -27,13 +51,16 @@ namespace Remora.Components
             set { _logger = value; }
         }
 
-        public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
+        public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition,
+                                               Action<bool> callback)
         {
             var category = GetCategory(componentDefinition);
             var executionPropertyKey = GetStopwatchExecutionPropertyKey(category);
-            if(operation.ExecutionProperties.ContainsKey(executionPropertyKey))
+            if (operation.ExecutionProperties.ContainsKey(executionPropertyKey))
             {
-                Logger.WarnFormat("There may exists two tracer with the same category ({0}) in the same pipeline. Results may be inacurate.", category);
+                Logger.WarnFormat(
+                    "There may exists two tracer with the same category ({0}) in the same pipeline. Results may be inacurate.",
+                    category);
             }
 
             var stopwatch = new Stopwatch();
@@ -42,7 +69,8 @@ namespace Remora.Components
             callback(true);
         }
 
-        public override void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action callback)
+        public override void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition,
+                                             Action callback)
         {
             try
             {
@@ -61,7 +89,9 @@ namespace Remora.Components
 
             if (!componentDefinition.Properties.ContainsKey("directory"))
             {
-                Logger.WarnFormat("Unable to trace operation {0}: no directory has been provided. You must use the directory attribute in the component configuration.", operation);
+                Logger.WarnFormat(
+                    "Unable to trace operation {0}: no directory has been provided. You must use the directory attribute in the component configuration.",
+                    operation);
                 return;
             }
             var directoryPath = componentDefinition.Properties["directory"];
@@ -74,12 +104,17 @@ namespace Remora.Components
                 }
                 catch (Exception ex)
                 {
-                    Logger.WarnFormat(ex, "Unable to trace operation {0}: the directory {1} does not exists and there has been an error when creating it.", operation, directoryPath);
+                    Logger.WarnFormat(ex,
+                                      "Unable to trace operation {0}: the directory {1} does not exists and there has been an error when creating it.",
+                                      operation, directoryPath);
                     return;
                 }
             }
 
-            var fileName = Path.Combine(directoryPath, string.Format("{0}-{1}-{2}.xml", DateTime.UtcNow.ToString("s").MakeValidFileName(), category.MakeValidFileName(), operation.OperationId));
+            var fileName = Path.Combine(directoryPath,
+                                        string.Format("{0}-{1}-{2}.xml",
+                                                      DateTime.UtcNow.ToString("s").MakeValidFileName(),
+                                                      category.MakeValidFileName(), operation.OperationId));
 
             if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Operation {0}: saving trace ({1}) in {2}...", operation, category, fileName);
@@ -105,7 +140,9 @@ namespace Remora.Components
 
         private static string GetCategory(IComponentDefinition componentDefinition)
         {
-            return componentDefinition.Properties.ContainsKey("category") ? componentDefinition.Properties["category"] : "default";
+            return componentDefinition.Properties.ContainsKey("category")
+                       ? componentDefinition.Properties["category"]
+                       : "default";
         }
 
         private static string GetStopwatchExecutionPropertyKey(string category)

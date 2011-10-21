@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -39,14 +41,14 @@ namespace Remora.Handler.Impl
 
         public ResponseWriter(IExceptionFormatter exceptionformatter)
         {
-            if(exceptionformatter == null) throw new ArgumentNullException("exceptionFormatter");
+            if (exceptionformatter == null) throw new ArgumentNullException("exceptionFormatter");
             Contract.EndContractBlock();
 
             _exceptionformatter = exceptionformatter;
         }
 
         /// <summary>
-        /// Logger
+        ///   Logger
         /// </summary>
         public ILogger Logger
         {
@@ -64,7 +66,9 @@ namespace Remora.Handler.Impl
 
             if (operation.OnError)
             {
-                Logger.ErrorFormat(operation.Exception, "There has been an error when processing request coming from {0}.", operation.IncomingUri);
+                Logger.ErrorFormat(operation.Exception,
+                                   "There has been an error when processing request coming from {0}.",
+                                   operation.IncomingUri);
                 _exceptionformatter.WriteException(operation, response);
             }
             else

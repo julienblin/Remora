@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -56,7 +58,7 @@ namespace Remora.Core.Impl
         }
 
         /// <summary>
-        /// Logger
+        ///   Logger
         /// </summary>
         public ILogger Logger
         {
@@ -72,13 +74,13 @@ namespace Remora.Core.Impl
             Contract.EndContractBlock();
 
             var args = new InternalGetArgs
-            {
-                Uri = request.Url,
-                Headers = request.Headers,
-                InputStream = request.InputStream,
-                ContentEncoding = request.ContentEncoding,
-                Method = request.HttpMethod
-            };
+                           {
+                               Uri = request.Url,
+                               Headers = request.Headers,
+                               InputStream = request.InputStream,
+                               ContentEncoding = request.ContentEncoding,
+                               Method = request.HttpMethod
+                           };
 
             return InternalGet(args);
         }
@@ -89,13 +91,13 @@ namespace Remora.Core.Impl
             Contract.EndContractBlock();
 
             var args = new InternalGetArgs
-            {
-                Uri = request.Url,
-                Headers = request.Headers,
-                InputStream = request.InputStream,
-                ContentEncoding = request.ContentEncoding,
-                Method = request.HttpMethod
-            };
+                           {
+                               Uri = request.Url,
+                               Headers = request.Headers,
+                               InputStream = request.InputStream,
+                               ContentEncoding = request.ContentEncoding,
+                               Method = request.HttpMethod
+                           };
 
             return InternalGet(args);
         }
@@ -104,8 +106,7 @@ namespace Remora.Core.Impl
 
         public virtual IRemoraOperation InternalGet(InternalGetArgs args)
         {
-
-            if(Logger.IsDebugEnabled)
+            if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Creating IRemoraOperation for {0}...", args.Uri);
 
             IRemoraOperation operation;
@@ -115,7 +116,9 @@ namespace Remora.Core.Impl
             }
             catch (Exception ex)
             {
-                throw new InvalidConfigurationException("Error while resolving IRemoraOperation from Windsor. Please make sure that the IRemoraOperation component is correctly registered.", ex);
+                throw new InvalidConfigurationException(
+                    "Error while resolving IRemoraOperation from Windsor. Please make sure that the IRemoraOperation component is correctly registered.",
+                    ex);
             }
 
             operation.Request.Data = args.InputStream.ReadFully(_config.MaxMessageSize);
@@ -136,11 +139,13 @@ namespace Remora.Core.Impl
             return operation;
         }
 
+        #region Nested type: InternalGetArgs
+
         public class InternalGetArgs
         {
             public Uri Uri { get; set; }
-            
-            public NameValueCollection Headers  { get; set; }
+
+            public NameValueCollection Headers { get; set; }
 
             public Stream InputStream { get; set; }
 
@@ -148,5 +153,7 @@ namespace Remora.Core.Impl
 
             public string Method { get; set; }
         }
+
+        #endregion
     }
 }

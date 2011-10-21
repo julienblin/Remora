@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -32,8 +34,9 @@ namespace Remora.Pipeline.Impl
     public class PipelineComponentInvocation : IPipelineComponentInvocation
     {
         private ILogger _logger = NullLogger.Instance;
+
         /// <summary>
-        /// Logger
+        ///   Logger
         /// </summary>
         public ILogger Logger
         {
@@ -57,13 +60,14 @@ namespace Remora.Pipeline.Impl
         {
             try
             {
-                if(Logger.IsDebugEnabled)
+                if (Logger.IsDebugEnabled)
                     Logger.DebugFormat("Calling Component[{0}].BeginAsyncProcess({1})...", Component, Operation);
                 Component.BeginAsyncProcess(Operation, ComponentDefinition, BeginProcessCallback);
             }
             catch (Exception ex)
             {
-                Logger.ErrorFormat(ex, "Error while calling Component[{0}].BeginAsyncProcess({1}).", Component, Operation);
+                Logger.ErrorFormat(ex, "Error while calling Component[{0}].BeginAsyncProcess({1}).", Component,
+                                   Operation);
                 Operation.Exception = ex;
 
                 if (Logger.IsDebugEnabled)
@@ -86,7 +90,8 @@ namespace Remora.Pipeline.Impl
                 Operation.Exception = ex;
 
                 if (Logger.IsDebugEnabled)
-                    Logger.DebugFormat("Calling PreviousInvocation[{0}].EndProcess() on {1}...", PreviousInvocation, Operation);
+                    Logger.DebugFormat("Calling PreviousInvocation[{0}].EndProcess() on {1}...", PreviousInvocation,
+                                       Operation);
                 PreviousInvocation.EndProcess();
             }
         }
@@ -95,7 +100,7 @@ namespace Remora.Pipeline.Impl
 
         public virtual void BeginProcessCallback(bool continueProcess)
         {
-            if(continueProcess)
+            if (continueProcess)
             {
                 if (Logger.IsDebugEnabled)
                     Logger.DebugFormat("Calling NextInvocation[{0}].BeginProcess() on {1}...", NextInvocation, Operation);
@@ -104,7 +109,8 @@ namespace Remora.Pipeline.Impl
             else
             {
                 if (Logger.IsDebugEnabled)
-                    Logger.DebugFormat("Calling PreviousInvocation[{0}].EndProcess() on {1}...", PreviousInvocation, Operation);
+                    Logger.DebugFormat("Calling PreviousInvocation[{0}].EndProcess() on {1}...", PreviousInvocation,
+                                       Operation);
                 PreviousInvocation.EndProcess();
             }
         }

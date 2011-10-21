@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -35,7 +37,7 @@ namespace Remora.Tests.Core.Impl
         [Test]
         public void It_should_identify_soap_requests_by_SOAPAction_header()
         {
-            var identifier = new RemoraOperationKindIdentifier { Logger = GetConsoleLogger() };
+            var identifier = new RemoraOperationKindIdentifier {Logger = GetConsoleLogger()};
             var operation = new RemoraOperation();
             operation.Request.HttpHeaders.Add("SOAPAction", "http://tempuri.org/");
 
@@ -45,7 +47,7 @@ namespace Remora.Tests.Core.Impl
         [Test]
         public void It_should_return_unknown()
         {
-            var identifier = new RemoraOperationKindIdentifier { Logger = GetConsoleLogger() };
+            var identifier = new RemoraOperationKindIdentifier {Logger = GetConsoleLogger()};
             var operation = new RemoraOperation();
 
             Assert.That(identifier.Identify(operation), Is.EqualTo(RemoraOperationKind.Unknown));
@@ -54,7 +56,7 @@ namespace Remora.Tests.Core.Impl
         [Test]
         public void It_should_validate_arguments()
         {
-            var identifier = new RemoraOperationKindIdentifier { Logger = GetConsoleLogger() };
+            var identifier = new RemoraOperationKindIdentifier {Logger = GetConsoleLogger()};
 
             Assert.That(() => identifier.Identify(null),
                         Throws.Exception.TypeOf<ArgumentNullException>()

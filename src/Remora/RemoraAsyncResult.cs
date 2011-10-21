@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -54,9 +56,18 @@ namespace Remora
         #region IAsyncResult Members
 
         public bool IsCompleted { get; private set; }
-        public WaitHandle AsyncWaitHandle { get { return null; } }
+
+        public WaitHandle AsyncWaitHandle
+        {
+            get { return null; }
+        }
+
         public object AsyncState { get; private set; }
-        public bool CompletedSynchronously { get { return false; } }
+
+        public bool CompletedSynchronously
+        {
+            get { return false; }
+        }
 
         #endregion
 
@@ -66,7 +77,9 @@ namespace Remora
             {
                 _logger = _container.Resolve<ILogger>();
             }
-            catch { }
+            catch
+            {
+            }
 
             try
             {
@@ -82,14 +95,16 @@ namespace Remora
                 operation.Kind = kindIdentifier.Identify(operation);
                 var pipeline = pipelineFactory.Get(operation);
 
-                if(pipeline == null)
-                    throw new InvalidConfigurationException(string.Format("Unable to select an appropriate pipeline for operation {0}.", operation));
+                if (pipeline == null)
+                    throw new InvalidConfigurationException(
+                        string.Format("Unable to select an appropriate pipeline for operation {0}.", operation));
 
                 pipelineEngine.RunAsync(operation, pipeline, EngineCallback);
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "There has been an error when processing request coming from {0}.", Context.Request.Url);
+                _logger.ErrorFormat(ex, "There has been an error when processing request coming from {0}.",
+                                    Context.Request.Url);
 
                 WriteGenericException(ex);
                 IsCompleted = true;
@@ -100,7 +115,8 @@ namespace Remora
         public void EngineCallback(IRemoraOperation operation)
         {
             if (_logger.IsDebugEnabled)
-                _logger.DebugFormat("Async process ended for request coming from {0}. Writing results...", Context.Request.Url);
+                _logger.DebugFormat("Async process ended for request coming from {0}. Writing results...",
+                                    Context.Request.Url);
 
             var writer = _container.Resolve<IResponseWriter>();
             writer.Write(operation, Context.Response);

@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -54,10 +56,11 @@ namespace Remora.Exceptions.Impl
 
         public virtual void WriteHtmlException(Exception exception, HttpResponse response)
         {
-            response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            response.StatusCode = (int) HttpStatusCode.InternalServerError;
             response.ContentType = "text/html";
             response.ContentEncoding = Encoding.UTF8;
-            response.Write(string.Format(ErrorResources.GenericHtmlError, exception.GetType().Name.Replace("Exception", ""), exception.Message));
+            response.Write(string.Format(ErrorResources.GenericHtmlError,
+                                         exception.GetType().Name.Replace("Exception", ""), exception.Message));
             response.Flush();
         }
 
@@ -66,9 +69,11 @@ namespace Remora.Exceptions.Impl
         protected virtual void WriteSoap(IRemoraOperation operation, HttpResponse response)
         {
             response.ContentType = "text/xml";
-            response.StatusCode = (int)HttpStatusCode.OK;
+            response.StatusCode = (int) HttpStatusCode.OK;
             response.ContentEncoding = Encoding.UTF8;
-            response.Write(string.Format(ErrorResources.SoapError, operation.Exception.GetType().Name.Replace("Exception", ""), operation.Exception.Message));
+            response.Write(string.Format(ErrorResources.SoapError,
+                                         operation.Exception.GetType().Name.Replace("Exception", ""),
+                                         operation.Exception.Message));
             response.Flush();
         }
     }

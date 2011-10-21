@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System.IO;
@@ -44,7 +46,10 @@ namespace Remora.Extensions
                     currentMessageSize += read;
 
                     if ((maxMessageSize > 0) && (currentMessageSize > maxMessageSize))
-                        throw new MaxMessageSizeException(string.Format("The maximum message size has been reached. Current value: {0}. Adjust your configuration settings if needed.", maxMessageSize));
+                        throw new MaxMessageSizeException(
+                            string.Format(
+                                "The maximum message size has been reached. Current value: {0}. Adjust your configuration settings if needed.",
+                                maxMessageSize));
 
                     ms.Write(buffer, 0, read);
                 }

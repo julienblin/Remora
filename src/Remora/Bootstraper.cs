@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System.Configuration;
@@ -67,7 +69,9 @@ namespace Remora
 
         private static IWindsorContainer InitContainer()
         {
-            var container = ConfigurationManager.GetSection("castle") != null ? new WindsorContainer(new XmlInterpreter()) : new WindsorContainer();
+            var container = ConfigurationManager.GetSection("castle") != null
+                                ? new WindsorContainer(new XmlInterpreter())
+                                : new WindsorContainer();
             container.AddFacility<LoggingFacility>(f => f.LogUsing(LoggerImplementation.Log4net).WithAppConfig());
             container.AddFacility<StartableFacility>();
             container.AddFacility<FactorySupportFacility>();
@@ -79,38 +83,35 @@ namespace Remora
                 RegisterIfMissing<IPipelineEngine, PipelineEngine>(),
                 RegisterIfMissing<IExceptionFormatter, ExceptionFormatter>(),
                 RegisterIfMissing<IResponseWriter, ResponseWriter>(),
-
                 Component.For<IRemoraConfig>()
                     .UsingFactoryMethod(RemoraConfigurationSectionHandler.GetConfiguration),
-
                 RegisterPipelineComponent<Sender>(Sender.ComponentId),
                 RegisterPipelineComponent<SoapRecorder>(SoapRecorder.ComponentId),
                 RegisterPipelineComponent<SoapPlayer>(SoapPlayer.ComponentId),
                 RegisterPipelineComponent<SetHttpHeader>(SetHttpHeader.ComponentId),
                 RegisterPipelineComponent<Tracer>(Tracer.ComponentId),
                 RegisterPipelineComponent<PerfCounter>(PerfCounter.ComponentId),
-                
                 RegisterIfMissing<ISoapTransformer, SoapTransformer>()
-            );
+                );
 
             return container;
         }
 
         private static ComponentRegistration<TService> RegisterIfMissing<TService, TImpl>(bool transient = false)
-             where TImpl : TService
+            where TImpl : TService
         {
             if (transient)
             {
                 return Component.For<TService>()
-                                .ImplementedBy<TImpl>()
-                                .LifeStyle.Transient
-                                .Unless((k, m) => k.HasComponent(typeof(TService)));
+                    .ImplementedBy<TImpl>()
+                    .LifeStyle.Transient
+                    .Unless((k, m) => k.HasComponent(typeof (TService)));
             }
             else
             {
                 return Component.For<TService>()
-                                .ImplementedBy<TImpl>()
-                                .Unless((k, m) => k.HasComponent(typeof(TService)));
+                    .ImplementedBy<TImpl>()
+                    .Unless((k, m) => k.HasComponent(typeof (TService)));
             }
         }
 

@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -45,26 +47,26 @@ namespace Remora.Tests.Exceptions.Impl
             var formatter = new ExceptionFormatter();
 
             Assert.That(() => formatter.WriteException(null, new HttpResponse(new StringWriter())),
-                Throws.Exception.TypeOf<ArgumentNullException>()
-                .With.Message.Contains("operation")
-            );
+                        Throws.Exception.TypeOf<ArgumentNullException>()
+                            .With.Message.Contains("operation")
+                );
 
             Assert.That(() => formatter.WriteException(new RemoraOperation(), null),
-                Throws.Exception.TypeOf<ArgumentNullException>()
-                .With.Message.Contains("response")
-            );
+                        Throws.Exception.TypeOf<ArgumentNullException>()
+                            .With.Message.Contains("response")
+                );
         }
 
         [Test]
         public void It_should_write_faults_when_operation_is_kind_of_soap()
         {
             var operation = new RemoraOperation
-            {
-                Kind = RemoraOperationKind.Soap,
-                Exception = new InvalidConfigurationException("themessage")
-            };
+                                {
+                                    Kind = RemoraOperationKind.Soap,
+                                    Exception = new InvalidConfigurationException("themessage")
+                                };
 
-            using(var writer = new StringWriter())
+            using (var writer = new StringWriter())
             {
                 var response = new HttpResponse(writer);
                 var formatter = new ExceptionFormatter();
@@ -72,7 +74,7 @@ namespace Remora.Tests.Exceptions.Impl
                 formatter.WriteException(operation, response);
 
                 Assert.That(response.ContentType, Is.EqualTo("text/xml"));
-                Assert.That(response.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
+                Assert.That(response.StatusCode, Is.EqualTo((int) HttpStatusCode.OK));
                 Assert.That(response.ContentEncoding, Is.EqualTo(Encoding.UTF8));
 
                 var body = writer.ToString();
@@ -90,10 +92,10 @@ namespace Remora.Tests.Exceptions.Impl
         public void It_should_write_html_errors_when_unknown()
         {
             var operation = new RemoraOperation
-            {
-                Kind = RemoraOperationKind.Unknown,
-                Exception = new InvalidConfigurationException("themessage")
-            };
+                                {
+                                    Kind = RemoraOperationKind.Unknown,
+                                    Exception = new InvalidConfigurationException("themessage")
+                                };
 
             using (var writer = new StringWriter())
             {
@@ -103,7 +105,7 @@ namespace Remora.Tests.Exceptions.Impl
                 formatter.WriteException(operation, response);
 
                 Assert.That(response.ContentType, Is.EqualTo("text/html"));
-                Assert.That(response.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
+                Assert.That(response.StatusCode, Is.EqualTo((int) HttpStatusCode.InternalServerError));
                 Assert.That(response.ContentEncoding, Is.EqualTo(Encoding.UTF8));
 
                 var body = writer.ToString();

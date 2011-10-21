@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -32,12 +34,14 @@ namespace Remora.Pipeline
     {
         #region IPipelineComponent Members
 
-        public virtual void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
+        public virtual void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition,
+                                              Action<bool> callback)
         {
             callback(true);
         }
 
-        public virtual void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action callback)
+        public virtual void EndAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition,
+                                            Action callback)
         {
             callback();
         }

@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System.IO;
@@ -61,10 +63,10 @@ namespace Remora.Tests.Extensions
 
             var testStream = new MemoryStream(sampleData);
 
-            Assert.That(() => testStream.ReadFully(10), 
-                Throws.Exception.TypeOf<MaxMessageSizeException>()
-                .With.Message.Contains("10")
-            );
+            Assert.That(() => testStream.ReadFully(10),
+                        Throws.Exception.TypeOf<MaxMessageSizeException>()
+                            .With.Message.Contains("10")
+                );
         }
     }
 }

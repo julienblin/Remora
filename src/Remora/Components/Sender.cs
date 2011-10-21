@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,11 +21,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
 using System.Diagnostics.Contracts;
-using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -42,7 +43,10 @@ namespace Remora.Components
     {
         public const string ComponentId = @"sender";
 
-        private static readonly Regex HttpSchemeRx = new Regex("^http(s)?$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+        private static readonly Regex HttpSchemeRx = new Regex("^http(s)?$",
+                                                               RegexOptions.Compiled | RegexOptions.CultureInvariant |
+                                                               RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+
         private readonly IRemoraConfig _config;
         private ILogger _logger = NullLogger.Instance;
 
@@ -55,7 +59,7 @@ namespace Remora.Components
         }
 
         /// <summary>
-        /// Logger
+        ///   Logger
         /// </summary>
         public ILogger Logger
         {
@@ -63,29 +67,37 @@ namespace Remora.Components
             set { _logger = value; }
         }
 
-        public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition, Action<bool> callback)
+        public override void BeginAsyncProcess(IRemoraOperation operation, IComponentDefinition componentDefinition,
+                                               Action<bool> callback)
         {
             if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Preparing to send {0}...", operation);
 
             if (operation.Request.Uri == null)
             {
-                throw new UnknownDestinationException(string.Format("Unable to send {0}: no destination uri is defined. Either use a rewrite attribute on the pipeline or create a custom IPipelineComponent that will determine the destination uri.", operation));
+                throw new UnknownDestinationException(
+                    string.Format(
+                        "Unable to send {0}: no destination uri is defined. Either use a rewrite attribute on the pipeline or create a custom IPipelineComponent that will determine the destination uri.",
+                        operation));
             }
 
             if (!HttpSchemeRx.IsMatch(operation.Request.Uri.Scheme))
             {
-                throw new InvalidDestinationUriException(string.Format("The destination uri for {0} is not a valid uri: {1}. Remora supports only http(s) destinations.", operation, operation.Request.Uri));
+                throw new InvalidDestinationUriException(
+                    string.Format(
+                        "The destination uri for {0} is not a valid uri: {1}. Remora supports only http(s) destinations.",
+                        operation, operation.Request.Uri));
             }
 
-            var webRequest = (HttpWebRequest)WebRequest.Create(operation.Request.Uri);
+            var webRequest = (HttpWebRequest) WebRequest.Create(operation.Request.Uri);
 
             if ((operation.ExecutingPipeline != null)
                 && (operation.ExecutingPipeline.Definition != null)
                 && (!string.IsNullOrEmpty(operation.ExecutingPipeline.Definition.ClientCertificateFilePath))
-            )
+                )
             {
-                ManageCertificate(webRequest, operation.ExecutingPipeline.Definition.ClientCertificateFilePath, operation.ExecutingPipeline.Definition.ClientCertificatePassword);
+                ManageCertificate(webRequest, operation.ExecutingPipeline.Definition.ClientCertificateFilePath,
+                                  operation.ExecutingPipeline.Definition.ClientCertificatePassword);
             }
 
             webRequest.Method = operation.Request.Method ?? "POST";
@@ -101,44 +113,56 @@ namespace Remora.Components
             }
 
             webRequest.BeginGetResponse((result) =>
-            {
-                webRequest = (HttpWebRequest)result.AsyncState;
-                try
-                {
-                    var response = (HttpWebResponse)webRequest.EndGetResponse(result);
-                    ReadResponse(operation, response, componentDefinition);
-                    if (Logger.IsDebugEnabled)
-                        Logger.DebugFormat("Successfully received response from {0} for {1}.", webRequest.RequestUri, operation);
-                }
-                catch (WebException webEx)
-                {
-                    if (webEx.Status == WebExceptionStatus.ProtocolError)
-                    {
-                        ReadResponse(operation, (HttpWebResponse)webEx.Response, componentDefinition);
-                        if (Logger.IsDebugEnabled)
-                            Logger.DebugFormat("Successfully received response from {0} for {1}.", webRequest.RequestUri, operation);
-                    }
-                    else
-                    {
-                        var message = string.Format("There has been an error while sending {0} to {1}.", operation, webRequest.RequestUri);
-                        Logger.Error(message, webEx);
-                        operation.Exception = new SendException(message, webEx);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var message = string.Format("There has been an error while sending {0} to {1}.", operation, webRequest.RequestUri);
-                    Logger.Error(message, ex);
-                    operation.Exception = new SendException(message, ex);
-                }
-                finally
-                {
-                    callback(false);
-                }
-            }, webRequest);
+                                            {
+                                                webRequest = (HttpWebRequest) result.AsyncState;
+                                                try
+                                                {
+                                                    var response = (HttpWebResponse) webRequest.EndGetResponse(result);
+                                                    ReadResponse(operation, response, componentDefinition);
+                                                    if (Logger.IsDebugEnabled)
+                                                        Logger.DebugFormat(
+                                                            "Successfully received response from {0} for {1}.",
+                                                            webRequest.RequestUri, operation);
+                                                }
+                                                catch (WebException webEx)
+                                                {
+                                                    if (webEx.Status == WebExceptionStatus.ProtocolError)
+                                                    {
+                                                        ReadResponse(operation, (HttpWebResponse) webEx.Response,
+                                                                     componentDefinition);
+                                                        if (Logger.IsDebugEnabled)
+                                                            Logger.DebugFormat(
+                                                                "Successfully received response from {0} for {1}.",
+                                                                webRequest.RequestUri, operation);
+                                                    }
+                                                    else
+                                                    {
+                                                        var message =
+                                                            string.Format(
+                                                                "There has been an error while sending {0} to {1}.",
+                                                                operation, webRequest.RequestUri);
+                                                        Logger.Error(message, webEx);
+                                                        operation.Exception = new SendException(message, webEx);
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    var message =
+                                                        string.Format(
+                                                            "There has been an error while sending {0} to {1}.",
+                                                            operation, webRequest.RequestUri);
+                                                    Logger.Error(message, ex);
+                                                    operation.Exception = new SendException(message, ex);
+                                                }
+                                                finally
+                                                {
+                                                    callback(false);
+                                                }
+                                            }, webRequest);
         }
 
-        protected virtual void ManageCertificate(HttpWebRequest webRequest, string clientCertificateFilePath, string clientCertificatePassword)
+        protected virtual void ManageCertificate(HttpWebRequest webRequest, string clientCertificateFilePath,
+                                                 string clientCertificatePassword)
         {
             if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Loading client certificate {0}...", clientCertificateFilePath);
@@ -155,15 +179,18 @@ namespace Remora.Components
             }
             catch (Exception ex)
             {
-                throw new ClientCertificateException(string.Format("There has been an error while opening client certificate {0}.", clientCertificateFilePath), ex);
+                throw new ClientCertificateException(
+                    string.Format("There has been an error while opening client certificate {0}.",
+                                  clientCertificateFilePath), ex);
             }
 
             webRequest.ClientCertificates.Add(clientCertificate);
         }
 
-        protected virtual void ReadResponse(IRemoraOperation operation, HttpWebResponse response, IComponentDefinition componentDefinition)
+        protected virtual void ReadResponse(IRemoraOperation operation, HttpWebResponse response,
+                                            IComponentDefinition componentDefinition)
         {
-            operation.Response.StatusCode = (int)response.StatusCode;
+            operation.Response.StatusCode = (int) response.StatusCode;
             operation.Response.Uri = response.ResponseUri;
 
             foreach (var header in response.Headers.AllKeys)
@@ -179,10 +206,12 @@ namespace Remora.Components
             ReadEncoding(operation, response, componentDefinition);
         }
 
-        protected virtual void ReadEncoding(IRemoraOperation operation, HttpWebResponse response, IComponentDefinition componentDefinition)
+        protected virtual void ReadEncoding(IRemoraOperation operation, HttpWebResponse response,
+                                            IComponentDefinition componentDefinition)
         {
             if (Logger.IsDebugEnabled)
-                Logger.DebugFormat("Determining encoding for response from {0} for operation {1}...", response.ResponseUri, operation);
+                Logger.DebugFormat("Determining encoding for response from {0} for operation {1}...",
+                                   response.ResponseUri, operation);
 
             if ((operation.ExecutingPipeline != null)
                 && (operation.ExecutingPipeline.Definition != null)
@@ -191,13 +220,17 @@ namespace Remora.Components
             {
                 try
                 {
-                    operation.Response.ContentEncoding = Encoding.GetEncoding(operation.ExecutingPipeline.Definition.Properties["forceResponseEncoding"]);
+                    operation.Response.ContentEncoding =
+                        Encoding.GetEncoding(operation.ExecutingPipeline.Definition.Properties["forceResponseEncoding"]);
                     if (Logger.IsDebugEnabled)
-                        Logger.DebugFormat("Operation {0}: encoding forced to {1}.", operation, operation.Response.ContentEncoding);
+                        Logger.DebugFormat("Operation {0}: encoding forced to {1}.", operation,
+                                           operation.Response.ContentEncoding);
                 }
                 catch (ArgumentException ex)
                 {
-                    Logger.ErrorFormat(ex, "There has been an error while loading encoding defined in forceResponseEncoding property: {0}", operation.ExecutingPipeline.Definition.Properties["forceResponseEncoding"]);
+                    Logger.ErrorFormat(ex,
+                                       "There has been an error while loading encoding defined in forceResponseEncoding property: {0}",
+                                       operation.ExecutingPipeline.Definition.Properties["forceResponseEncoding"]);
                     throw;
                 }
             }
@@ -211,11 +244,13 @@ namespace Remora.Components
                         encoding = Encoding.GetEncoding(response.CharacterSet);
 
                         if (Logger.IsDebugEnabled)
-                            Logger.DebugFormat("Operation {0}: loaded encoding {1} from character set: {2}", operation, encoding.EncodingName, response.CharacterSet);
+                            Logger.DebugFormat("Operation {0}: loaded encoding {1} from character set: {2}", operation,
+                                               encoding.EncodingName, response.CharacterSet);
                     }
                     catch (ArgumentException ex)
                     {
-                        Logger.WarnFormat(ex, "Operation {0}: unable to load a proper encoding for character set {1}", operation, response.CharacterSet);
+                        Logger.WarnFormat(ex, "Operation {0}: unable to load a proper encoding for character set {1}",
+                                          operation, response.CharacterSet);
                     }
                 }
                 else
@@ -271,8 +306,12 @@ namespace Remora.Components
                         if ((operation.ExecutingPipeline != null)
                             && (operation.ExecutingPipeline.Definition != null)
                             && (operation.ExecutingPipeline.Definition.Properties.ContainsKey("doNotAlterHost"))
-                            && (operation.ExecutingPipeline.Definition.Properties["doNotAlterHost"].Equals("true", StringComparison.InvariantCultureIgnoreCase))
-                          )
+                            &&
+                            (operation.ExecutingPipeline.Definition.Properties["doNotAlterHost"].Equals("true",
+                                                                                                        StringComparison
+                                                                                                            .
+                                                                                                            InvariantCultureIgnoreCase))
+                            )
                         {
                             webRequest.Host = header.Value;
                         }

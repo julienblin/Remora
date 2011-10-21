@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -47,7 +49,8 @@ namespace Remora.Configuration
                 {
                     case "maxmessagesize":
                         int maxMessageSizeValue;
-                        if (Int32.TryParse(attr.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out maxMessageSizeValue))
+                        if (Int32.TryParse(attr.Value, NumberStyles.Integer, CultureInfo.InvariantCulture,
+                                           out maxMessageSizeValue))
                             result.MaxMessageSize = maxMessageSizeValue;
                         break;
                     default:
@@ -101,7 +104,8 @@ namespace Remora.Configuration
 
         public static IRemoraConfig GetConfiguration()
         {
-            var config = (IRemoraConfig)ConfigurationManager.GetSection(ConfigurationSectionName);;
+            var config = (IRemoraConfig) ConfigurationManager.GetSection(ConfigurationSectionName);
+            ;
             return config ?? new RemoraConfig();
         }
 

@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -42,7 +44,7 @@ namespace Remora.Tests.Exceptions
                 var serializer = new BinaryFormatter();
                 serializer.Serialize(stream, reference);
                 stream.Position = 0;
-                return (T)serializer.Deserialize(stream);
+                return (T) serializer.Deserialize(stream);
             }
         }
 
@@ -75,7 +77,7 @@ namespace Remora.Tests.Exceptions
             Assert.That(() => new UnknownDestinationException("message"), Throws.Nothing);
             Assert.That(() => new UnknownDestinationException("message", innerException), Throws.Nothing);
             Assert.That(() => SerializeAndDeserialize<UnknownDestinationException>(), Throws.Nothing);
-            
+
             Assert.That(() => new UrlRewriteException(), Throws.Nothing);
             Assert.That(() => new UrlRewriteException("message"), Throws.Nothing);
             Assert.That(() => new UrlRewriteException("message", innerException), Throws.Nothing);

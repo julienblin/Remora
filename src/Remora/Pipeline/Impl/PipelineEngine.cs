@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -35,8 +37,9 @@ namespace Remora.Pipeline.Impl
     public class PipelineEngine : IPipelineEngine
     {
         private ILogger _logger = NullLogger.Instance;
+
         /// <summary>
-        /// Logger
+        ///   Logger
         /// </summary>
         public ILogger Logger
         {
@@ -64,32 +67,49 @@ namespace Remora.Pipeline.Impl
 
         #endregion
 
-        private IPipelineComponentInvocation BuildInvocations(IRemoraOperation operation, IPipeline pipeline, Action<IRemoraOperation> callback)
+        private IPipelineComponentInvocation BuildInvocations(IRemoraOperation operation, IPipeline pipeline,
+                                                              Action<IRemoraOperation> callback)
         {
-            var currentInvocation = new PipelineComponentInvocation { Logger = Logger, Operation = operation, Component = Kernel.Resolve<IPipelineComponent>(Sender.ComponentId)};
+            var currentInvocation = new PipelineComponentInvocation
+                                        {
+                                            Logger = Logger,
+                                            Operation = operation,
+                                            Component = Kernel.Resolve<IPipelineComponent>(Sender.ComponentId)
+                                        };
 
-            var pipelineDefs = pipeline.Definition != null ? pipeline.Definition.ComponentDefinitions.Reverse().ToArray() : null;
+            var pipelineDefs = pipeline.Definition != null
+                                   ? pipeline.Definition.ComponentDefinitions.Reverse().ToArray()
+                                   : null;
 
-            int currentIndex = 0;
+            var currentIndex = 0;
             foreach (var pipelineComponent in pipeline.Components.Reverse())
             {
                 if (pipelineComponent != null)
                 {
                     var previousInvocation = currentInvocation;
                     currentInvocation = new PipelineComponentInvocation
-                    {
-                        Logger              = Logger,
-                        Operation           = operation,
-                        ComponentDefinition = (pipelineDefs != null && pipelineDefs.Length > currentIndex) ? pipelineDefs[currentIndex] : null,
-                        Component           = pipelineComponent,
-                        NextInvocation      = currentInvocation
-                    };
+                                            {
+                                                Logger = Logger,
+                                                Operation = operation,
+                                                ComponentDefinition =
+                                                    (pipelineDefs != null && pipelineDefs.Length > currentIndex)
+                                                        ? pipelineDefs[currentIndex]
+                                                        : null,
+                                                Component = pipelineComponent,
+                                                NextInvocation = currentInvocation
+                                            };
                     previousInvocation.PreviousInvocation = currentInvocation;
                 }
                 ++currentIndex;
             }
 
-            var finalInvocation = new FinalCallbackPipelineComponentInvocation { Logger = Logger, Operation = operation, NextInvocation = currentInvocation, FinalCallback = callback };
+            var finalInvocation = new FinalCallbackPipelineComponentInvocation
+                                      {
+                                          Logger = Logger,
+                                          Operation = operation,
+                                          NextInvocation = currentInvocation,
+                                          FinalCallback = callback
+                                      };
             currentInvocation.PreviousInvocation = finalInvocation;
 
             return finalInvocation;

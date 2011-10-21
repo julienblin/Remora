@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,17 +21,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
-using System.Diagnostics;
-using Remora.Pipeline;
 using System.Collections.Generic;
+using Remora.Pipeline;
 
 namespace Remora.Core
 {
     /// <summary>
-    /// Represents a Remora operation
+    ///   Represents a Remora operation
     /// </summary>
     public interface IRemoraOperation
     {

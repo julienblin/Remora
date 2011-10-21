@@ -1,4 +1,5 @@
-﻿#region License
+﻿#region Licence
+
 // The MIT License
 // 
 // Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
@@ -20,6 +21,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -49,14 +51,14 @@ namespace Remora.Tests.Core.Impl
             container.Register(Component.For<IRemoraOperation>().ImplementedBy<RemoraOperation>());
 
             var args = new RemoraOperationFactory.InternalGetArgs
-            {
-                Uri = new Uri("http://tempuri.org/uri/?foo=bar"),
-                Headers = new NameValueCollection {{"Content-Type", "text/xml"}},
-                InputStream = LoadSample("SimpleHelloWorldRequest.xml"),
-                ContentEncoding = Encoding.UTF8
-            };
+                           {
+                               Uri = new Uri("http://tempuri.org/uri/?foo=bar"),
+                               Headers = new NameValueCollection {{"Content-Type", "text/xml"}},
+                               InputStream = LoadSample("SimpleHelloWorldRequest.xml"),
+                               ContentEncoding = Encoding.UTF8
+                           };
 
-            var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) {Logger = GetConsoleLogger()};
 
             var result = factory.InternalGet(args);
 
@@ -74,11 +76,13 @@ namespace Remora.Tests.Core.Impl
         public void It_should_throw_an_InvalidConfigurationException_when_IRemoraOperation_is_not_registered()
         {
             var container = new WindsorContainer();
-            var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) { Logger = GetConsoleLogger() };
+            var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) {Logger = GetConsoleLogger()};
 
-            Assert.That(() => factory.InternalGet(new RemoraOperationFactory.InternalGetArgs { Uri = new Uri("http://tempuri.org") }),
+            Assert.That(
+                () =>
+                factory.InternalGet(new RemoraOperationFactory.InternalGetArgs {Uri = new Uri("http://tempuri.org")}),
                 Throws.Exception.TypeOf<InvalidConfigurationException>()
-                .With.Message.Contains("IRemoraOperation"));
+                    .With.Message.Contains("IRemoraOperation"));
         }
 
         [Test]
@@ -96,11 +100,11 @@ namespace Remora.Tests.Core.Impl
 
             var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig());
 
-            Assert.That(() => factory.Get((HttpRequest)null),
+            Assert.That(() => factory.Get((HttpRequest) null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("request"));
 
-            Assert.That(() => factory.Get((HttpListenerRequest)null),
+            Assert.That(() => factory.Get((HttpListenerRequest) null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("request"));
         }
