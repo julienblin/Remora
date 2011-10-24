@@ -1,34 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns='http://schemas.microsoft.com/windows/2009/Ribbon'>
   <Application.Commands>
-    <Command Name="cmdApplicationMenu" Id="1000" />
 
-    <Command Name="cmdButtonOpen"
-				 Id="1002"
-				 LabelTitle="Open"
-				 LabelDescription="Open Description"
-				 TooltipTitle="Open"
-				 TooltipDescription="Open an existing image.">
-      <Command.LargeImages>
-        <Image>Res/Open32.bmp</Image>
-      </Command.LargeImages>
-      <Command.SmallImages>
-        <Image>Res/Open16.bmp</Image>
-      </Command.SmallImages>
+    <Command Name="cmdTabTrace"
+             Id="1100"
+             LabelTitle="{Resource:cmdTabTrace_LabelTitle}">
+    </Command>
+
+    <Command Name="cmdGroupTabTraceDirectoryManagement"
+             Id="1110"
+             LabelTitle="{Resource:cmdGroupTabTraceDirectoryManagement_LabelTitle}">
+    </Command>
+
+    <Command Name="cmdGroupTabTraceDirectoryManagementOpen"
+             Id="1111"
+             LabelTitle="{Resource:cmdGroupTabTraceDirectoryManagementOpen_LabelTitle}">
+    </Command>
+
+    <Command Name="cmdGroupTabTraceDirectoryManagementClose"
+             Id="1112"
+             LabelTitle="{Resource:cmdGroupTabTraceDirectoryManagementClose_LabelTitle}">
+    </Command>
+
+    <Command Name="cmdTabLocalServer"
+             Id="1200"
+             LabelTitle="{Resource:cmdTabLocalServer_LabelTitle}">
     </Command>
 
     <Command Name="cmdButtonExit"
-				 Id="1004"
-				 LabelTitle="Exit"
-				 LabelDescription="Exit Description"
-				 TooltipTitle="Exit"
-				 TooltipDescription="Exit application.">
-      <Command.LargeImages>
-        <Image>Res/Exit32.bmp</Image>
-      </Command.LargeImages>
-      <Command.SmallImages>
-        <Image>Res/Exit16.bmp</Image>
-      </Command.SmallImages>
+				 Id="9001"
+				 LabelTitle="{Resource:cmdButtonExit_LabelTitle}">
     </Command>
 
   </Application.Commands>
@@ -36,15 +37,32 @@
   <Application.Views>
     <Ribbon>
       <Ribbon.ApplicationMenu>
-        <ApplicationMenu CommandName="cmdApplicationMenu">
-          <MenuGroup>
-            <Button CommandName='cmdButtonOpen' />
-          </MenuGroup>
-          <MenuGroup>
-            <Button CommandName='cmdButtonExit' />
-          </MenuGroup>
-        </ApplicationMenu>
-      </Ribbon.ApplicationMenu>
+				<ApplicationMenu CommandName="cmdApplicationMenu">
+					<MenuGroup>
+						<Button CommandName='cmdButtonExit' />
+					</MenuGroup>
+				</ApplicationMenu>
+			</Ribbon.ApplicationMenu>
+
+      <Ribbon.Tabs>
+        <Tab CommandName="cmdTabTrace">
+
+          <Tab.ScalingPolicy>
+            <ScalingPolicy>
+              <ScalingPolicy.IdealSizes>
+                <Scale Group="cmdGroupTabTraceDirectoryManagement" Size="Large" />
+              </ScalingPolicy.IdealSizes>
+            </ScalingPolicy>
+          </Tab.ScalingPolicy>
+          
+          <Group CommandName="cmdGroupTabTraceDirectoryManagement" SizeDefinition="TwoButtons">
+            <Button CommandName="cmdGroupTabTraceDirectoryManagementOpen" />
+            <Button CommandName="cmdGroupTabTraceDirectoryManagementClose" />
+          </Group>
+        </Tab>
+        <Tab CommandName="cmdTabLocalServer">
+        </Tab>
+      </Ribbon.Tabs>
     </Ribbon>
   </Application.Views>
 </Application>

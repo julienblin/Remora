@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
 
 namespace Remora.UI
 {
@@ -15,7 +17,17 @@ namespace Remora.UI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow());
+
+            var container = new WindsorContainer();
+            container.Register(
+                Component.For<MainWindow>(),
+                AllTypes
+                    .FromThisAssembly()
+                    .BasedOn<ICommand>()
+                    .Configure(c => c.LifeStyle.Transient)
+            );
+
+            Application.Run(container.Resolve<MainWindow>());
         }
     }
 }
