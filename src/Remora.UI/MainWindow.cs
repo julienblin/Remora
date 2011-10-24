@@ -96,7 +96,12 @@ namespace Remora.UI
 
             SetApplicationMode(result.Value);
 
-            FindOrCreatePanel(result.Key.TargetPanelType, true);
+            var panel = FindOrCreatePanel(result.Key.TargetPanelType, true);
+            var commandNotifier = panel as ICommandNotifier;
+            if (commandNotifier != null)
+            {
+                commandNotifier.CommandFinished(result.Key);
+            }
         }
     }
 }

@@ -28,26 +28,54 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this._labelNothing = new System.Windows.Forms.Label();
             this.FolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this._dataGrid = new System.Windows.Forms.DataGridView();
+            this.OperationId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)(this._dataGrid)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // _labelNothing
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 61);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "label1";
+            this._labelNothing.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this._labelNothing.AutoSize = true;
+            this._labelNothing.Location = new System.Drawing.Point(179, 167);
+            this._labelNothing.Name = "_labelNothing";
+            this._labelNothing.Size = new System.Drawing.Size(241, 13);
+            this._labelNothing.TabIndex = 0;
+            this._labelNothing.Text = "Use the open command to load a set of trace files";
+            // 
+            // _dataGrid
+            // 
+            this._dataGrid.AllowUserToAddRows = false;
+            this._dataGrid.AllowUserToDeleteRows = false;
+            this._dataGrid.AllowUserToOrderColumns = true;
+            this._dataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this._dataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.OperationId});
+            this._dataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._dataGrid.Location = new System.Drawing.Point(0, 0);
+            this._dataGrid.Name = "_dataGrid";
+            this._dataGrid.ReadOnly = true;
+            this._dataGrid.Size = new System.Drawing.Size(596, 369);
+            this._dataGrid.TabIndex = 1;
+            this._dataGrid.Visible = false;
+            // 
+            // OperationId
+            // 
+            this.OperationId.HeaderText = "OperationId";
+            this.OperationId.Name = "OperationId";
+            this.OperationId.ReadOnly = true;
             // 
             // TracePanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this._dataGrid);
+            this.Controls.Add(this._labelNothing);
             this.Name = "TracePanel";
             this.Size = new System.Drawing.Size(596, 369);
+            ((System.ComponentModel.ISupportInitialize)(this._dataGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -55,7 +83,9 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label _labelNothing;
         public System.Windows.Forms.FolderBrowserDialog FolderBrowserDialog;
+        private System.Windows.Forms.DataGridView _dataGrid;
+        private System.Windows.Forms.DataGridViewTextBoxColumn OperationId;
     }
 }

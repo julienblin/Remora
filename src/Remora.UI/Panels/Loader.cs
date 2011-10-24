@@ -19,8 +19,10 @@ namespace Remora.UI.Panels
         public void ReportProgress(string message, int current, int total)
         {
             _labelLoading.Text = message;
+            _labelLoading.Left = (Width - _labelLoading.Width)/2;
             _progressBar.Maximum = total;
             _progressBar.Value = current;
+            _progressBar.Text = string.Format("{0} / {1}", current, total);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Remora.UI.Trace
         private LuceneDirectory _directoryStore;
         private Analyzer _analyzer;
 
-        public void AddToIndex(string path, Action<DirectoryIndex, int, int> progressCallback)
+        public void AddToIndex(string path, Action<DirectoryIndex, string, int, int> progressCallback)
         {
             _directoryStore = new RAMDirectory();
             _analyzer = new StandardAnalyzer();
@@ -34,7 +34,7 @@ namespace Remora.UI.Trace
                     var doc = new Document();
                     doc.Add(new Field("id", serializableOperation.OperationId.ToString(), Field.Store.YES, Field.Index.ANALYZED));
                     writer.AddDocument(doc);
-                    progressCallback(this, currentIndex, traceFiles.Count);
+                    progressCallback(this, traceFile, currentIndex, traceFiles.Count);
                     ++currentIndex;
                 }
             }

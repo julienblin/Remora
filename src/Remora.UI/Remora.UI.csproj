@@ -75,8 +75,12 @@
     <Compile Include="AbstractCommand.cs" />
     <Compile Include="ApplicationModes.cs" />
     <Compile Include="Commands\OpenTraceDirectoryCommand.cs" />
+    <Compile Include="Controls\TextProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ICommand.cs" />
     <Compile Include="CommandReportProgressEventArgs.cs" />
+    <Compile Include="ICommandNotifier.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

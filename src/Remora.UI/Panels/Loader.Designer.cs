@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this._progressBar = new System.Windows.Forms.ProgressBar();
+            this._progressBar = new Remora.UI.Controls.TextProgressBar();
             this._labelLoading = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -65,7 +65,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ProgressBar _progressBar;
+        private Remora.UI.Controls.TextProgressBar _progressBar;
         private System.Windows.Forms.Label _labelLoading;
     }
 }

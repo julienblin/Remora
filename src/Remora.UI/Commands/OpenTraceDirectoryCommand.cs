@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Remora.UI.Panels;
+using Remora.UI.Trace;
 using RibbonLib.Controls;
 
 namespace Remora.UI.Commands
@@ -26,12 +27,10 @@ namespace Remora.UI.Commands
         {
             if (applicationMode == (int)ApplicationModes.DirectoryIndexing)
             {
-                for (var i = 0; i < 100; i++)
-                {
-                    Thread.Sleep(100);
-                    InvokeReportProgress("Better...", i, 100);
-                }
-
+                CastTargetPanel.DirectoryIndex = new DirectoryIndex();
+                CastTargetPanel.DirectoryIndex.AddToIndex(CastTargetPanel.FolderBrowserDialog.SelectedPath, (msg, traceFile,current, total) => {
+                    InvokeReportProgress(string.Format("Loading {0}...", traceFile), current, total);
+                });
                 return (int) ApplicationModes.DirectoryIndexed;
             }
 

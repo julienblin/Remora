@@ -45,7 +45,7 @@
 			</Ribbon.ApplicationMenu>
 
       <Ribbon.Tabs>
-        <Tab CommandName="cmdTabTrace">
+        <Tab CommandName="cmdTabTrace" ApplicationModes="0,1,2">
 
           <Tab.ScalingPolicy>
             <ScalingPolicy>
@@ -55,7 +55,7 @@
             </ScalingPolicy>
           </Tab.ScalingPolicy>
           
-          <Group CommandName="cmdGroupTabTraceDirectoryManagement" SizeDefinition="TwoButtons">
+          <Group CommandName="cmdGroupTabTraceDirectoryManagement" SizeDefinition="TwoButtons" ApplicationModes="0,2">
             <Button CommandName="cmdGroupTabTraceDirectoryManagementOpen" />
             <Button CommandName="cmdGroupTabTraceDirectoryManagementClose" />
           </Group>
