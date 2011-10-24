@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this._ribbonControl = new RibbonLib.Ribbon();
+            this._panelContent = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // _ribbonControl
@@ -41,11 +42,20 @@
             this._ribbonControl.Size = new System.Drawing.Size(761, 118);
             this._ribbonControl.TabIndex = 0;
             // 
+            // _panelContent
+            // 
+            this._panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._panelContent.Location = new System.Drawing.Point(0, 118);
+            this._panelContent.Name = "_panelContent";
+            this._panelContent.Size = new System.Drawing.Size(761, 408);
+            this._panelContent.TabIndex = 1;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(761, 526);
+            this.Controls.Add(this._panelContent);
             this.Controls.Add(this._ribbonControl);
             this.Name = "MainWindow";
             this.Text = "MainWindow";
@@ -56,5 +66,6 @@
         #endregion
 
         private RibbonLib.Ribbon _ribbonControl;
+        private System.Windows.Forms.Panel _panelContent;
     }
 }
