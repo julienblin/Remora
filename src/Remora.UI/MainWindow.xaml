@@ -1,8 +1,20 @@
 ﻿<Window x:Class="Remora.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Remora" Height="350" Width="525">
+        Title="Remora" Height="350" Width="525" xmlns:my="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon" xmlns:ViewModel="clr-namespace:Remora.UI.ViewModel">
     <Grid>
-        
+        <my:Ribbon Height="Auto" HorizontalAlignment="Stretch" Name="mainRibbon" VerticalAlignment="Top" HorizontalContentAlignment="Stretch">
+            <my:Ribbon.ApplicationMenu>
+                <my:RibbonApplicationMenu IsEnabled="False" Visibility="Collapsed" />
+            </my:Ribbon.ApplicationMenu>
+            <my:RibbonTab Header="Trace Viewer">
+                <my:RibbonGroup>
+                    <my:RibbonButton DataContext="{x:Static ViewModel:TraceViewer.Open}" />
+                </my:RibbonGroup>
+            </my:RibbonTab>
+            <my:RibbonTab Header="Local Server">
+
+            </my:RibbonTab>
+        </my:Ribbon>
     </Grid>
 </Window>
