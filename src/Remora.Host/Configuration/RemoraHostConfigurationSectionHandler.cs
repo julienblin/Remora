@@ -68,23 +68,55 @@ namespace Remora.Host.Configuration
             var serviceNode = section.SelectSingleNode("//service");
             if (serviceNode != null)
             {
+                var serviceConfig = new ServiceConfig();
+
                 foreach (XmlAttribute attr in serviceNode.Attributes)
                 {
                     switch (attr.Name.ToLowerInvariant())
                     {
                         case "name":
-                            result.ServiceName = attr.Value;
+                            serviceConfig.ServiceName = attr.Value;
                             break;
                         case "displayname":
-                            result.DisplayName = attr.Value;
+                            serviceConfig.DisplayName = attr.Value;
                             break;
                         case "description":
-                            result.Description = attr.Value;
+                            serviceConfig.Description = attr.Value;
+                            break;
+                        case "runas":
+                            switch (attr.Value.ToLowerInvariant())
+                            {
+                                case "localservice":
+                                    serviceConfig.RunAs = ServiceConfigRunAs.LocalService;
+                                    break;
+                                case "localsystem":
+                                    serviceConfig.RunAs = ServiceConfigRunAs.LocalSystem;
+                                    break;
+                                case "networkservice":
+                                    serviceConfig.RunAs = ServiceConfigRunAs.NetworkService;
+                                    break;
+                                case "user":
+                                    serviceConfig.RunAs = ServiceConfigRunAs.User;
+                                    break;
+                                default:
+                                    throw new RemoraHostConfigException(string.Format("Unknown runas option for service node: {0}", attr.Value));
+                            }
+                            break;
+                        case "username":
+                            serviceConfig.Username = attr.Value;
+                            break;
+                        case "password":
+                            serviceConfig.Password= attr.Value;
                             break;
                         default:
                             throw new RemoraHostConfigException(string.Format("Unknown attribute for service node: {0}", attr.Name));
                     }
                 }
+
+                if((serviceConfig.RunAs == ServiceConfigRunAs.User) && string.IsNullOrWhiteSpace(serviceConfig.Username))
+                    throw new RemoraHostConfigException("Missing mandatory username value for service node when runAs=user.");
+
+                result.ServiceConfig = serviceConfig;
             }
         }
     }

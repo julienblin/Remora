@@ -19,14 +19,14 @@ namespace Remora.Host
 
         public void Start()
         {
-            Log.InfoFormat("Starting {0} service...", _config.DisplayName);
-            Log.InfoFormat("{0} service started.", _config.DisplayName);
+            Log.InfoFormat("Starting {0} service...", _config.ServiceConfig.DisplayName);
+            Log.InfoFormat("{0} service started.", _config.ServiceConfig.DisplayName);
         }
 
         public void Stop()
         {
-            Log.InfoFormat("Stopping {0} service...", _config.DisplayName);
-            Log.InfoFormat("{0} service stopped.", _config.DisplayName);
+            Log.InfoFormat("Stopping {0} service...", _config.ServiceConfig.DisplayName);
+            Log.InfoFormat("{0} service stopped.", _config.ServiceConfig.DisplayName);
         }
     }
 }

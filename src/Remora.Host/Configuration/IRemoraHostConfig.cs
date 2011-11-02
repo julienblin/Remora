@@ -7,11 +7,7 @@ namespace Remora.Host.Configuration
 {
     public interface IRemoraHostConfig
     {
-        string ServiceName { get; }
-
-        string DisplayName { get; }
-
-        string Description { get; }
+        IServiceConfig ServiceConfig { get; }
 
         IEnumerable<IListenerConfig> ListenerConfigs { get; }
     }

@@ -18,9 +18,10 @@ namespace Remora.Host.Tests.Configuration
         {
             var config = RemoraHostConfigurationSectionHandler.GetConfiguration();
 
-            Assert.That(config.ServiceName, Is.EqualTo("serviceName"));
-            Assert.That(config.DisplayName, Is.EqualTo("displayName"));
-            Assert.That(config.Description, Is.EqualTo("description"));
+            Assert.That(config.ServiceConfig.ServiceName, Is.EqualTo("serviceName"));
+            Assert.That(config.ServiceConfig.DisplayName, Is.EqualTo("displayName"));
+            Assert.That(config.ServiceConfig.Description, Is.EqualTo("description"));
+            Assert.That(config.ServiceConfig.RunAs, Is.EqualTo(ServiceConfigRunAs.LocalSystem));
 
             Assert.That(config.ListenerConfigs.Count(), Is.EqualTo(2));
             Assert.That(config.ListenerConfigs.First().Prefix, Is.EqualTo("http://+:9091/"));
@@ -32,9 +33,10 @@ namespace Remora.Host.Tests.Configuration
         {
             var config = RemoraHostConfigurationSectionHandler.GetConfiguration("default");
 
-            Assert.That(config.ServiceName, Is.EqualTo(RemoraHostConfig.Defaults.ServiceName));
-            Assert.That(config.DisplayName, Is.EqualTo(RemoraHostConfig.Defaults.DisplayName));
-            Assert.That(config.Description, Is.EqualTo(RemoraHostConfig.Defaults.Description));
+            Assert.That(config.ServiceConfig.ServiceName, Is.EqualTo(ServiceConfig.Defaults.ServiceName));
+            Assert.That(config.ServiceConfig.DisplayName, Is.EqualTo(ServiceConfig.Defaults.DisplayName));
+            Assert.That(config.ServiceConfig.Description, Is.EqualTo(ServiceConfig.Defaults.Description));
+            Assert.That(config.ServiceConfig.RunAs, Is.EqualTo(ServiceConfig.Defaults.RunAs));
             Assert.That(config.ListenerConfigs.Count(), Is.EqualTo(0));
         }
 
@@ -63,6 +65,54 @@ namespace Remora.Host.Tests.Configuration
                 Throws.Exception.TypeOf<ConfigurationErrorsException>()
                 .With.InnerException.TypeOf<RemoraHostConfigException>()
                 .And.Message.Contains("prefix"));
+        }
+
+        [Test]
+        public void It_should_load_local_service()
+        {
+            var config = RemoraHostConfigurationSectionHandler.GetConfiguration("localService");
+            Assert.That(config.ServiceConfig.RunAs, Is.EqualTo(ServiceConfigRunAs.LocalService));
+        }
+
+        [Test]
+        public void It_should_load_local_system()
+        {
+            var config = RemoraHostConfigurationSectionHandler.GetConfiguration("localSystem");
+            Assert.That(config.ServiceConfig.RunAs, Is.EqualTo(ServiceConfigRunAs.LocalSystem));
+        }
+
+        [Test]
+        public void It_should_load_local_network_service()
+        {
+            var config = RemoraHostConfigurationSectionHandler.GetConfiguration("networkService");
+            Assert.That(config.ServiceConfig.RunAs, Is.EqualTo(ServiceConfigRunAs.NetworkService));
+        }
+
+        [Test]
+        public void It_should_load_runas_user()
+        {
+            var config = RemoraHostConfigurationSectionHandler.GetConfiguration("runAsUser");
+            Assert.That(config.ServiceConfig.RunAs, Is.EqualTo(ServiceConfigRunAs.User));
+            Assert.That(config.ServiceConfig.Username, Is.EqualTo("foo"));
+            Assert.That(config.ServiceConfig.Password, Is.EqualTo("bar"));
+        }
+
+        [Test]
+        public void It_should_validate_runas_value()
+        {
+            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("badRunAsValue"),
+                Throws.Exception.TypeOf<ConfigurationErrorsException>()
+                .With.InnerException.TypeOf<RemoraHostConfigException>()
+                .And.Message.Contains("foo"));
+        }
+
+        [Test]
+        public void It_should_validate_runas_user()
+        {
+            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("badRunAsUser"),
+                Throws.Exception.TypeOf<ConfigurationErrorsException>()
+                .With.InnerException.TypeOf<RemoraHostConfigException>()
+                .And.Message.Contains("username"));
         }
     }
 }

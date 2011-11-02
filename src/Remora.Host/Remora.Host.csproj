@@ -70,7 +70,9 @@
     <Compile Include="Configuration\IListenerConfig.cs" />
     <Compile Include="Configuration\Impl\ListenerConfig.cs" />
     <Compile Include="Configuration\Impl\RemoraHostConfig.cs" />
+    <Compile Include="Configuration\Impl\ServiceConfig.cs" />
     <Compile Include="Configuration\IRemoraHostConfig.cs" />
+    <Compile Include="Configuration\IServiceConfig.cs" />
     <Compile Include="Configuration\RemoraHostConfigurationSectionHandler.cs" />
     <Compile Include="Exceptions\RemoraHostConfigException.cs" />
     <Compile Include="Exceptions\RemoraHostException.cs" />

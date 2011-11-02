@@ -30,11 +30,26 @@ namespace Remora.Host
                         s.WhenStarted(rhs => rhs.Start());
                         s.WhenStopped(rhs => rhs.Stop());
                     });
-                    x.RunAsLocalSystem();
 
-                    x.SetDescription(config.Description);
-                    x.SetDisplayName(config.DisplayName);
-                    x.SetServiceName(config.ServiceName);
+                    switch (config.ServiceConfig.RunAs)
+                    {
+                        case ServiceConfigRunAs.LocalService:
+                            x.RunAsLocalService();
+                            break;
+                        case ServiceConfigRunAs.LocalSystem:
+                            x.RunAsLocalSystem();
+                            break;
+                        case ServiceConfigRunAs.NetworkService:
+                            x.RunAsNetworkService();
+                            break;
+                        case ServiceConfigRunAs.User:
+                            x.RunAs(config.ServiceConfig.Username, config.ServiceConfig.Password);
+                            break;
+                    }
+
+                    x.SetDescription(config.ServiceConfig.Description);
+                    x.SetDisplayName(config.ServiceConfig.DisplayName);
+                    x.SetServiceName(config.ServiceConfig.ServiceName);
                 });
 
                 return 0;
