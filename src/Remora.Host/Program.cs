@@ -24,13 +24,13 @@ namespace Remora.Host
 
                 HostFactory.Run(x =>
                 {
-                    //x.Service<TownCrier>(s => 
-                    //{
-                    //    s.ConstructUsing(name => new TownCrier());
-                    //    s.WhenStarted(tc => tc.Start());
-                    //    s.WhenStopped(tc => tc.Stop());
-                    //});
-                    //x.RunAsLocalSystem();
+                    x.Service<RemoraHostService>(s =>
+                    {
+                        s.ConstructUsing(name => new RemoraHostService(config));
+                        s.WhenStarted(rhs => rhs.Start());
+                        s.WhenStopped(rhs => rhs.Stop());
+                    });
+                    x.RunAsLocalSystem();
 
                     x.SetDescription(config.Description);
                     x.SetDisplayName(config.DisplayName);
@@ -56,7 +56,15 @@ namespace Remora.Host
                 {
                     Layout = layout
                 };
-                consoleAppender.AddFilter(new log4net.Filter.LevelRangeFilter { LevelMin = Level.Info, AcceptOnMatch = true });
+                consoleAppender.AddFilter(
+                    new log4net.Filter.LoggerMatchFilter
+                        {
+                            LoggerToMatch = "Remora",
+                            AcceptOnMatch = true,
+                            Next = new log4net.Filter.LevelRangeFilter { LevelMin = Level.Info, AcceptOnMatch = true }
+                        }
+                );
+                consoleAppender.AddFilter(new log4net.Filter.DenyAllFilter());
                 consoleAppender.ActivateOptions();
                 log4net.Config.BasicConfigurator.Configure(consoleAppender);
             }
