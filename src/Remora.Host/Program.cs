@@ -14,7 +14,6 @@ namespace Remora.Host
             {
                 //x.Service<TownCrier>(s => 
                 //{
-                //    s.SetServiceName("tc");
                 //    s.ConstructUsing(name => new TownCrier());
                 //    s.WhenStarted(tc => tc.Start());
                 //    s.WhenStopped(tc => tc.Stop());
