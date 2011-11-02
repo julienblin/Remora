@@ -25,6 +25,7 @@
 #endregion
 
 using System;
+using System.Net;
 using System.Web;
 using Remora.Core;
 
@@ -34,6 +35,10 @@ namespace Remora.Exceptions
     {
         void WriteException(IRemoraOperation operation, HttpResponse response);
 
+        void WriteException(IRemoraOperation operation, HttpListenerResponse response);
+
         void WriteHtmlException(Exception exception, HttpResponse response);
+
+        void WriteHtmlException(Exception exception, HttpListenerResponse response);
     }
 }

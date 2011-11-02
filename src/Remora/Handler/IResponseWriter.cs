@@ -24,6 +24,7 @@
 
 #endregion
 
+using System.Net;
 using System.Web;
 using Remora.Core;
 
@@ -32,5 +33,7 @@ namespace Remora.Handler
     public interface IResponseWriter
     {
         void Write(IRemoraOperation operation, HttpResponse response);
+
+        void Write(IRemoraOperation operation, HttpListenerResponse response);
     }
 }

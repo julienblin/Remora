@@ -76,12 +76,12 @@ namespace Remora.Tests.Handler.Impl
 
             var responseWriter = new ResponseWriter(_exceptionFormatter) {Logger = GetConsoleLogger()};
 
-            Assert.That(() => responseWriter.Write(null, null),
+            Assert.That(() => responseWriter.Write(null, (HttpResponse)null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("operation")
                 );
 
-            Assert.That(() => responseWriter.Write(new RemoraOperation(), null),
+            Assert.That(() => responseWriter.Write(new RemoraOperation(), (HttpResponse)null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("response")
                 );

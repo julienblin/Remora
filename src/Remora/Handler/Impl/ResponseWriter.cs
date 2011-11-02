@@ -26,6 +26,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
+using System.Net;
 using System.Web;
 using Castle.Core.Logging;
 using Remora.Core;
@@ -77,6 +78,38 @@ namespace Remora.Handler.Impl
                 foreach (var header in operation.Response.HttpHeaders)
                 {
                     response.AppendHeader(header.Key, header.Value);
+                }
+
+                if (operation.Response.Data != null)
+                {
+                    response.OutputStream.Write(operation.Response.Data, 0, operation.Response.Data.Length);
+                }
+                response.OutputStream.Flush();
+            }
+        }
+
+        public void Write(IRemoraOperation operation, HttpListenerResponse response)
+        {
+            if (operation == null) throw new ArgumentNullException("operation");
+            if (response == null) throw new ArgumentNullException("response");
+            Contract.EndContractBlock();
+
+            if (operation.OnError)
+            {
+                Logger.ErrorFormat(operation.Exception,
+                                   "There has been an error when processing request coming from {0}.",
+                                   operation.IncomingUri);
+                _exceptionformatter.WriteException(operation, response);
+            }
+            else
+            {
+                response.StatusCode = operation.Response.StatusCode;
+                foreach (var header in operation.Response.HttpHeaders)
+                {
+                    if (!header.Key.Equals("Content-Length"))
+                    {
+                        response.AppendHeader(header.Key, header.Value);
+                    }
                 }
 
                 if (operation.Response.Data != null)

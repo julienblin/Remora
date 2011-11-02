@@ -51,7 +51,7 @@ namespace Remora.Tests.Exceptions.Impl
                             .With.Message.Contains("operation")
                 );
 
-            Assert.That(() => formatter.WriteException(new RemoraOperation(), null),
+            Assert.That(() => formatter.WriteException(new RemoraOperation(), (HttpResponse)null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("response")
                 );

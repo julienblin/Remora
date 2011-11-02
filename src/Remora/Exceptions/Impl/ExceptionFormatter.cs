@@ -54,6 +54,23 @@ namespace Remora.Exceptions.Impl
             }
         }
 
+        public void WriteException(IRemoraOperation operation, HttpListenerResponse response)
+        {
+            if (operation == null) throw new ArgumentNullException("operation");
+            if (response == null) throw new ArgumentNullException("response");
+            Contract.EndContractBlock();
+
+            switch (operation.Kind)
+            {
+                case RemoraOperationKind.Soap:
+                    WriteSoap(operation, response);
+                    break;
+                default:
+                    WriteHtmlException(operation.Exception, response);
+                    break;
+            }
+        }
+
         public virtual void WriteHtmlException(Exception exception, HttpResponse response)
         {
             response.StatusCode = (int) HttpStatusCode.InternalServerError;
@@ -62,6 +79,19 @@ namespace Remora.Exceptions.Impl
             response.Write(string.Format(ErrorResources.GenericHtmlError,
                                          exception.GetType().Name.Replace("Exception", ""), exception.Message));
             response.Flush();
+        }
+
+        public virtual void WriteHtmlException(Exception exception, HttpListenerResponse response)
+        {
+            response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            response.ContentType = "text/html";
+            response.ContentEncoding = Encoding.UTF8;
+
+            var content = response.ContentEncoding.GetBytes(string.Format(ErrorResources.GenericHtmlError,
+                                         exception.GetType().Name.Replace("Exception", ""), exception.Message));
+
+            response.OutputStream.Write(content, 0, content.Length);
+            response.OutputStream.Flush();
         }
 
         #endregion
@@ -75,6 +105,20 @@ namespace Remora.Exceptions.Impl
                                          operation.Exception.GetType().Name.Replace("Exception", ""),
                                          operation.Exception.Message));
             response.Flush();
+        }
+
+        protected virtual void WriteSoap(IRemoraOperation operation, HttpListenerResponse response)
+        {
+            response.ContentType = "text/xml";
+            response.StatusCode = (int)HttpStatusCode.OK;
+            response.ContentEncoding = Encoding.UTF8;
+
+            var content = response.ContentEncoding.GetBytes(string.Format(ErrorResources.SoapError,
+                                         operation.Exception.GetType().Name.Replace("Exception", ""),
+                                         operation.Exception.Message));
+
+            response.OutputStream.Write(content, 0, content.Length);
+            response.OutputStream.Flush();
         }
     }
 }
