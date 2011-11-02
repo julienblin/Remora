@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using log4net;
-using Remora.Core;
-using Remora.Exceptions;
-using Remora.Handler;
 using Remora.Host.Configuration;
 using Remora.Host.Exceptions;
-using Remora.Pipeline;
 
 namespace Remora.Host
 {
@@ -20,6 +15,8 @@ namespace Remora.Host
         private static readonly ILog Log = LogManager.GetLogger(typeof(RemoraHostService));
 
         private HttpListener _httpListener;
+        private Thread _listenerThread;
+        private ManualResetEvent _stop;
 
         public RemoraHostService(IRemoraHostConfig config)
         {
@@ -32,6 +29,9 @@ namespace Remora.Host
                 throw new RemoraHostServiceException(string.Format("Unable to start {0}: no prefixes has been defined.", _config.ServiceConfig.DisplayName));
 
             Log.InfoFormat("Starting {0}...", _config.ServiceConfig.DisplayName);
+
+            _stop = new ManualResetEvent(false);
+            _listenerThread = new Thread(HandleRequests);
 
             Log.Debug("Bootstrapping Remora...");
             Bootstraper.Init();
@@ -48,14 +48,9 @@ namespace Remora.Host
 
             Log.Debug("Starting HttpListener...");
             _httpListener.Start();
+            _listenerThread.Start();
 
             Log.InfoFormat("{0} started.", _config.ServiceConfig.DisplayName);
-
-            while (true)
-            {
-                var result = _httpListener.BeginGetContext(ListenerCallback, _httpListener);
-                result.AsyncWaitHandle.WaitOne();
-            }
         }
 
         public void Stop()
@@ -67,6 +62,8 @@ namespace Remora.Host
                 try
                 {
                     Log.Debug("Stopping HttpListener...");
+                    _stop.Set();
+                    _listenerThread.Join();
                     _httpListener.Stop();
                     Log.Debug("HttpListener stopped.");
                 }
@@ -79,16 +76,29 @@ namespace Remora.Host
             Log.InfoFormat("{0} stopped.", _config.ServiceConfig.DisplayName);
         }
 
-        private void ListenerCallback(IAsyncResult result)
+        private void HandleRequests()
         {
-            var listener = (HttpListener)result.AsyncState;
-            var context = listener.EndGetContext(result);
+            while (_httpListener.IsListening)
+            {
+                var context = _httpListener.BeginGetContext(ListenerCallback, null);
 
-            var remoraAsyncResult = new RemoraAsyncResult(RemoraAsyncResultCallback, context, null, Bootstraper.Container);
-            remoraAsyncResult.Process();
+                if (0 == WaitHandle.WaitAny(new[] { _stop, context.AsyncWaitHandle }))
+                    return;
+            }
         }
 
-        private void RemoraAsyncResultCallback(IAsyncResult result)
+        private void ListenerCallback(IAsyncResult result)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                var context = _httpListener.EndGetContext(result);
+
+                var remoraAsyncResult = new RemoraAsyncResult(RemoraAsyncResultCallback, context, null, Bootstraper.Container);
+                remoraAsyncResult.Process();
+            });
+        }
+
+        private static void RemoraAsyncResultCallback(IAsyncResult result)
         {
             var remoraAsyncResult = (RemoraAsyncResult) result;
             remoraAsyncResult.HttpListenerContext.Response.OutputStream.Close();
