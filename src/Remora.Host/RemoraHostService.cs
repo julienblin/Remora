@@ -28,7 +28,7 @@ namespace Remora.Host
 
         public void Start()
         {
-            if (_config.ListenerConfigs.Count() == 0)
+            if (_config.BindingConfigs.Count() == 0)
                 throw new RemoraHostServiceException(string.Format("Unable to start {0}: no prefixes has been defined.", _config.ServiceConfig.DisplayName));
 
             Log.InfoFormat("Starting {0}...", _config.ServiceConfig.DisplayName);
@@ -38,10 +38,10 @@ namespace Remora.Host
 
             Log.DebugFormat("Configuring {0} to listen to prefixes: {1}",
                  _config.ServiceConfig.DisplayName,
-                 string.Join(",", _config.ListenerConfigs.Select(x => x.Prefix))
+                 string.Join(",", _config.BindingConfigs.Select(x => x.Prefix))
             );
             _httpListener = new HttpListener();
-            foreach (var listenerConfig in _config.ListenerConfigs)
+            foreach (var listenerConfig in _config.BindingConfigs)
             {
                 _httpListener.Prefixes.Add(listenerConfig.Prefix);
             }

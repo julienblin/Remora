@@ -10,11 +10,11 @@ namespace Remora.Host.Configuration.Impl
         public RemoraHostConfig()
         {
             ServiceConfig = new ServiceConfig();
-            ListenerConfigs = new IListenerConfig[0];
+            BindingConfigs = new IBindingConfig[0];
         }
 
         public IServiceConfig ServiceConfig { get; set; }
 
-        public IEnumerable<IListenerConfig> ListenerConfigs { get; set; }
+        public IEnumerable<IBindingConfig> BindingConfigs { get; set; }
     }
 }

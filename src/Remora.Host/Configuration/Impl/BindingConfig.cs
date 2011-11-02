@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Remora.Host.Configuration.Impl
 {
-    public class ListenerConfig : IListenerConfig
+    public class BindingConfig : IBindingConfig
     {
         public string Prefix { get; set; }
     }

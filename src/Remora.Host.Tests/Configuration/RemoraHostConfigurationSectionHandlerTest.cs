@@ -23,9 +23,9 @@ namespace Remora.Host.Tests.Configuration
             Assert.That(config.ServiceConfig.Description, Is.EqualTo("description"));
             Assert.That(config.ServiceConfig.RunAs, Is.EqualTo(ServiceConfigRunAs.LocalSystem));
 
-            Assert.That(config.ListenerConfigs.Count(), Is.EqualTo(2));
-            Assert.That(config.ListenerConfigs.First().Prefix, Is.EqualTo("http://+:9091/"));
-            Assert.That(config.ListenerConfigs.Skip(1).First().Prefix, Is.EqualTo("http://+:9092/"));
+            Assert.That(config.BindingConfigs.Count(), Is.EqualTo(2));
+            Assert.That(config.BindingConfigs.First().Prefix, Is.EqualTo("http://+:9091/"));
+            Assert.That(config.BindingConfigs.Skip(1).First().Prefix, Is.EqualTo("http://+:9092/"));
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace Remora.Host.Tests.Configuration
             Assert.That(config.ServiceConfig.DisplayName, Is.EqualTo(ServiceConfig.Defaults.DisplayName));
             Assert.That(config.ServiceConfig.Description, Is.EqualTo(ServiceConfig.Defaults.Description));
             Assert.That(config.ServiceConfig.RunAs, Is.EqualTo(ServiceConfig.Defaults.RunAs));
-            Assert.That(config.ListenerConfigs.Count(), Is.EqualTo(0));
+            Assert.That(config.BindingConfigs.Count(), Is.EqualTo(0));
         }
 
         [Test]
@@ -50,18 +50,18 @@ namespace Remora.Host.Tests.Configuration
         }
 
         [Test]
-        public void It_should_validate_attributes_for_listener_nodes()
+        public void It_should_validate_attributes_for_binding_nodes()
         {
-            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("badListenerNode"),
+            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("badBindingNode"),
                 Throws.Exception.TypeOf<ConfigurationErrorsException>()
                 .With.InnerException.TypeOf<RemoraHostConfigException>()
                 .And.Message.Contains("foo"));
         }
 
         [Test]
-        public void It_should_validate_prefix_for_listener_nodes()
+        public void It_should_validate_prefix_for_binding_nodes()
         {
-            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("emptyPrefixForListenerNode"),
+            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("emptyPrefixForBindingNode"),
                 Throws.Exception.TypeOf<ConfigurationErrorsException>()
                 .With.InnerException.TypeOf<RemoraHostConfigException>()
                 .And.Message.Contains("prefix"));

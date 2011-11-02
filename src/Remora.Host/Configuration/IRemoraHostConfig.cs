@@ -9,6 +9,6 @@ namespace Remora.Host.Configuration
     {
         IServiceConfig ServiceConfig { get; }
 
-        IEnumerable<IListenerConfig> ListenerConfigs { get; }
+        IEnumerable<IBindingConfig> BindingConfigs { get; }
     }
 }

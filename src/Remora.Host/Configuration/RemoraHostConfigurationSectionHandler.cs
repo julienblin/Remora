@@ -24,42 +24,42 @@ namespace Remora.Host.Configuration
             var result = new RemoraHostConfig();
 
             LoadServiceNode(section, result);
-            LoadListeners(section, result);
+            LoadBindings(section, result);
 
             return result;
         }
 
-        private void LoadListeners(XmlNode section, RemoraHostConfig result)
+        private void LoadBindings(XmlNode section, RemoraHostConfig result)
         {
-            var listenersNode = section.SelectSingleNode("//listeners");
-            if (listenersNode != null)
+            var bindingsNode = section.SelectSingleNode("//bindings");
+            if (bindingsNode != null)
             {
-                var listeners = new List<IListenerConfig>();
+                var bindings = new List<IBindingConfig>();
 
-                var listenerNodes = listenersNode.SelectNodes("listener");
-                foreach (XmlNode listenerNode in listenerNodes)
+                var bindingNodes = bindingsNode.SelectNodes("binding");
+                foreach (XmlNode bindingNode in bindingNodes)
                 {
-                    var listenerConfig = new ListenerConfig();
+                    var bindingConfig = new BindingConfig();
 
-                    foreach (XmlAttribute attr in listenerNode.Attributes)
+                    foreach (XmlAttribute attr in bindingNode.Attributes)
                     {
                         switch (attr.Name.ToLowerInvariant())
                         {
                             case "prefix":
-                                listenerConfig.Prefix = attr.Value;
+                                bindingConfig.Prefix = attr.Value;
                                 break;
                             default:
-                                throw new RemoraHostConfigException(string.Format("Unknown attribute for listener node: {0}", attr.Name));
+                                throw new RemoraHostConfigException(string.Format("Unknown attribute for binding node: {0}", attr.Name));
                         }
                     }
 
-                    if(string.IsNullOrWhiteSpace(listenerConfig.Prefix))
-                        throw new RemoraHostConfigException("Missing required attribute prefix for a listener.");
+                    if(string.IsNullOrWhiteSpace(bindingConfig.Prefix))
+                        throw new RemoraHostConfigException("Missing required attribute prefix for a binding.");
                     
-                    listeners.Add(listenerConfig);
+                    bindings.Add(bindingConfig);
                 }
 
-                result.ListenerConfigs = listeners;
+                result.BindingConfigs = bindings;
             }
         }
 

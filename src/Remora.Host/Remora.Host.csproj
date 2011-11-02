@@ -67,8 +67,8 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Configuration\IListenerConfig.cs" />
-    <Compile Include="Configuration\Impl\ListenerConfig.cs" />
+    <Compile Include="Configuration\IBindingConfig.cs" />
+    <Compile Include="Configuration\Impl\BindingConfig.cs" />
     <Compile Include="Configuration\Impl\RemoraHostConfig.cs" />
     <Compile Include="Configuration\Impl\ServiceConfig.cs" />
     <Compile Include="Configuration\IRemoraHostConfig.cs" />
