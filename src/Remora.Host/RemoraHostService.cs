@@ -84,47 +84,14 @@ namespace Remora.Host
             var listener = (HttpListener)result.AsyncState;
             var context = listener.EndGetContext(result);
 
-            try
-            {
-                Log.DebugFormat("Begin async process for request coming from {0}...", context.Request.Url);
-
-                var operationFactory = Bootstraper.Container.Resolve<IRemoraOperationFactory>();
-                var kindIdentifier = Bootstraper.Container.Resolve<IRemoraOperationKindIdentifier>();
-                var pipelineFactory = Bootstraper.Container.Resolve<IPipelineFactory>();
-                var pipelineEngine = Bootstraper.Container.Resolve<IPipelineEngine>();
-
-                var operation = operationFactory.Get(context.Request);
-                operation.Kind = kindIdentifier.Identify(operation);
-                var pipeline = pipelineFactory.Get(operation);
-
-                if (pipeline == null)
-                    throw new InvalidConfigurationException(
-                        string.Format("Unable to select an appropriate pipeline for operation {0}.", operation));
-
-                operation.ExecutionProperties["HttpListener.Response"] = context.Response;
-
-                pipelineEngine.RunAsync(operation, pipeline, EngineCallback);
-            }
-            catch (Exception ex)
-            {
-                Log.Error("There has been an error while handling a request.", ex);
-                var exceptionFormatter = Bootstraper.Container.Resolve<IExceptionFormatter>();
-                exceptionFormatter.WriteHtmlException(ex, context.Response);
-                context.Response.OutputStream.Close();
-            }
+            var remoraAsyncResult = new RemoraAsyncResult(RemoraAsyncResultCallback, context, null, Bootstraper.Container);
+            remoraAsyncResult.Process();
         }
 
-        private void EngineCallback(IRemoraOperation operation)
+        private void RemoraAsyncResultCallback(IAsyncResult result)
         {
-            if (Log.IsDebugEnabled)
-                Log.DebugFormat("Async process ended for request coming from {0}. Writing results...", operation.IncomingUri);
-
-            var response = (HttpListenerResponse)operation.ExecutionProperties["HttpListener.Response"];
-
-            var writer = Bootstraper.Container.Resolve<IResponseWriter>();
-            writer.Write(operation, response);
-
-            response.OutputStream.Close();
+            var remoraAsyncResult = (RemoraAsyncResult) result;
+            remoraAsyncResult.HttpListenerContext.Response.OutputStream.Close();
         }
     }
 }

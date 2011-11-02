@@ -25,6 +25,7 @@
 #endregion
 
 using System;
+using System.Net;
 using System.Threading;
 using System.Web;
 using Castle.Core.Logging;
@@ -39,19 +40,34 @@ namespace Remora
 {
     public class RemoraAsyncResult : IAsyncResult
     {
+        public const string ContextKey = @"Context";
+
         private readonly AsyncCallback _callback;
         private readonly IWindsorContainer _container;
         private ILogger _logger = NullLogger.Instance;
+        private ContextKind _kind;
 
         public RemoraAsyncResult(AsyncCallback cb, HttpContext context, object state, IWindsorContainer container)
         {
             _callback = cb;
             _container = container;
-            Context = context;
+            HttpWebContext = context;
+            _kind = ContextKind.Web;
             AsyncState = state;
         }
 
-        public HttpContext Context { get; private set; }
+        public RemoraAsyncResult(AsyncCallback cb, HttpListenerContext context, object state, IWindsorContainer container)
+        {
+            _callback = cb;
+            _container = container;
+            HttpListenerContext = context;
+            _kind = ContextKind.Net;
+            AsyncState = state;
+        }
+
+        public HttpContext HttpWebContext { get; private set; }
+
+        public HttpListenerContext HttpListenerContext { get; private set; }
 
         #region IAsyncResult Members
 
@@ -84,14 +100,26 @@ namespace Remora
             try
             {
                 if (_logger.IsDebugEnabled)
-                    _logger.DebugFormat("Begin async process for request coming from {0}...", Context.Request.Url);
+                    _logger.DebugFormat("Begin async process for request coming from {0}...", IncomingUri);
 
                 var operationFactory = _container.Resolve<IRemoraOperationFactory>();
                 var kindIdentifier = _container.Resolve<IRemoraOperationKindIdentifier>();
                 var pipelineFactory = _container.Resolve<IPipelineFactory>();
                 var pipelineEngine = _container.Resolve<IPipelineEngine>();
 
-                var operation = operationFactory.Get(Context.Request);
+                IRemoraOperation operation = null;
+                switch (_kind)
+                {
+                    case ContextKind.Web:
+                        operation = operationFactory.Get(HttpWebContext.Request);
+                        operation.ExecutionProperties[ContextKey] = HttpWebContext;
+                        break;
+                    case ContextKind.Net:
+                        operation = operationFactory.Get(HttpListenerContext.Request);
+                        operation.ExecutionProperties[ContextKey] = HttpListenerContext;
+                        break;
+                }
+
                 operation.Kind = kindIdentifier.Identify(operation);
                 var pipeline = pipelineFactory.Get(operation);
 
@@ -103,8 +131,7 @@ namespace Remora
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "There has been an error when processing request coming from {0}.",
-                                    Context.Request.Url);
+                _logger.ErrorFormat(ex, "There has been an error when processing request coming from {0}.", IncomingUri);
 
                 WriteGenericException(ex);
                 IsCompleted = true;
@@ -115,11 +142,19 @@ namespace Remora
         public void EngineCallback(IRemoraOperation operation)
         {
             if (_logger.IsDebugEnabled)
-                _logger.DebugFormat("Async process ended for request coming from {0}. Writing results...",
-                                    Context.Request.Url);
+                _logger.DebugFormat("Async process ended for request coming from {0}. Writing results...", IncomingUri);
 
             var writer = _container.Resolve<IResponseWriter>();
-            writer.Write(operation, Context.Response);
+
+            switch (_kind)
+            {
+                case ContextKind.Web:
+                    writer.Write(operation, HttpWebContext.Response);
+                    break;
+                case ContextKind.Net:
+                    writer.Write(operation, HttpListenerContext.Response);
+                    break;
+            }
 
             IsCompleted = true;
             _callback(this);
@@ -136,7 +171,38 @@ namespace Remora
             {
                 formatter = new ExceptionFormatter();
             }
-            formatter.WriteHtmlException(exception, Context.Response);
+
+            switch (_kind)
+            {
+                case ContextKind.Web:
+                    formatter.WriteHtmlException(exception, HttpWebContext.Response);
+                    break;
+                case ContextKind.Net:
+                    formatter.WriteHtmlException(exception, HttpListenerContext.Response);
+                    break;
+            }
+        }
+
+        private Uri IncomingUri
+        {
+            get
+            {
+                switch (_kind)
+                {
+                    case ContextKind.Web:
+                        return HttpWebContext.Request.Url;
+                    case ContextKind.Net:
+                        return HttpListenerContext.Request.Url;
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        private enum ContextKind
+        {
+            Web,
+            Net
         }
     }
 }
