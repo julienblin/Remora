@@ -26,8 +26,51 @@ namespace Remora.Host.Configuration
 
             LoadServiceNode(section, result);
             LoadBindings(section, result);
+            LoadJobs(section, result);
 
             return result;
+        }
+
+        private void LoadJobs(XmlNode section, RemoraHostConfig result)
+        {
+           var jobsNode = section.SelectSingleNode("//jobs");
+           if (jobsNode != null)
+           {
+               var jobsConfig = new JobsConfig();
+
+               var jobNodes = jobsNode.SelectNodes("job");
+               foreach (XmlNode jobNode in jobNodes)
+               {
+                   var jobConfig = new JobConfig();
+                   var jobConfigList = new List<JobConfig>();
+
+                   foreach (XmlAttribute attr in jobNode.Attributes)
+                   {
+                       switch (attr.Name.ToLowerInvariant())
+                       {
+                           case "cron":
+                               jobConfig.Cron = attr.Value;
+                               break;
+                           case "name":
+                               jobConfig.Name = attr.Value;
+                               break;
+                           default:
+                               throw new RemoraHostConfigException(string.Format("Unknown attribute for job node: {0}", attr.Name));
+                       }
+                   }
+
+                   if (string.IsNullOrWhiteSpace(jobConfig.Cron))
+                       throw new RemoraHostConfigException("Missing required attribute cron for a job.");
+
+                   if (string.IsNullOrWhiteSpace(jobConfig.Name))
+                       throw new RemoraHostConfigException("Missing required attribute name for a job.");
+
+                   jobConfigList.Add(jobConfig);
+                   jobsConfig.JobConfigs = jobConfigList;
+               }
+
+               result.JobsConfig = jobsConfig;
+           }
         }
 
         private void LoadBindings(XmlNode section, RemoraHostConfig result)

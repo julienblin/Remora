@@ -11,10 +11,13 @@ namespace Remora.Host.Configuration.Impl
         {
             ServiceConfig = new ServiceConfig();
             BindingConfigs = new IBindingConfig[0];
+            JobsConfig = new JobsConfig();
         }
 
         public IServiceConfig ServiceConfig { get; set; }
 
         public IEnumerable<IBindingConfig> BindingConfigs { get; set; }
+
+        public IJobsConfig JobsConfig { get; set; }
     }
 }

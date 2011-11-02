@@ -26,6 +26,10 @@ namespace Remora.Host.Tests.Configuration
             Assert.That(config.BindingConfigs.Count(), Is.EqualTo(2));
             Assert.That(config.BindingConfigs.First().Prefix, Is.EqualTo("http://+:9091/"));
             Assert.That(config.BindingConfigs.Skip(1).First().Prefix, Is.EqualTo("http://+:9092/"));
+
+            Assert.That(config.JobsConfig.JobConfigs.Count(), Is.EqualTo(1));
+            Assert.That(config.JobsConfig.JobConfigs.First().Cron, Is.EqualTo("0 0/5 * * * ?"));
+            Assert.That(config.JobsConfig.JobConfigs.First().Name, Is.EqualTo("SampleJob"));
         }
 
         [Test]
@@ -113,6 +117,33 @@ namespace Remora.Host.Tests.Configuration
                 Throws.Exception.TypeOf<ConfigurationErrorsException>()
                 .With.InnerException.TypeOf<RemoraHostConfigException>()
                 .And.Message.Contains("username"));
+        }
+
+        [Test]
+        public void It_should_validate_job_attributes()
+        {
+            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("badAttributeInJob"),
+                Throws.Exception.TypeOf<ConfigurationErrorsException>()
+                .With.InnerException.TypeOf<RemoraHostConfigException>()
+                .And.Message.Contains("foo"));
+        }
+
+        [Test]
+        public void It_should_validate_job_cron()
+        {
+            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("missingCronInJob"),
+                Throws.Exception.TypeOf<ConfigurationErrorsException>()
+                .With.InnerException.TypeOf<RemoraHostConfigException>()
+                .And.Message.Contains("cron"));
+        }
+
+        [Test]
+        public void It_should_validate_job_name()
+        {
+            Assert.That(() => RemoraHostConfigurationSectionHandler.GetConfiguration("missingNameInJob"),
+                Throws.Exception.TypeOf<ConfigurationErrorsException>()
+                .With.InnerException.TypeOf<RemoraHostConfigException>()
+                .And.Message.Contains("name"));
         }
     }
 }

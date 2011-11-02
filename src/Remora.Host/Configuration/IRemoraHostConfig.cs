@@ -10,5 +10,7 @@ namespace Remora.Host.Configuration
         IServiceConfig ServiceConfig { get; }
 
         IEnumerable<IBindingConfig> BindingConfigs { get; }
+
+        IJobsConfig JobsConfig { get; }
     }
 }

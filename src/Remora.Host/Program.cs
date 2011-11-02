@@ -92,15 +92,15 @@ namespace Remora.Host
                 {
                     Layout = layout
                 };
-                consoleAppender.AddFilter(
-                    new log4net.Filter.LoggerMatchFilter
-                        {
-                            LoggerToMatch = "Remora",
-                            AcceptOnMatch = true,
-                            Next = new log4net.Filter.LevelRangeFilter { LevelMin = Level.Info, AcceptOnMatch = true }
-                        }
-                );
-                consoleAppender.AddFilter(new log4net.Filter.DenyAllFilter());
+                //consoleAppender.AddFilter(
+                //    new log4net.Filter.LoggerMatchFilter
+                //        {
+                //            LoggerToMatch = "Remora",
+                //            AcceptOnMatch = true,
+                //            Next = new log4net.Filter.LevelRangeFilter { LevelMax = Level.Debug, AcceptOnMatch = false }
+                //        }
+                //);
+                //consoleAppender.AddFilter(new log4net.Filter.DenyAllFilter());
                 consoleAppender.ActivateOptions();
                 log4net.Config.BasicConfigurator.Configure(consoleAppender);
             }
