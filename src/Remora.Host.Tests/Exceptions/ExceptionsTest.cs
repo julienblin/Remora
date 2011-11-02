@@ -34,6 +34,11 @@ namespace Remora.Host.Tests.Exceptions
             Assert.That(() => new RemoraHostConfigException("message"), Throws.Nothing);
             Assert.That(() => new RemoraHostConfigException("message", innerException), Throws.Nothing);
             Assert.That(() => SerializeAndDeserialize<RemoraHostConfigException>(), Throws.Nothing);
+
+            Assert.That(() => new RemoraHostServiceException(), Throws.Nothing);
+            Assert.That(() => new RemoraHostServiceException("message"), Throws.Nothing);
+            Assert.That(() => new RemoraHostServiceException("message", innerException), Throws.Nothing);
+            Assert.That(() => SerializeAndDeserialize<RemoraHostServiceException>(), Throws.Nothing);
         }
     }
 }

@@ -27,8 +27,29 @@ namespace Remora.Host
                     x.Service<RemoraHostService>(s =>
                     {
                         s.ConstructUsing(name => new RemoraHostService(config));
-                        s.WhenStarted(rhs => rhs.Start());
-                        s.WhenStopped(rhs => rhs.Stop());
+                        s.WhenStarted(rhs =>
+                        {
+                            try
+                            {
+                                rhs.Start();
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("There has been an error while starting the service.", ex);
+                                throw;
+                            }
+                        });
+                        s.WhenStopped(rhs =>
+                        {
+                            try
+                            {
+                                rhs.Stop();
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("There has been an error while stopping the service.", ex);
+                            }
+                        });
                     });
 
                     switch (config.ServiceConfig.RunAs)
@@ -67,7 +88,7 @@ namespace Remora.Host
             {
                 var layout = new log4net.Layout.SimpleLayout();
                 layout.ActivateOptions();
-                var consoleAppender = new log4net.Appender.ColoredConsoleAppender
+                var consoleAppender = new log4net.Appender.ConsoleAppender
                 {
                     Layout = layout
                 };

@@ -74,6 +74,7 @@
     <Compile Include="Configuration\IRemoraHostConfig.cs" />
     <Compile Include="Configuration\IServiceConfig.cs" />
     <Compile Include="Configuration\RemoraHostConfigurationSectionHandler.cs" />
+    <Compile Include="Exceptions\RemoraHostServiceException.cs" />
     <Compile Include="Exceptions\RemoraHostConfigException.cs" />
     <Compile Include="Exceptions\RemoraHostException.cs" />
     <Compile Include="Program.cs" />
