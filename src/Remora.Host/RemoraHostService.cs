@@ -49,9 +49,13 @@ namespace Remora.Host
             Log.Debug("Starting HttpListener...");
             _httpListener.Start();
 
-            _httpListener.BeginGetContext(ListenerCallback, _httpListener);
-
             Log.InfoFormat("{0} started.", _config.ServiceConfig.DisplayName);
+
+            while (true)
+            {
+                var result = _httpListener.BeginGetContext(ListenerCallback, _httpListener);
+                result.AsyncWaitHandle.WaitOne();
+            }
         }
 
         public void Stop()
@@ -77,11 +81,11 @@ namespace Remora.Host
 
         private void ListenerCallback(IAsyncResult result)
         {
+            var listener = (HttpListener)result.AsyncState;
+            var context = listener.EndGetContext(result);
+
             try
             {
-                var listener = (HttpListener)result.AsyncState;
-                var context = listener.EndGetContext(result);
-                
                 Log.DebugFormat("Begin async process for request coming from {0}...", context.Request.Url);
 
                 var operationFactory = Bootstraper.Container.Resolve<IRemoraOperationFactory>();
@@ -104,7 +108,9 @@ namespace Remora.Host
             catch (Exception ex)
             {
                 Log.Error("There has been an error while handling a request.", ex);
-                throw;
+                var exceptionFormatter = Bootstraper.Container.Resolve<IExceptionFormatter>();
+                exceptionFormatter.WriteHtmlException(ex, context.Response);
+                context.Response.OutputStream.Close();
             }
         }
 
