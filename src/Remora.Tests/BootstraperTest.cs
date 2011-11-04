@@ -102,6 +102,7 @@ namespace Remora.Tests
             Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SetHttpHeader.ComponentId),
                         Is.TypeOf<SetHttpHeader>());
             Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(Tracer.ComponentId), Is.TypeOf<Tracer>());
+            Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(SvcTracer.ComponentId), Is.TypeOf<SvcTracer>());
             Assert.That(Bootstraper.Container.Resolve<IPipelineComponent>(PerfCounter.ComponentId),
                         Is.TypeOf<PerfCounter>());
         }
