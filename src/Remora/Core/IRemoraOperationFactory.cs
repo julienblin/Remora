@@ -31,8 +31,6 @@ namespace Remora.Core
 {
     public interface IRemoraOperationFactory
     {
-        IRemoraOperation Get(HttpRequest request);
-
-        IRemoraOperation Get(HttpListenerRequest request);
+        IRemoraOperation Get(IUniversalRequest request);
     }
 }

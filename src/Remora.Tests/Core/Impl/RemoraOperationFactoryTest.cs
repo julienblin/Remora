@@ -25,6 +25,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
@@ -38,38 +39,47 @@ using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Exceptions;
 using Remora.Extensions;
+using Rhino.Mocks;
 
 namespace Remora.Tests.Core.Impl
 {
     [TestFixture]
     public class RemoraOperationFactoryTest : BaseTest
     {
+        private MockRepository _mocks;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _mocks = new MockRepository();
+        }
+
         [Test]
         public void It_should_return_a_IRemoraOperation()
         {
             var container = new WindsorContainer();
             container.Register(Component.For<IRemoraOperation>().ImplementedBy<RemoraOperation>());
 
-            var args = new RemoraOperationFactory.InternalGetArgs
-                           {
-                               Uri = new Uri("http://tempuri.org/uri/?foo=bar"),
-                               Headers = new NameValueCollection {{"Content-Type", "text/xml"}},
-                               InputStream = LoadSample("SimpleHelloWorldRequest.xml"),
-                               ContentEncoding = Encoding.UTF8
-                           };
+            var request = _mocks.DynamicMock<IUniversalRequest>();
+            SetupResult.For(request.Url).Return(new Uri("http://tempuri.org/uri/?foo=bar"));
+            SetupResult.For(request.Headers).Return(new Dictionary<string, string> { { "Content-Type", "text/xml" } });
+            SetupResult.For(request.InputStream).Return(LoadSample("SimpleHelloWorldRequest.xml"));
+            SetupResult.For(request.ContentEncoding).Return(Encoding.UTF8);
+            _mocks.Replay(request);
 
             var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) {Logger = GetConsoleLogger()};
 
-            var result = factory.InternalGet(args);
+            var result = factory.Get(request);
 
-            Assert.That(result.IncomingUri, Is.EqualTo(args.Uri));
-            Assert.That(result.Request.Uri, Is.EqualTo(args.Uri));
+            Assert.That(result.IncomingUri, Is.EqualTo(request.Url));
+            Assert.That(result.Request.Uri, Is.EqualTo(request.Url));
             Assert.That(result.Request.HttpHeaders.Count(), Is.EqualTo(1));
             Assert.That(result.Request.HttpHeaders.First().Key, Is.EqualTo("Content-Type"));
             Assert.That(result.Request.HttpHeaders.First().Value, Is.EqualTo("text/xml"));
 
-            Assert.That(result.Request.ContentEncoding, Is.EqualTo(args.ContentEncoding));
+            Assert.That(result.Request.ContentEncoding, Is.EqualTo(request.ContentEncoding));
             Assert.That(result.Request.Data, Is.EqualTo(LoadSample("SimpleHelloWorldRequest.xml").ReadFully(0)));
+            Assert.That(result.ExecutionProperties[RemoraOperationFactory.RequestContextKey], Is.SameAs(request));
         }
 
         [Test]
@@ -78,9 +88,11 @@ namespace Remora.Tests.Core.Impl
             var container = new WindsorContainer();
             var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig()) {Logger = GetConsoleLogger()};
 
-            Assert.That(
-                () =>
-                factory.InternalGet(new RemoraOperationFactory.InternalGetArgs {Uri = new Uri("http://tempuri.org")}),
+            var request = _mocks.DynamicMock<IUniversalRequest>();
+            SetupResult.For(request.Url).Return(new Uri("http://tempuri.org/uri/?foo=bar"));
+            _mocks.Replay(request);
+
+            Assert.That(() => factory.Get(request),
                 Throws.Exception.TypeOf<InvalidConfigurationException>()
                     .With.Message.Contains("IRemoraOperation"));
         }
@@ -100,11 +112,7 @@ namespace Remora.Tests.Core.Impl
 
             var factory = new RemoraOperationFactory(container.Kernel, new RemoraConfig());
 
-            Assert.That(() => factory.Get((HttpRequest) null),
-                        Throws.Exception.TypeOf<ArgumentNullException>()
-                            .With.Message.Contains("request"));
-
-            Assert.That(() => factory.Get((HttpListenerRequest) null),
+            Assert.That(() => factory.Get(null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("request"));
         }

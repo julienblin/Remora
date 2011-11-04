@@ -31,6 +31,7 @@ using System.Web;
 using Castle.Core.Logging;
 using Castle.Windsor;
 using Remora.Core;
+using Remora.Core.Impl;
 using Remora.Exceptions;
 using Remora.Exceptions.Impl;
 using Remora.Handler;
@@ -111,11 +112,11 @@ namespace Remora
                 switch (_kind)
                 {
                     case ContextKind.Web:
-                        operation = operationFactory.Get(HttpWebContext.Request);
+                        operation = operationFactory.Get(new UniversalRequest(HttpWebContext.Request));
                         operation.ExecutionProperties[ContextKey] = HttpWebContext;
                         break;
                     case ContextKind.Net:
-                        operation = operationFactory.Get(HttpListenerContext.Request);
+                        operation = operationFactory.Get(new UniversalRequest(HttpListenerContext.Request));
                         operation.ExecutionProperties[ContextKey] = HttpListenerContext;
                         break;
                 }

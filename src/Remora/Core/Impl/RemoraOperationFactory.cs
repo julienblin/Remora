@@ -41,7 +41,7 @@ namespace Remora.Core.Impl
 {
     public class RemoraOperationFactory : IRemoraOperationFactory
     {
-        public const string SoapEnvelopeSchema = @"http://schemas.xmlsoap.org/soap/envelope/";
+        public const string RequestContextKey = @"Request";
 
         private readonly IRemoraConfig _config;
         private readonly IKernel _kernel;
@@ -68,46 +68,12 @@ namespace Remora.Core.Impl
 
         #region IRemoraOperationFactory Members
 
-        public IRemoraOperation Get(HttpRequest request)
+        public IRemoraOperation Get(IUniversalRequest request)
         {
-            if (request == null) throw new ArgumentNullException("request");
-            Contract.EndContractBlock();
+            if(request == null) throw new ArgumentNullException("request");
 
-            var args = new InternalGetArgs
-                           {
-                               Uri = request.Url,
-                               Headers = request.Headers,
-                               InputStream = request.InputStream,
-                               ContentEncoding = request.ContentEncoding,
-                               Method = request.HttpMethod
-                           };
-
-            return InternalGet(args);
-        }
-
-        public IRemoraOperation Get(HttpListenerRequest request)
-        {
-            if (request == null) throw new ArgumentNullException("request");
-            Contract.EndContractBlock();
-
-            var args = new InternalGetArgs
-                           {
-                               Uri = request.Url,
-                               Headers = request.Headers,
-                               InputStream = request.InputStream,
-                               ContentEncoding = request.ContentEncoding,
-                               Method = request.HttpMethod
-                           };
-
-            return InternalGet(args);
-        }
-
-        #endregion
-
-        public virtual IRemoraOperation InternalGet(InternalGetArgs args)
-        {
             if (Logger.IsDebugEnabled)
-                Logger.DebugFormat("Creating IRemoraOperation for {0}...", args.Uri);
+                Logger.DebugFormat("Creating IRemoraOperation for {0}...", request.Url);
 
             IRemoraOperation operation;
             try
@@ -121,37 +87,24 @@ namespace Remora.Core.Impl
                     ex);
             }
 
-            operation.Request.Data = args.InputStream.ReadFully(_config.MaxMessageSize);
+            operation.Request.Data = request.InputStream.ReadFully(_config.MaxMessageSize);
 
-            operation.IncomingUri = args.Uri;
-            operation.Request.Uri = args.Uri;
-            operation.Request.ContentEncoding = args.ContentEncoding;
-            operation.Request.Method = args.Method;
+            operation.IncomingUri = request.Url;
+            operation.Request.Uri = request.Url;
+            operation.Request.ContentEncoding = request.ContentEncoding;
+            operation.Request.Method = request.HttpMethod;
 
-            foreach (string header in args.Headers)
+            foreach (var header in request.Headers.Keys)
             {
-                operation.Request.HttpHeaders.Add(header, args.Headers[header]);
+                operation.Request.HttpHeaders.Add(header, request.Headers[header]);
             }
+
+            operation.ExecutionProperties[RequestContextKey] = request;
 
             if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("IRemoraOperation {0} created.", operation);
 
             return operation;
-        }
-
-        #region Nested type: InternalGetArgs
-
-        public class InternalGetArgs
-        {
-            public Uri Uri { get; set; }
-
-            public NameValueCollection Headers { get; set; }
-
-            public Stream InputStream { get; set; }
-
-            public Encoding ContentEncoding { get; set; }
-
-            public string Method { get; set; }
         }
 
         #endregion
