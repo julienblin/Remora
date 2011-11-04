@@ -158,7 +158,7 @@ namespace Remora.Host
                 {
                     var context = _httpListener.EndGetContext(result);
 
-                    var remoraAsyncResult = new RemoraAsyncResult(RemoraAsyncResultCallback, context, null, Bootstraper.Container);
+                    var remoraAsyncResult = new RemoraAsyncProcessor(RemoraAsyncResultCallback, context, null, Bootstraper.Container);
                     remoraAsyncResult.Process();
                 }
                 catch (Exception)
@@ -171,7 +171,7 @@ namespace Remora.Host
 
         private static void RemoraAsyncResultCallback(IAsyncResult result)
         {
-            var remoraAsyncResult = (RemoraAsyncResult)result;
+            var remoraAsyncResult = (RemoraAsyncProcessor)result;
             remoraAsyncResult.HttpListenerContext.Response.OutputStream.Close();
         }
     }

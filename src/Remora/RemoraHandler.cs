@@ -47,7 +47,7 @@ namespace Remora
         {
             Bootstraper.Init();
 
-            var result = new RemoraAsyncResult(cb, context, extraData, Bootstraper.Container);
+            var result = new RemoraAsyncProcessor(cb, context, extraData, Bootstraper.Container);
             result.Process();
             return result;
         }

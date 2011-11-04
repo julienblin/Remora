@@ -39,7 +39,7 @@ using Remora.Pipeline;
 
 namespace Remora
 {
-    public class RemoraAsyncResult : IAsyncResult
+    public class RemoraAsyncProcessor : IAsyncResult
     {
         public const string ContextKey = @"Context";
 
@@ -48,7 +48,7 @@ namespace Remora
         private ILogger _logger = NullLogger.Instance;
         private ContextKind _kind;
 
-        public RemoraAsyncResult(AsyncCallback cb, HttpContext context, object state, IWindsorContainer container)
+        public RemoraAsyncProcessor(AsyncCallback cb, HttpContext context, object state, IWindsorContainer container)
         {
             _callback = cb;
             _container = container;
@@ -57,7 +57,7 @@ namespace Remora
             AsyncState = state;
         }
 
-        public RemoraAsyncResult(AsyncCallback cb, HttpListenerContext context, object state, IWindsorContainer container)
+        public RemoraAsyncProcessor(AsyncCallback cb, HttpListenerContext context, object state, IWindsorContainer container)
         {
             _callback = cb;
             _container = container;
