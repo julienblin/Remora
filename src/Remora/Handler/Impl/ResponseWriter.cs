@@ -26,8 +26,6 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using System.Net;
-using System.Web;
 using Castle.Core.Logging;
 using Remora.Core;
 using Remora.Exceptions;

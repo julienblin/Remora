@@ -25,12 +25,7 @@
 #endregion
 
 using System;
-using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Web;
 using Castle.Core.Logging;
 using Castle.MicroKernel;
 using Remora.Configuration;
@@ -70,7 +65,7 @@ namespace Remora.Core.Impl
 
         public IRemoraOperation Get(IUniversalRequest request)
         {
-            if(request == null) throw new ArgumentNullException("request");
+            if (request == null) throw new ArgumentNullException("request");
 
             if (Logger.IsDebugEnabled)
                 Logger.DebugFormat("Creating IRemoraOperation for {0}...", request.Url);

@@ -1,4 +1,30 @@
-﻿using System;
+﻿#region Licence
+
+// The MIT License
+// 
+// Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,8 +36,8 @@ namespace Remora.Core.Impl
 {
     public class UniversalRequest : IUniversalRequest
     {
-        private readonly HttpRequestBase _httpRequest;
         private readonly HttpListenerRequest _httpListenerRequest;
+        private readonly HttpRequestBase _httpRequest;
         private readonly Mode _mode;
 
         public UniversalRequest(HttpRequest request)
@@ -30,6 +56,8 @@ namespace Remora.Core.Impl
             _httpListenerRequest = request;
             _mode = Mode.HttpListenerRequest;
         }
+
+        #region IUniversalRequest Members
 
         public IEnumerable<string> AcceptTypes
         {
@@ -104,11 +132,19 @@ namespace Remora.Core.Impl
                     case Mode.HttpRequest:
                         if (_httpRequest.Cookies == null)
                             return null;
-                        return _httpRequest.Cookies.Cast<string>().ToDictionary(x => x, x => _httpRequest.Cookies[x].Value, StringComparer.InvariantCultureIgnoreCase);
+                        return _httpRequest.Cookies.Cast<string>().ToDictionary(x => x,
+                                                                                x => _httpRequest.Cookies[x].Value,
+                                                                                StringComparer.
+                                                                                    InvariantCultureIgnoreCase);
                     case Mode.HttpListenerRequest:
                         if (_httpListenerRequest.Cookies == null)
                             return null;
-                        return _httpListenerRequest.Cookies.Cast<string>().ToDictionary(x => x, x => _httpListenerRequest.Cookies[x].Value, StringComparer.InvariantCultureIgnoreCase);
+                        return _httpListenerRequest.Cookies.Cast<string>().ToDictionary(x => x,
+                                                                                        x =>
+                                                                                        _httpListenerRequest.Cookies[x].
+                                                                                            Value,
+                                                                                        StringComparer.
+                                                                                            InvariantCultureIgnoreCase);
                     default:
                         throw new NotSupportedException();
                 }
@@ -128,7 +164,9 @@ namespace Remora.Core.Impl
                     case Mode.HttpListenerRequest:
                         if (_httpListenerRequest.Headers == null)
                             return null;
-                        return _httpListenerRequest.Headers.Cast<string>().ToDictionary(x => x, x => _httpListenerRequest.Headers[x]);
+                        return _httpListenerRequest.Headers.Cast<string>().ToDictionary(x => x,
+                                                                                        x =>
+                                                                                        _httpListenerRequest.Headers[x]);
                     default:
                         throw new NotSupportedException();
                 }
@@ -224,11 +262,15 @@ namespace Remora.Core.Impl
                     case Mode.HttpRequest:
                         if (_httpRequest.QueryString == null)
                             return null;
-                        return _httpRequest.QueryString.Cast<string>().ToDictionary(x => x, x => _httpRequest.QueryString[x]);
+                        return _httpRequest.QueryString.Cast<string>().ToDictionary(x => x,
+                                                                                    x => _httpRequest.QueryString[x]);
                     case Mode.HttpListenerRequest:
                         if (_httpListenerRequest.QueryString == null)
                             return null;
-                        return _httpListenerRequest.QueryString.Cast<string>().ToDictionary(x => x, x => _httpListenerRequest.QueryString[x]);
+                        return _httpListenerRequest.QueryString.Cast<string>().ToDictionary(x => x,
+                                                                                            x =>
+                                                                                            _httpListenerRequest.
+                                                                                                QueryString[x]);
                     default:
                         throw new NotSupportedException();
                 }
@@ -363,10 +405,16 @@ namespace Remora.Core.Impl
             }
         }
 
+        #endregion
+
+        #region Nested type: Mode
+
         private enum Mode
         {
             HttpRequest,
             HttpListenerRequest
         }
+
+        #endregion
     }
 }

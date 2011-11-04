@@ -28,7 +28,6 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Net;
 using System.Text;
-using System.Web;
 using Remora.Core;
 
 namespace Remora.Exceptions.Impl
@@ -60,12 +59,14 @@ namespace Remora.Exceptions.Impl
             if (response == null) throw new ArgumentNullException("response");
             Contract.EndContractBlock();
 
-            response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            response.StatusCode = (int) HttpStatusCode.InternalServerError;
             response.ContentType = "text/html";
             response.ContentEncoding = Encoding.UTF8;
 
             var content = response.ContentEncoding.GetBytes(string.Format(ErrorResources.GenericHtmlError,
-                                         exception.GetType().Name.Replace("Exception", ""), exception.Message));
+                                                                          exception.GetType().Name.Replace("Exception",
+                                                                                                           ""),
+                                                                          exception.Message));
 
             response.OutputStream.Write(content, 0, content.Length);
             response.OutputStream.Flush();
@@ -76,12 +77,13 @@ namespace Remora.Exceptions.Impl
         protected virtual void WriteSoap(IRemoraOperation operation, IUniversalResponse response)
         {
             response.ContentType = "text/xml";
-            response.StatusCode = (int)HttpStatusCode.OK;
+            response.StatusCode = (int) HttpStatusCode.OK;
             response.ContentEncoding = Encoding.UTF8;
 
             var content = response.ContentEncoding.GetBytes(string.Format(ErrorResources.SoapError,
-                                         operation.Exception.GetType().Name.Replace("Exception", ""),
-                                         operation.Exception.Message));
+                                                                          operation.Exception.GetType().Name.Replace(
+                                                                              "Exception", ""),
+                                                                          operation.Exception.Message));
 
             response.OutputStream.Write(content, 0, content.Length);
             response.OutputStream.Flush();

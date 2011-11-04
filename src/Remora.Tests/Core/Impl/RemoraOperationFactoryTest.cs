@@ -26,11 +26,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Net;
 using System.Text;
-using System.Web;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using NUnit.Framework;
@@ -46,13 +43,17 @@ namespace Remora.Tests.Core.Impl
     [TestFixture]
     public class RemoraOperationFactoryTest : BaseTest
     {
-        private MockRepository _mocks;
+        #region Setup/Teardown
 
         [SetUp]
         public void SetUp()
         {
             _mocks = new MockRepository();
         }
+
+        #endregion
+
+        private MockRepository _mocks;
 
         [Test]
         public void It_should_return_a_IRemoraOperation()
@@ -62,7 +63,7 @@ namespace Remora.Tests.Core.Impl
 
             var request = _mocks.DynamicMock<IUniversalRequest>();
             SetupResult.For(request.Url).Return(new Uri("http://tempuri.org/uri/?foo=bar"));
-            SetupResult.For(request.Headers).Return(new Dictionary<string, string> { { "Content-Type", "text/xml" } });
+            SetupResult.For(request.Headers).Return(new Dictionary<string, string> {{"Content-Type", "text/xml"}});
             SetupResult.For(request.InputStream).Return(LoadSample("SimpleHelloWorldRequest.xml"));
             SetupResult.For(request.ContentEncoding).Return(Encoding.UTF8);
             _mocks.Replay(request);
@@ -93,8 +94,8 @@ namespace Remora.Tests.Core.Impl
             _mocks.Replay(request);
 
             Assert.That(() => factory.Get(request),
-                Throws.Exception.TypeOf<InvalidConfigurationException>()
-                    .With.Message.Contains("IRemoraOperation"));
+                        Throws.Exception.TypeOf<InvalidConfigurationException>()
+                            .With.Message.Contains("IRemoraOperation"));
         }
 
         [Test]

@@ -25,8 +25,6 @@
 #endregion
 
 using System;
-using System.Net;
-using System.Web;
 using Remora.Core;
 
 namespace Remora.Exceptions

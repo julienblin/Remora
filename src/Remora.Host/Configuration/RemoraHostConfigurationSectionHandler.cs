@@ -1,9 +1,31 @@
-﻿using System;
+﻿#region Licence
+
+// The MIT License
+// 
+// Copyright (c) 2011 Julien Blin, julien.blin@gmail.com
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#endregion
+
 using System.Collections.Generic;
 using System.Configuration;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using Remora.Host.Configuration.Impl;
 using Remora.Host.Exceptions;
@@ -14,11 +36,7 @@ namespace Remora.Host.Configuration
     {
         public const string ConfigurationSectionName = @"remora.host";
 
-        public static IRemoraHostConfig GetConfiguration(string sectionName = ConfigurationSectionName)
-        {
-            var config = (IRemoraHostConfig)ConfigurationManager.GetSection(sectionName);
-            return config ?? new RemoraHostConfig();
-        }
+        #region IConfigurationSectionHandler Members
 
         public object Create(object parent, object configContext, XmlNode section)
         {
@@ -31,46 +49,55 @@ namespace Remora.Host.Configuration
             return result;
         }
 
+        #endregion
+
+        public static IRemoraHostConfig GetConfiguration(string sectionName = ConfigurationSectionName)
+        {
+            var config = (IRemoraHostConfig) ConfigurationManager.GetSection(sectionName);
+            return config ?? new RemoraHostConfig();
+        }
+
         private void LoadJobs(XmlNode section, RemoraHostConfig result)
         {
-           var jobsNode = section.SelectSingleNode("//jobs");
-           if (jobsNode != null)
-           {
-               var jobsConfig = new JobsConfig();
+            var jobsNode = section.SelectSingleNode("//jobs");
+            if (jobsNode != null)
+            {
+                var jobsConfig = new JobsConfig();
 
-               var jobNodes = jobsNode.SelectNodes("job");
-               foreach (XmlNode jobNode in jobNodes)
-               {
-                   var jobConfig = new JobConfig();
-                   var jobConfigList = new List<JobConfig>();
+                var jobNodes = jobsNode.SelectNodes("job");
+                foreach (XmlNode jobNode in jobNodes)
+                {
+                    var jobConfig = new JobConfig();
+                    var jobConfigList = new List<JobConfig>();
 
-                   foreach (XmlAttribute attr in jobNode.Attributes)
-                   {
-                       switch (attr.Name.ToLowerInvariant())
-                       {
-                           case "cron":
-                               jobConfig.Cron = attr.Value;
-                               break;
-                           case "name":
-                               jobConfig.Name = attr.Value;
-                               break;
-                           default:
-                               throw new RemoraHostConfigException(string.Format("Unknown attribute for job node: {0}", attr.Name));
-                       }
-                   }
+                    foreach (XmlAttribute attr in jobNode.Attributes)
+                    {
+                        switch (attr.Name.ToLowerInvariant())
+                        {
+                            case "cron":
+                                jobConfig.Cron = attr.Value;
+                                break;
+                            case "name":
+                                jobConfig.Name = attr.Value;
+                                break;
+                            default:
+                                throw new RemoraHostConfigException(string.Format(
+                                    "Unknown attribute for job node: {0}", attr.Name));
+                        }
+                    }
 
-                   if (string.IsNullOrWhiteSpace(jobConfig.Cron))
-                       throw new RemoraHostConfigException("Missing required attribute cron for a job.");
+                    if (string.IsNullOrWhiteSpace(jobConfig.Cron))
+                        throw new RemoraHostConfigException("Missing required attribute cron for a job.");
 
-                   if (string.IsNullOrWhiteSpace(jobConfig.Name))
-                       throw new RemoraHostConfigException("Missing required attribute name for a job.");
+                    if (string.IsNullOrWhiteSpace(jobConfig.Name))
+                        throw new RemoraHostConfigException("Missing required attribute name for a job.");
 
-                   jobConfigList.Add(jobConfig);
-                   jobsConfig.JobConfigs = jobConfigList;
-               }
+                    jobConfigList.Add(jobConfig);
+                    jobsConfig.JobConfigs = jobConfigList;
+                }
 
-               result.JobsConfig = jobsConfig;
-           }
+                result.JobsConfig = jobsConfig;
+            }
         }
 
         private void LoadBindings(XmlNode section, RemoraHostConfig result)
@@ -93,13 +120,14 @@ namespace Remora.Host.Configuration
                                 bindingConfig.Prefix = attr.Value;
                                 break;
                             default:
-                                throw new RemoraHostConfigException(string.Format("Unknown attribute for binding node: {0}", attr.Name));
+                                throw new RemoraHostConfigException(
+                                    string.Format("Unknown attribute for binding node: {0}", attr.Name));
                         }
                     }
 
-                    if(string.IsNullOrWhiteSpace(bindingConfig.Prefix))
+                    if (string.IsNullOrWhiteSpace(bindingConfig.Prefix))
                         throw new RemoraHostConfigException("Missing required attribute prefix for a binding.");
-                    
+
                     bindings.Add(bindingConfig);
                 }
 
@@ -143,22 +171,26 @@ namespace Remora.Host.Configuration
                                     serviceConfig.RunAs = ServiceConfigRunAs.User;
                                     break;
                                 default:
-                                    throw new RemoraHostConfigException(string.Format("Unknown runas option for service node: {0}", attr.Value));
+                                    throw new RemoraHostConfigException(
+                                        string.Format("Unknown runas option for service node: {0}", attr.Value));
                             }
                             break;
                         case "username":
                             serviceConfig.Username = attr.Value;
                             break;
                         case "password":
-                            serviceConfig.Password= attr.Value;
+                            serviceConfig.Password = attr.Value;
                             break;
                         default:
-                            throw new RemoraHostConfigException(string.Format("Unknown attribute for service node: {0}", attr.Name));
+                            throw new RemoraHostConfigException(string.Format(
+                                "Unknown attribute for service node: {0}", attr.Name));
                     }
                 }
 
-                if((serviceConfig.RunAs == ServiceConfigRunAs.User) && string.IsNullOrWhiteSpace(serviceConfig.Username))
-                    throw new RemoraHostConfigException("Missing mandatory username value for service node when runAs=user.");
+                if ((serviceConfig.RunAs == ServiceConfigRunAs.User) &&
+                    string.IsNullOrWhiteSpace(serviceConfig.Username))
+                    throw new RemoraHostConfigException(
+                        "Missing mandatory username value for service node when runAs=user.");
 
                 result.ServiceConfig = serviceConfig;
             }

@@ -28,7 +28,6 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Web;
 using System.Xml.Linq;
 using NUnit.Framework;
 using Remora.Core;
@@ -43,13 +42,17 @@ namespace Remora.Tests.Exceptions.Impl
     [TestFixture]
     public class ExceptionFormatterTest : BaseTest
     {
-        private MockRepository _mocks;
+        #region Setup/Teardown
 
         [SetUp]
         public void SetUp()
         {
             _mocks = new MockRepository();
         }
+
+        #endregion
+
+        private MockRepository _mocks;
 
         [Test]
         public void It_should_validate_arguments()
@@ -121,7 +124,7 @@ namespace Remora.Tests.Exceptions.Impl
                 formatter.WriteException(operation, response);
 
                 Assert.That(response.ContentType, Is.EqualTo("text/html"));
-                Assert.That(response.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
+                Assert.That(response.StatusCode, Is.EqualTo((int) HttpStatusCode.InternalServerError));
                 Assert.That(response.ContentEncoding, Is.EqualTo(Encoding.UTF8));
 
                 stream.Position = 0;

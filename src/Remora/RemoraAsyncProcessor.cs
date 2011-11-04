@@ -45,8 +45,8 @@ namespace Remora
 
         private readonly AsyncCallback _callback;
         private readonly IWindsorContainer _container;
+        private readonly ContextKind _kind;
         private ILogger _logger = NullLogger.Instance;
-        private ContextKind _kind;
 
         public RemoraAsyncProcessor(AsyncCallback cb, HttpContext context, object state, IWindsorContainer container)
         {
@@ -57,7 +57,8 @@ namespace Remora
             AsyncState = state;
         }
 
-        public RemoraAsyncProcessor(AsyncCallback cb, HttpListenerContext context, object state, IWindsorContainer container)
+        public RemoraAsyncProcessor(AsyncCallback cb, HttpListenerContext context, object state,
+                                    IWindsorContainer container)
         {
             _callback = cb;
             _container = container;
@@ -69,6 +70,22 @@ namespace Remora
         public HttpContext HttpWebContext { get; private set; }
 
         public HttpListenerContext HttpListenerContext { get; private set; }
+
+        private Uri IncomingUri
+        {
+            get
+            {
+                switch (_kind)
+                {
+                    case ContextKind.Web:
+                        return HttpWebContext.Request.Url;
+                    case ContextKind.Net:
+                        return HttpListenerContext.Request.Url;
+                    default:
+                        return null;
+                }
+            }
+        }
 
         #region IAsyncResult Members
 
@@ -189,26 +206,14 @@ namespace Remora
             formatter.WriteHtmlException(exception, universalResponse);
         }
 
-        private Uri IncomingUri
-        {
-            get
-            {
-                switch (_kind)
-                {
-                    case ContextKind.Web:
-                        return HttpWebContext.Request.Url;
-                    case ContextKind.Net:
-                        return HttpListenerContext.Request.Url;
-                    default:
-                        return null;
-                }
-            }
-        }
+        #region Nested type: ContextKind
 
         private enum ContextKind
         {
             Web,
             Net
         }
+
+        #endregion
     }
 }

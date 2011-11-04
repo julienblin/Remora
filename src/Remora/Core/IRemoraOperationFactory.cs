@@ -24,9 +24,6 @@
 
 #endregion
 
-using System.Net;
-using System.Web;
-
 namespace Remora.Core
 {
     public interface IRemoraOperationFactory
