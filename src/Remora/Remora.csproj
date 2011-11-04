@@ -79,6 +79,10 @@
     <Compile Include="Core\Impl\RemoraOperationKindIdentifier.cs" />
     <Compile Include="Core\Impl\RemoraRequest.cs" />
     <Compile Include="Core\Impl\RemoraResponse.cs" />
+    <Compile Include="Core\Impl\UniversalRequest.cs" />
+    <Compile Include="Core\Impl\UniversalResponse.cs" />
+    <Compile Include="Core\IUniversalRequest.cs" />
+    <Compile Include="Core\IUniversalResponse.cs" />
     <Compile Include="Core\Serialization\CDataWrapper.cs" />
     <Compile Include="Core\Serialization\SerializableHeader.cs" />
     <Compile Include="Core\Serialization\SerializableOperation.cs" />

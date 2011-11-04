@@ -82,6 +82,8 @@
     <Compile Include="Components\TracerTest.cs" />
     <Compile Include="Configuration\RemoraConfigurationSectionHandlerTest.cs" />
     <Compile Include="Core\Impl\RemoraOperationKindIdentifierTest.cs" />
+    <Compile Include="Core\Impl\UniversalRequestTest.cs" />
+    <Compile Include="Core\Impl\UniversalResponseTest.cs" />
     <Compile Include="Core\Serialization\SerializableOperationTest.cs" />
     <Compile Include="Exceptions\ExceptionsTest.cs" />
     <Compile Include="Exceptions\Impl\ExceptionFormatterTest.cs" />
