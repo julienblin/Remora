@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Web;
 using NUnit.Framework;
+using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Exceptions;
 using Remora.Handler.Impl;
@@ -55,15 +56,18 @@ namespace Remora.Tests.Handler.Impl
         [Test]
         public void It_should_use_the_exception_formatter_in_case_of_error()
         {
-            var operation = new RemoraOperation {Exception = new Exception()};
-            var responseWriter = new ResponseWriter(_exceptionFormatter) {Logger = GetConsoleLogger()};
+            var operation = new RemoraOperation { Exception = new Exception() };
+            var responseWriter = new ResponseWriter(_exceptionFormatter) { Logger = GetConsoleLogger() };
 
-            using (var writer = new StringWriter())
+
+            var response = _mocks.Stub<IUniversalResponse>();
+            With.Mocks(_mocks).Expecting(() =>
             {
-                var response = new HttpResponse(writer);
-                With.Mocks(_mocks).Expecting(() => { _exceptionFormatter.WriteException(operation, response); }).Verify(
-                    () => { responseWriter.Write(operation, response); });
-            }
+                _exceptionFormatter.WriteException(operation, response);
+            }).Verify(() =>
+            {
+                responseWriter.Write(operation, response);
+            });
         }
 
         [Test]
@@ -74,14 +78,14 @@ namespace Remora.Tests.Handler.Impl
                             .With.Message.Contains("exceptionFormatter")
                 );
 
-            var responseWriter = new ResponseWriter(_exceptionFormatter) {Logger = GetConsoleLogger()};
+            var responseWriter = new ResponseWriter(_exceptionFormatter) { Logger = GetConsoleLogger() };
 
-            Assert.That(() => responseWriter.Write(null, (HttpResponse)null),
+            Assert.That(() => responseWriter.Write(null, null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("operation")
                 );
 
-            Assert.That(() => responseWriter.Write(new RemoraOperation(), (HttpResponse)null),
+            Assert.That(() => responseWriter.Write(new RemoraOperation(), null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("response")
                 );

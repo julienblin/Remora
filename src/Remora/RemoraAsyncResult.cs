@@ -145,17 +145,20 @@ namespace Remora
             if (_logger.IsDebugEnabled)
                 _logger.DebugFormat("Async process ended for request coming from {0}. Writing results...", IncomingUri);
 
-            var writer = _container.Resolve<IResponseWriter>();
+            IUniversalResponse universalResponse = null;
 
             switch (_kind)
             {
                 case ContextKind.Web:
-                    writer.Write(operation, HttpWebContext.Response);
+                    universalResponse = new UniversalResponse(HttpWebContext.Response);
                     break;
                 case ContextKind.Net:
-                    writer.Write(operation, HttpListenerContext.Response);
+                    universalResponse = new UniversalResponse(HttpListenerContext.Response);
                     break;
             }
+
+            var writer = _container.Resolve<IResponseWriter>();
+            writer.Write(operation, universalResponse);
 
             IsCompleted = true;
             _callback(this);
@@ -173,15 +176,17 @@ namespace Remora
                 formatter = new ExceptionFormatter();
             }
 
+            IUniversalResponse universalResponse = null;
             switch (_kind)
             {
                 case ContextKind.Web:
-                    formatter.WriteHtmlException(exception, HttpWebContext.Response);
+                    universalResponse = new UniversalResponse(HttpWebContext.Response);
                     break;
                 case ContextKind.Net:
-                    formatter.WriteHtmlException(exception, HttpListenerContext.Response);
+                    universalResponse = new UniversalResponse(HttpListenerContext.Response);
                     break;
             }
+            formatter.WriteHtmlException(exception, universalResponse);
         }
 
         private Uri IncomingUri

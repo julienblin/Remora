@@ -33,12 +33,8 @@ namespace Remora.Exceptions
 {
     public interface IExceptionFormatter
     {
-        void WriteException(IRemoraOperation operation, HttpResponse response);
+        void WriteException(IRemoraOperation operation, IUniversalResponse response);
 
-        void WriteException(IRemoraOperation operation, HttpListenerResponse response);
-
-        void WriteHtmlException(Exception exception, HttpResponse response);
-
-        void WriteHtmlException(Exception exception, HttpListenerResponse response);
+        void WriteHtmlException(Exception exception, IUniversalResponse response);
     }
 }

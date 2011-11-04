@@ -59,36 +59,7 @@ namespace Remora.Handler.Impl
 
         #region IResponseWriter Members
 
-        public void Write(IRemoraOperation operation, HttpResponse response)
-        {
-            if (operation == null) throw new ArgumentNullException("operation");
-            if (response == null) throw new ArgumentNullException("response");
-            Contract.EndContractBlock();
-
-            if (operation.OnError)
-            {
-                Logger.ErrorFormat(operation.Exception,
-                                   "There has been an error when processing request coming from {0}.",
-                                   operation.IncomingUri);
-                _exceptionformatter.WriteException(operation, response);
-            }
-            else
-            {
-                response.StatusCode = operation.Response.StatusCode;
-                foreach (var header in operation.Response.HttpHeaders)
-                {
-                    response.AppendHeader(header.Key, header.Value);
-                }
-
-                if (operation.Response.Data != null)
-                {
-                    response.OutputStream.Write(operation.Response.Data, 0, operation.Response.Data.Length);
-                }
-                response.OutputStream.Flush();
-            }
-        }
-
-        public void Write(IRemoraOperation operation, HttpListenerResponse response)
+        public void Write(IRemoraOperation operation, IUniversalResponse response)
         {
             if (operation == null) throw new ArgumentNullException("operation");
             if (response == null) throw new ArgumentNullException("response");
@@ -108,7 +79,7 @@ namespace Remora.Handler.Impl
                 {
                     if (!header.Key.Equals("Content-Length"))
                     {
-                        response.AppendHeader(header.Key, header.Value);
+                        response.SetHeader(header.Key, header.Value);
                     }
                 }
 

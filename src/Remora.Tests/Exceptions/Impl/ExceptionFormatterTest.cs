@@ -35,23 +35,33 @@ using Remora.Core;
 using Remora.Core.Impl;
 using Remora.Exceptions;
 using Remora.Exceptions.Impl;
+using Remora.Extensions;
+using Rhino.Mocks;
 
 namespace Remora.Tests.Exceptions.Impl
 {
     [TestFixture]
     public class ExceptionFormatterTest : BaseTest
     {
+        private MockRepository _mocks;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _mocks = new MockRepository();
+        }
+
         [Test]
         public void It_should_validate_arguments()
         {
             var formatter = new ExceptionFormatter();
 
-            Assert.That(() => formatter.WriteException(null, new HttpResponse(new StringWriter())),
+            Assert.That(() => formatter.WriteException(null, null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("operation")
                 );
 
-            Assert.That(() => formatter.WriteException(new RemoraOperation(), (HttpResponse)null),
+            Assert.That(() => formatter.WriteException(new RemoraOperation(), null),
                         Throws.Exception.TypeOf<ArgumentNullException>()
                             .With.Message.Contains("response")
                 );
@@ -66,9 +76,11 @@ namespace Remora.Tests.Exceptions.Impl
                                     Exception = new InvalidConfigurationException("themessage")
                                 };
 
-            using (var writer = new StringWriter())
+            using (var stream = new MemoryStream())
             {
-                var response = new HttpResponse(writer);
+                var response = _mocks.Stub<IUniversalResponse>();
+                SetupResult.For(response.OutputStream).Return(stream);
+                _mocks.Replay(response);
                 var formatter = new ExceptionFormatter();
 
                 formatter.WriteException(operation, response);
@@ -77,7 +89,9 @@ namespace Remora.Tests.Exceptions.Impl
                 Assert.That(response.StatusCode, Is.EqualTo((int) HttpStatusCode.OK));
                 Assert.That(response.ContentEncoding, Is.EqualTo(Encoding.UTF8));
 
-                var body = writer.ToString();
+                stream.Position = 0;
+                var body = Encoding.UTF8.GetString(stream.ReadFully(0));
+
                 Assert.That(body, Contains.Substring("InvalidConfiguration"));
                 Assert.That(body, Contains.Substring("themessage"));
 
@@ -97,18 +111,22 @@ namespace Remora.Tests.Exceptions.Impl
                                     Exception = new InvalidConfigurationException("themessage")
                                 };
 
-            using (var writer = new StringWriter())
+            using (var stream = new MemoryStream())
             {
-                var response = new HttpResponse(writer);
+                var response = _mocks.Stub<IUniversalResponse>();
+                SetupResult.For(response.OutputStream).Return(stream);
+                _mocks.Replay(response);
                 var formatter = new ExceptionFormatter();
 
                 formatter.WriteException(operation, response);
 
                 Assert.That(response.ContentType, Is.EqualTo("text/html"));
-                Assert.That(response.StatusCode, Is.EqualTo((int) HttpStatusCode.InternalServerError));
+                Assert.That(response.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
                 Assert.That(response.ContentEncoding, Is.EqualTo(Encoding.UTF8));
 
-                var body = writer.ToString();
+                stream.Position = 0;
+                var body = Encoding.UTF8.GetString(stream.ReadFully(0));
+
                 Assert.That(body, Contains.Substring("InvalidConfiguration"));
                 Assert.That(body, Contains.Substring("themessage"));
             }

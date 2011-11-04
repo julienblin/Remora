@@ -32,8 +32,6 @@ namespace Remora.Handler
 {
     public interface IResponseWriter
     {
-        void Write(IRemoraOperation operation, HttpResponse response);
-
-        void Write(IRemoraOperation operation, HttpListenerResponse response);
+        void Write(IRemoraOperation operation, IUniversalResponse response);
     }
 }
