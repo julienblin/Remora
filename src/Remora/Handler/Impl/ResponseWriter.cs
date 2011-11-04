@@ -77,10 +77,7 @@ namespace Remora.Handler.Impl
                 response.StatusCode = operation.Response.StatusCode;
                 foreach (var header in operation.Response.HttpHeaders)
                 {
-                    if (!header.Key.Equals("Content-Length"))
-                    {
-                        response.SetHeader(header.Key, header.Value);
-                    }
+                    response.SetHeader(header.Key, header.Value);
                 }
 
                 if (operation.Response.Data != null)

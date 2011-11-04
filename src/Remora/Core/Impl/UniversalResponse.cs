@@ -115,16 +115,20 @@ namespace Remora.Core.Impl
 
         public void SetHeader(string name, string value)
         {
-            switch (_mode)
+            if (!name.Equals("Content-Length", StringComparison.InvariantCultureIgnoreCase))
             {
-                case Mode.HttpResponse:
-                    _httpResponse.AppendHeader(name, value);
-                    break;
-                case Mode.HttpListenerResponse:
-                    _httpListenerResponse.AppendHeader(name, value);
-                    break;
-                default:
-                    throw new NotSupportedException();
+                switch (_mode)
+                {
+                    case Mode.HttpResponse:
+                        _httpResponse.AppendHeader(name, value);
+                        break;
+                    case Mode.HttpListenerResponse:
+
+                        _httpListenerResponse.AppendHeader(name, value);
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
             }
         }
 
